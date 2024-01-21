@@ -1,19 +1,26 @@
 import Pusher from 'pusher';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-const pusher = new Pusher({
+const appKey = process.env.PUSHER_APP_KEY || process.env.NEXT_PUBLIC_PUSHER_APP_KEY;
+const appId = process.env.PUSHER_APP_ID || process.env.NEXT_PUBLIC_PUSHER_APP_ID;
+const appSecret = process.env.PUSHER_APP_SECRET || process.env.NEXT_PUBLIC_PUSHER_APP_SECRET;
+const appCluster = process.env.PUSHER_APP_CLUSTER || process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER;
+
+const pusherOptions = {
   useTLS: true,
-  key: process.env.PUSHER_APP_KEY,
-  appId: process.env.PUSHER_APP_ID,
-  secret: process.env.PUSHER_APP_SECRET,
-  cluster: process.env.PUSHER_APP_CLUSTER,
-});
+  key: appKey,
+  appId: appId,
+  secret: appSecret,
+  cluster: appCluster,
+}
+
+const pusher = new Pusher(pusherOptions);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === `POST`) {
     try {
       const productsUpdatedSignal = req.body;
-      console.log(`Products Updated Webhook`, productsUpdatedSignal);
+      console.log(`Products Updated Webhook`, { pusher, pusherOptions, productsUpdatedSignal });
 
       pusher.trigger(`products`, `updated`, {
         productsUpdatedSignal,
