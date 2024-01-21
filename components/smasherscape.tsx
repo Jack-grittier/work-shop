@@ -3,10 +3,8 @@ import Play from '../models/Play';
 import { useContext } from 'react';
 import Level from '../models/Level';
 import Player from '../models/Player';
-import PlayerForm from './PlayerForm';
 import { Levels } from '../common/Levels';
-import CommandsForm from './CommandsForm';
-import { parseDate } from './PlayerRecord';
+// import { parseDate } from './PlayerRecord';
 import LoadingSpinner from './LoadingSpinner';
 import Experience from '../models/Experience';
 import { Characters } from '../common/Characters';
@@ -136,26 +134,26 @@ export const calcPlayerLevelImage = (levelName) => {
     // else return `${smasherscapeImagesURL}/OSRS_Top_Hat.png?raw=true`;
 }
 
-export const calcPlayerCharactersPlayed = (plyr: Player, cutOff = true, plays) => {
-    let playsToUpdate = [];
-    if (plays && plays?.length > 0) {
-        playsToUpdate = plays.filter(ply => ply?.winnerUUID == plyr?.uuid || ply?.loserUUID == plyr?.uuid);
-    } else {
-        playsToUpdate = plyr?.plays;
-    }
-    let charsPlayed = playsToUpdate?.length > 0 ? playsToUpdate?.map(ply => (ply?.winnerUUID == plyr?.uuid ? ply?.character : ply?.otherCharacter)) : [];
-    let counts = charsPlayed.reduce((acc, char) => {
-        acc[char] = (acc[char] || 0) + 1;
-        return acc;
-    }, {});
-    let sortedCharactersByMostTimesPlayed = Object.entries(counts).sort((a, b) => {
-        const aRecent = playsToUpdate?.find(p => (p?.winnerUUID == plyr?.uuid ? p?.character : p?.otherCharacter) === a[0])?.date;
-        const bRecent = playsToUpdate?.find(p => (p?.winnerUUID == plyr?.uuid ? p?.character : p?.otherCharacter) === b[0])?.date;
-        // return (new Date(bRecent) as any) - (new Date(aRecent) as any); 
-        return parseDate(bRecent) - parseDate(aRecent); 
-    }).sort((a: any, b: any) => b[1] - a[1]).map(entry => entry[0].toLowerCase());
-    return cutOff == true ? sortedCharactersByMostTimesPlayed.slice(0,3) : sortedCharactersByMostTimesPlayed;
-}
+// export const calcPlayerCharactersPlayed = (plyr: Player, cutOff = true, plays) => {
+//     let playsToUpdate = [];
+//     if (plays && plays?.length > 0) {
+//         playsToUpdate = plays.filter(ply => ply?.winnerUUID == plyr?.uuid || ply?.loserUUID == plyr?.uuid);
+//     } else {
+//         playsToUpdate = plyr?.plays;
+//     }
+//     let charsPlayed = playsToUpdate?.length > 0 ? playsToUpdate?.map(ply => (ply?.winnerUUID == plyr?.uuid ? ply?.character : ply?.otherCharacter)) : [];
+//     let counts = charsPlayed.reduce((acc, char) => {
+//         acc[char] = (acc[char] || 0) + 1;
+//         return acc;
+//     }, {});
+//     let sortedCharactersByMostTimesPlayed = Object.entries(counts).sort((a, b) => {
+//         const aRecent = playsToUpdate?.find(p => (p?.winnerUUID == plyr?.uuid ? p?.character : p?.otherCharacter) === a[0])?.date;
+//         const bRecent = playsToUpdate?.find(p => (p?.winnerUUID == plyr?.uuid ? p?.character : p?.otherCharacter) === b[0])?.date;
+//         // return (new Date(bRecent) as any) - (new Date(aRecent) as any); 
+//         return parseDate(bRecent) - parseDate(aRecent); 
+//     }).sort((a: any, b: any) => b[1] - a[1]).map(entry => entry[0].toLowerCase());
+//     return cutOff == true ? sortedCharactersByMostTimesPlayed.slice(0,3) : sortedCharactersByMostTimesPlayed;
+// }
 
 export const isInvalid = (item) => {
     if (typeof item == `string`) {
@@ -221,16 +219,9 @@ export const newPlayerType = (player: Player, customObject = true, plays) => {
 }
 
 export default function Smasherscape(props) {
-    const { user, mobile, useDatabase, filteredPlayers, players, noPlayersFoundMessage, plays, playersLoading, command } = useContext<any>(StateContext);
+    const { filteredPlayers, noPlayersFoundMessage, plays, playersLoading } = useContext<any>(StateContext);
 
     return <Main className={`smasherscapeLeaderboard`} style={playersLoading ? {paddingTop: 10} : null}>
-        <div className={`AdminArea ${command?.name}`}>
-            {getActivePlayers(players, true, plays).length > 0 && (useDatabase == false && !mobile || (user && checkUserRole(user, `Admin`))) && <>
-                <h2 className={`centerPageHeader toggleButtonsHeader`}>Commands Builder Form</h2>
-                <CommandsForm />
-            </>}
-            <PlayerForm />
-        </div>
         <div id={props.id} className={`${props.className} playerGrid ${getActivePlayers(filteredPlayers, true, plays)?.length == 0 ? `empty` : `populated`}`}>
             {getActivePlayers(filteredPlayers, true, plays)?.length == 0 && <>
                 <div className="gridCard">
