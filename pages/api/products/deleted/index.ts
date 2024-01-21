@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const productsDeletedSignal = req.body;
       console.log(`Products Deleted Webhook`, { pusher, pusherOptions, productsDeletedSignal });
 
-      pusher.trigger(`products`, `deleted`, {
+      await pusher.trigger(`products`, `deleted`, {
         productsDeletedSignal,
         message: `products deleted`,
       }).then(() => {

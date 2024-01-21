@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const productsUpdatedSignal = req.body;
       console.log(`Products Updated Webhook`, { pusher, pusherOptions, productsUpdatedSignal });
 
-      pusher.trigger(`products`, `updated`, {
+      await pusher.trigger(`products`, `updated`, {
         productsUpdatedSignal,
         message: `products updated`,
       }).then(() => {
