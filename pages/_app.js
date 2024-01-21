@@ -60,7 +60,7 @@ export const getShopDataFromAPI = async () => {
     let getDatabase = true;
     if (getDatabase == true) {
       let serverPort = 3000;
-      let liveLink = dev() ? `http://localhost:${serverPort}` : window.location.href;
+      let liveLink = dev() ? `http://localhost:${serverPort}` : window.location.origin;
       let shopResponse = await fetch(`${liveLink}/api/shop`);
       if (shopResponse.status === 200) {
         let shopData = await shopResponse.json();
@@ -80,7 +80,7 @@ export const getProductsFromAPI = async () => {
     let getDatabase = true;
     if (getDatabase == true) {
       let serverPort = 3000;
-      let liveLink = dev() ? `http://localhost:${serverPort}` : window.location.href;
+      let liveLink = dev() ? `http://localhost:${serverPort}` : window.location.origin;
       let productsResponse = await fetch(`${liveLink}/api/products`);
       if (productsResponse.status === 200) {
         let productsData = await productsResponse.json();
