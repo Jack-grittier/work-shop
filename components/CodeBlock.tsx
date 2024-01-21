@@ -1,9 +1,8 @@
 import User from '../models/User';
 import Player from '../models/Player';
-import { StateContext } from '../pages/_app';
 import Parameters from '../models/Parameters';
+import { StateContext, dev } from '../pages/_app';
 import React, { useState, useContext } from 'react';
-import { processCommandsWithParameters, updatePlayersLocalStorage } from './PlayerForm';
 
 export default function CodeBlock(props) {
     let [clicked, setClicked] = useState(false);
@@ -35,9 +34,10 @@ export default function CodeBlock(props) {
                 setLoadingPlayers, 
                 setFilteredPlayers,
                 sameNamePlayeredEnabled,
-                updatePlayersLocalStorage,
+                // updatePlayersLocalStorage,
             })
-            processCommandsWithParameters(parameters);
+            dev() && console.log(`Submit Parameters`, parameters);
+            // processCommandsWithParameters(parameters);
             setTimeout(() => setClicked(false), 1500);
         }
     };

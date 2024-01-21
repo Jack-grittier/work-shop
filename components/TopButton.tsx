@@ -33,9 +33,11 @@ export default function TopButton(props) {
         }
     }, [])
 
-    return <button className={show ? `visibleButton iconButton` : `hiddenButton iconButton`} onClick={() => scrollTop()} id="topButton" title="Scroll to top">
-    <span className="upArrow">
-        &gt;
-    </span>
-</button>
+    return (
+        <button className={show ? `visibleButton iconButton` : `hiddenButton iconButton`} onClick={() => scrollTop()} id="topButton" title="Scroll to top">
+            <span className="upArrow">
+                &gt;
+            </span>
+        </button>
+    )
 }

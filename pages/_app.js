@@ -3,14 +3,9 @@ import '../xuruko.scss';
 import '../concentration.scss';
 import Pusher from 'pusher-js';
 import '../creativeWorkshop.scss';
-import User from '../models/User';
 import ReactDOM from 'react-dom/client';
-import { parseDate } from '../components/PlayerRecord';
 import { AnimatePresence, motion } from 'framer-motion';
-import { defaultCommands } from '../components/Commands';
-import { createUserFromFirebaseData } from '../components/Form';
 import { createContext, useRef, useState, useEffect } from 'react';
-import { getActivePlayers, newPlayerType } from '../components/smasherscape';
 
 export const useDB = () => true;
 export const StateContext = createContext({});
@@ -135,19 +130,21 @@ export const getAllPlaysJSON = (players) => {
   return allPlays;
 }
 
-export const logPlayers = (plyrs, useDatabase, plays) => {
-  if (getActivePlayers(plyrs, true, plays).length > 0) {
-    dev() && console.log(`All ${renderLogMessage(`Player(s)`, useDatabase)}`, plyrs.map(pla => newPlayerType(pla, true, plays)));
-    dev() && console.log(`Active ${renderLogMessage(`Player(s)`, useDatabase)}`, getActivePlayers(plyrs.map(pla => newPlayerType(pla, true, plays)), true, plays));
-  }
-}
-
 export const cutOffTextAndReplace = (string, end, replacement) => {
   if (!replacement) {
     replacement = `...` || `-`;
   }
   return string?.length > end ? string?.substring(0, end - 1) + replacement : string;
 };
+
+export const parseDate = (dateStr) => {
+  const parts = dateStr.split(`, `);
+  const timePart = parts[0];
+  const datePart = parts[1];
+  const datePartWithoutSuffix = datePart.replace(/(\d+)(st|nd|rd|th)/, `$1`);
+  const newDateStr = `${datePartWithoutSuffix}, ${timePart}`;
+  return new Date(newDateStr);
+}
 
 export const genUUIDNumbers = (existingIDs) => {
   let newID;
@@ -175,16 +172,6 @@ export const updateOrAdd = (obj, arr) => {
   }
   return arr;
 };
-
-export const getActivePlayersJSON = (players, customObject = false, plays) => {
-  let activePlayers = players.filter(plyr => (plyr.active || !plyr.disabled)).sort((a, b) => {
-    if (b.experience.arenaXP !== a.experience.arenaXP) {
-      return b.experience.arenaXP - a.experience.arenaXP;
-    }
-    if (plays && plays.length > 0) return plays.filter(ply => ply?.winnerUUID == b?.uuid || ply?.loserUUID == b?.uuid).length - plays.filter(ply => ply?.winnerUUID == a?.uuid || ply?.loserUUID == a?.uuid).length;
-  });
-  return customObject == true ? activePlayers.map(plyr => newPlayerType(plyr)) : activePlayers;
-}
 
 export const removeDuplicateObjectFromArray = (arrayOfObjects) => {
   const uniqueArray = arrayOfObjects?.filter((value, index) => {
@@ -255,23 +242,6 @@ export const defaultPlayerRoles = [
     level: 5,
   },
 ];
-
-export const getCurrentUser = (userCredential, players) => {
-  let currentUser = userCredential;
-  // dev() && console.log(`Current Players`, players);
-  let name = capitalizeAllWords(userCredential?.email?.split(`@`)[0]);
-  let providerID = userCredential && userCredential?.providerData && userCredential?.providerData[0]?.providerId;
-  let provider = providerID && providerID?.includes(`.`) ? providerID?.split(`.`)[0] : providerID;
-  let type = capitalizeAllWords(provider);
-  let constructedUser = new User(createUserFromFirebaseData(userCredential, type, name));
-  constructedUser = { ...userCredential, ...constructedUser };
-  if (players && getActivePlayers(players) && getActivePlayers(players)?.length > 0 && getActivePlayers(players).some(plyr => plyr?.uid)) {
-    currentUser = getActivePlayers(players).find(plyr => plyr?.uid == userCredential?.uid);
-  } else {
-    currentUser = constructedUser;
-  }
-  return currentUser;
-}
 
 export const generateUniqueID = (existingIDs) => {
   const generateID = () => {
@@ -487,8 +457,6 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     let [plays, setPlays] = useState([]);
     let [user, setUser] = useState(null);
     let [dark, setDark] = useState(false);
-    let [height, setHeight] = useState(0);
-    let [boards, setBoards] = useState([]);
     let [updates, setUpdates] = useState(0);
     let [onMac, setOnMac] = useState(false);
     let [focus, setFocus] = useState(false);
@@ -513,17 +481,14 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     let [buttonText, setButtonText] = useState(`Next`);
     let [rearranging, setRearranging] = useState(false);
     let [content, setContent] = useState(`defaultContent`)
-    let [commands, setCommands] = useState(defaultCommands);
     let [year, setYear] = useState(new Date().getFullYear());
     let [playersToSelect, setPlayersToSelect] = useState([]);
     let [databasePlayers, setDatabasePlayers] = useState([]);
     let [playersLoading, setPlayersLoading] = useState(true);
-    let [command, setCommand] = useState(defaultCommands.Update);
     let [filteredPlayers, setFilteredPlayers] = useState(players);
     let [deleteCompletely, setDeleteCompletely] = useState(false);
     let [sameNamePlayeredEnabled, setSameNamePlayeredEnabled] = useState(false);
     let [noPlayersFoundMessage, setNoPlayersFoundMessage] = useState(`No Players Found`);
-    let [commandsToNotInclude, setCommandsToNotInclude] = useState([`!com`, `!add`, `!res`, `!set`, `!giv`]);
 
     let [useLazyLoad, setUseLazyLoad] = useState(false);
     let [useDatabase, setUseDatabase] = useState(useDB());
@@ -551,16 +516,6 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
       }
     }
 
-    // const setCommandsToShow = (players) => {
-    //   if (getActivePlayersJSON(players, false, plays).length < 2) {
-    //     setCommand(defaultCommands.Delete);
-    //     setCommandsToNotInclude([`!com`, `!add`, `!res`, `!set`, `!giv`, `!upd`]);
-    //   } else {
-    //     setCommand(defaultCommands.Update);
-    //     setCommandsToNotInclude([`!com`, `!add`, `!res`, `!set`, `!giv`]);
-    //   }
-    // }
-
     // Catch Shop Updates
     useEffect(() => {
       if (Object.keys(shop).length > 0) {
@@ -576,27 +531,6 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
         console.log(`Products`, products);
       }
     }, [products])
-
-    // Catch Player Updates
-    // useEffect(() => {
-    //   setCommandsToShow(players);
-    //   if (useDB() == false) {
-    //     logPlayers(players, useDatabase, plays);
-    //   } else {
-    //     if (user) {
-    //       let currentUser = getCurrentUser(user, players);
-    //       dev() && console.log(`Current User`, currentUser);
-    //       setUser(currentUser);
-    //     }
-    //   }
-    // }, [players])
-
-    // Catch Plays Updates
-    // useEffect(() => {
-    //   if (plays?.length > 0) {
-    //     localStorage.setItem(`plays`, JSON.stringify(plays));
-    //   };
-    // }, [plays])
 
     // App and User Updater
     useEffect(() => {
@@ -650,82 +584,11 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
 
       refreshProductsFromAPI();
 
-      // User
-      // if (useDatabase == true) {
-      //   const unsubscribeFromAuthStateListener = onAuthStateChanged(auth, userCredential => {
-      //     if (userCredential) {
-      //       let currentUser = getCurrentUser(userCredential, players);
-      //       setUser(currentUser);
-      //       setAuthState(`Sign Out`);
-      //     } else {
-      //       setUser(null);
-      //       setAuthState(`Next`);
-      //     }
-      //   })
-      //   return () => {
-      //     unsubscribeFromAuthStateListener();
-      //   }
-      // }
-
-      // socket.on('webhookEvent', (data) => {
-      //   console.log('Webhook event received:', data);
-      //   // Handle the event data here
-      // });
-  
-      // return () => {
-      //   socket.off('webhookEvent');
-      //   socket.close();
-      // };
-
     }, [rte, user, users, authState, dark])
 
     // Player & Plays Updater
     useEffect(() => {
-    //   if (useDatabase == true) {
-    //     // Players
-    //     const unsubscribeFromDatabasePlayersListener = onSnapshot(collection(db, usePlayersDatabase), (querySnapshot) => {
-    //       const playersFromDatabase = [];
-    //       querySnapshot.forEach((doc) => playersFromDatabase.push({...doc.data(), expanded: false}));
-          setPlayersLoading(false);
-    //       setPlayers(playersFromDatabase);
-    //       setDatabasePlayers(playersFromDatabase);
-    //       setFilteredPlayers(getActivePlayersJSON(playersFromDatabase, false, plays));
-    //       setCommandsToShow(playersFromDatabase);
-    //       localStorage.setItem(`players`, JSON.stringify(playersFromDatabase));
-    //       logPlayers(playersFromDatabase, useDatabase, plays);
-    //     });
-        
-    //     // Plays
-    //     const playsCollection = collection(db, usePlaysDatabase);
-    //     const playsQuery = query(playsCollection, orderBy(`date`));
-    //     const unsubscribeFromDatabasePlaysListener = onSnapshot(playsQuery, (querySnapshot) => {
-    //       const playsFromDatabase = [];
-    //       querySnapshot.forEach((doc) => playsFromDatabase.push(doc.data()));
-    //       setPlays(playsFromDatabase);
-    //       localStorage.setItem(`plays`, JSON.stringify(playsFromDatabase));
-    //       dev() && plays && playsFromDatabase?.length > 0 && console.log(`All Active ${renderLogMessage(`Play(s)`, useDatabase)}`, playsFromDatabase.map(ply => new Play(ply)));
-    //     });
-  
-    //     return () => {
-    //       unsubscribeFromDatabasePlayersListener();
-    //       unsubscribeFromDatabasePlaysListener();
-    //     };
-    //   } else {
-    //     let storedPlays = JSON.parse(localStorage.getItem(`plays`)) || [];
-    //     let storedPlayers = JSON.parse(localStorage.getItem(`players`));
-    //     if (storedPlayers && storedPlays && useLocalStorage) {
-    //       setPlays(storedPlays);
-    //       setPlayersLoading(false); 
-    //       setPlayers(storedPlayers);
-    //       setCommandsToShow(storedPlayers);
-    //       setFilteredPlayers(getActivePlayersJSON(storedPlayers, false, plays));
-    //     } else {
-    //       setPlayersLoading(false); 
-    //       setPlayers(defaultPlayers);
-    //       setCommandsToShow(defaultPlayers);
-    //       setFilteredPlayers(getActivePlayersJSON(defaultPlayers, false, plays));
-    //     }
-    //   }
+      setPlayersLoading(false);
     }, [])
 
     useEffect(() => { 
@@ -768,7 +631,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
       };
     }, [])
 
-    return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, highScore, setHighScore, color, setColor, dark, setDark, colorPref, setColorPref, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, gameFormStep, setGameFormStep, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, command, setCommand, commands, setCommands, playersToSelect, setPlayersToSelect, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, commandsToNotInclude, setCommandsToNotInclude, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, playersLoading, setPlayersLoading, iPhone, set_iPhone, plays, setPlays, shop, setShop, products, setProducts }}>
+    return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, highScore, setHighScore, color, setColor, dark, setDark, colorPref, setColorPref, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, gameFormStep, setGameFormStep, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, playersToSelect, setPlayersToSelect, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, playersLoading, setPlayersLoading, iPhone, set_iPhone, plays, setPlays, shop, setShop, products, setProducts }}>
       {(browser != `chrome` || onMac) ? <div className={bodyClasses}>
         <AnimatePresence mode={`wait`}>
           <motion.div className={bodyClasses} key={router.route} initial="pageInitial" animate="pageAnimate" exit="pageExit" transition={{ duration: 0.35 }} variants={{

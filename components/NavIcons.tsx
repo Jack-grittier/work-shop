@@ -1,4 +1,4 @@
-export default function NavIcons(props) {
+export default function NavIcons() {
     return (
         <div className={`navIcons`}>
             <a href="https://discord.gg/FUXbKfGs29" target="_blank" rel="noreferrer" className="nx-p-2 nx-text-current">

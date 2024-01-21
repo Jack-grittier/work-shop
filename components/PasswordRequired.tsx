@@ -1,4 +1,4 @@
-export default function PasswordRequired(props) {
+export default function PasswordRequired() {
     return (
         <div className={`formWarning`}>
             <h2 style={{fontSize: `1.5em`}}>
