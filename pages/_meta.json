@@ -1,6 +1,6 @@
 {
   "index": {
-    "title": "Creative Workshop",
+    "title": "Home",
     "type": "page",
     "theme": {
       "pagination": false,
@@ -9,6 +9,38 @@
   },
   "about": {
     "title": "About",
+    "type": "page",
+    "theme": {
+      "pagination": false,
+      "layout": "full"
+    }
+  },
+  "shop": {
+    "title": "Shop",
+    "type": "page",
+    "theme": {
+      "pagination": false,
+      "layout": "full"
+    }
+  },
+  "services": {
+    "title": "Services",
+    "type": "page",
+    "theme": {
+      "pagination": false,
+      "layout": "full"
+    }
+  },
+  "events": {
+    "title": "Events",
+    "type": "page",
+    "theme": {
+      "pagination": false,
+      "layout": "full"
+    }
+  },
+  "contact": {
+    "title": "Contact",
     "type": "page",
     "theme": {
       "pagination": false,

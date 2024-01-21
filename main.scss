@@ -105,14 +105,14 @@ h6 {
 
 html[class~="dark"] {
      @supports (-webkit-backdrop-filter:blur(1px)) or ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-        background: rgba(0, 0, 0, 1) !important;
+        background: var(--navyT) !important;
         .nextra-nav-container-blur {
-            background: rgba(0, 0, 0, 1) !important;
-            background-color: rgba(0, 0, 0, 1) !important;
+            background: var(--navyT) !important;
+            background-color: var(--navyT) !important;
         }
      }
      .nextra-nav-container-blur {
-         background: rgba(0, 0, 0, 1) !important;
+         background: var(--navyT) !important;
          --tw-shadow: 0 -12px 16px #000 !important;
          border-bottom: solid 1px #000000 !important;
      }
@@ -218,7 +218,8 @@ html[class~="dark"] {
         // background: url(./public/assets/images/CWBG.jpg);
         // background: url(./public/assets/CobbleStoneTexture.png);
 
-        background-size: 100% !important;
+        // background-size: 100% !important;
+        background-size: cover !important;
         background-attachment: fixed !important;
         // background: url("./public/assets/runescapeBG.jpg") repeat-y center;
     }
@@ -249,8 +250,9 @@ html[class~="dark"] {
     }
 
     footer {
+        background: var(--navyT);
         div {
-            background: black;
+            background: var(--navyT);
         }
     }
 
@@ -1604,4 +1606,9 @@ footer {
 
 .lineSep {
     border-color: var(--gameBlueSoft);
+}
+
+:is(html[class~=dark] .dark\:nx-bg-primary-300\/10) {
+    background-color: hsl(var(--nextra-primary-hue)var(--nextra-primary-saturation)77%/.1);
+    backdrop-filter: blur(15px);
 }

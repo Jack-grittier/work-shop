@@ -41,8 +41,9 @@ html, body {
     --smasherscapeGreen2Transparent2: rgba(30, 220, 120, 0.55);
     --customTagHeight: calc(var(--customHookInputContainerHeight) - 15);
     --customHookRootHeight: calc(var(--customHookInputContainerHeight) - 10);
-    --xurukoGradientGreenBlue: linear-gradient(90deg, var(--smasherscapeGreen2), var(--smasherscapeBlue2));
-    --xurukoGradientBlueGreen: linear-gradient(90deg, var(--smasherscapeBlue2), var(--smasherscapeGreen2));
+    --xurukoGradientGreenBlue: linear-gradient(90deg, var(--cwsBlue), var(--cwsPink));
+    // --xurukoGradientGreenBlue: linear-gradient(90deg, var(--smasherscapeGreen2), var(--smasherscapeBlue2));
+    --xurukoGradientBlueGreen: linear-gradient(90deg, var(--cwsPink), var(--cwsBlue));
     --xurukoGradientGreenBlueTransparent: linear-gradient(90deg, var(--smasherscapeGreen2Transparent), var(--smasherscapeBlue2Transparent));
     --xurukoGradientBlueGreenTransparent: linear-gradient(90deg, var(--smasherscapeBlue2Transparent), var(--smasherscapeGreen2Transparent));
     --xurukoGradientBlueGreenTransparentSubtle: linear-gradient(90deg, var(--smasherscapeBlue2Transparent2), var(--smasherscapeGreen2Transparent2));
@@ -627,7 +628,7 @@ li {
 
 .dark {
     nav {
-        background: black !important;
+        background: var(--navyT) !important;
     }
 }
 
@@ -638,7 +639,7 @@ nav {
         &::after {
             left: 50%;
             width: 90%;
-            content: "";
+            // content: "";
             bottom: 1px;
             height: 1.1px;
             margin: 0 auto;
@@ -978,7 +979,8 @@ form {
                 max-width: fit-content;
                 border: 3px solid black;
                 .authFormPhrase {
-                    top: -3px;
+                    top: -2px;
+                    font-size: 10px;
                     position: relative;
                 }
             }
@@ -1550,7 +1552,7 @@ div[role="presentation"] {
     li {
         display: flex;
         grid-gap: 10px;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
         .desc {
             white-space: nowrap;
@@ -2310,7 +2312,7 @@ div[role="presentation"] {
         grid-gap: 15px;
         font-size: 1.2em;
         font-weight: 900;
-        padding: 0 35px 5px;
+        padding: 0 0 5px;
         align-items: baseline;
         max-width: fit-content;
         border-bottom-left-radius: 4px;
@@ -2322,8 +2324,9 @@ div[role="presentation"] {
     }
     .copyText {
         color: white;
-        font-size: 16px;
+        font-size: 12px;
         font-weight: 500;
+        font-family: monospace;
         // font-family: 'RuneScape Chat';
     }
     div {

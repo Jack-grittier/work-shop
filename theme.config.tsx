@@ -8,13 +8,14 @@ import { DocsThemeConfig } from 'nextra-theme-docs';
 // import NextraSearch from './components/NextraSearch';
 
 const siteTitle = `Creative Workshop`;
+const description = `Get Creative!`;
 const content = `Creative Workshop is a dashboard for tracking orders through Trello Boards, Lists, Cards API and having it be connected directly and programmatically to the Client which communicates back to the TypeForm API to create new orders.`;
 
 const config: DocsThemeConfig = {
   primaryHue: 195, // Sky Blue
   useNextSeoProps() {
     return {
-      titleTemplate: `%s | Creative Workshop`
+      titleTemplate: `%s | ${siteTitle}`,
     }
   },
   feedback: {
@@ -35,19 +36,25 @@ const config: DocsThemeConfig = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link rel="icon" href="/assets/images/Blue-Green-Icon.svg" type="image/x-icon"></link>
-    <meta name="description" content={content} />
-    <meta property="og:title" content={`${siteTitle} Leaderboard`} />
-    <meta property="og:description" content={content}  />
-    <meta property="og:image" content={`/assets/images/CWBG.jpg`} />
-    <meta name="twitter:card" content={`/assets/images/CWBG.jpg`} />
+    <link rel="icon" href="/assets/images/CatIcon.png" type="image/x-icon"></link>
+    <meta name="description" content={`Get Creative!`} />
+    <meta property="og:title" content={siteTitle} />
+    <meta property="og:type" content={`website`} />
+    <meta property="og:site_name" content={siteTitle} />
+    <meta property="og:description" content={description}  />
+    <meta property="og:image" content={`/assets/images/ogImage.jpg`} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="482" />
+    <meta name="twitter:card" content={`/assets/images/ogImage.jpg`} />
     <meta name="twitter:site" content="@creativeworkshop" />
     <meta name="twitter:title" content={siteTitle} />
-    <meta name="twitter:description" content={content}  />
-    <meta name="twitter:image" content={`/assets/images/CWBG.jpg`} />
+    <meta name="twitter:description" content={description}  />
+    <meta name="twitter:image" content={`/assets/images/ogImage.jpg`} />
     </>,
   logo: <>
-    <img width={40} src={`/assets/images/Blue-Green-Icon.svg`} alt={`Logo`} /> <h1 style={{marginLeft: 15}}>Creative Workshop</h1>
+    <img width={100} src={`/assets/images/cwsLongWhiteLogo.svg`} alt={`Logo`} /> 
+    {/* <h1 style={{marginLeft: 15}}>Creative Workshop</h1> */}
   </>,
   // navbar: {
     // extraContent: <NextraSearch />

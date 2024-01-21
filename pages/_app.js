@@ -13,41 +13,30 @@ export const signUpOrSignIn = `Sign Up or Sign In`;
 
 export const environments = {
   dev: {
-    playsDatabase: `devPlays`,
-    playersDatabase: `devPlayers`,
+    usersDatabase: `devUsers`,
+    productsDatabase: `devProducts`,
   },
   test: {
-    playsDatabase: `testPlays`,
-    playersDatabase: `testPlayers`,
+    usersDatabase: `testUsers`,
+    productsDatabase: `testProducts`,
   },
   alpha: {
-    playsDatabase: `alphaPlays`,
-    playersDatabase: `alphaPlayers`,
+    usersDatabase: `alphaUsers`,
+    productsDatabase: `alphaProducts`,
   },
   beta: {
-    playsDatabase: `betaPlays`,
-    playersDatabase: `betaPlayers`,
+    usersDatabase: `betaUsers`,
+    productsDatabase: `betaProducts`,
   },
   prod: {
-    playsDatabase: `plays`,
-    playersDatabase: `players`,
+    usersDatabase: `users`,
+    productsDatabase: `products`,
   },
 };
 
 export const environment = environments.alpha;
-export const usePlaysDatabase = environment.playsDatabase;
-export const usePlayersDatabase = environment.playersDatabase;
-
-export const defaultWinXP = 400;
-export const testingWinXP = 1000;
-export const defaultXPMultiplier = 1;
-export const XPGainOnWin = defaultWinXP;
-export const globalBonusXPMultiplier = 1;
-export const defaultLoserXPForEachStockTaken = 100;
-export const testingLoserXPForEachStockTaken = 300;
-export const XPGainOnLoserXPForEachStockTaken = defaultLoserXPForEachStockTaken;
-export const loseCons = [`loses-to`, `falls-to`, `defeated-by`, `destroyed-by`, `gets-owned-by`];
-export const winCons = [`beat`, `beats`, `destroys`, `destroyed`, `defeats`, `defeated`, `conquers`, `crushes`, `kills`, `killed`];
+export const usersDatabase = environment.usersDatabase;
+export const productsDatabase = environment.productsDatabase;
 
 export const getPage = () => capitalizeAllWords(window.location.pathname.replace(`/`,``));
 export const replaceAll = (str, search, replacement) => str.replace(new RegExp(search, `g`), replacement);
@@ -207,41 +196,6 @@ export const dev = (item, source) => {
     return false;
   }
 }
-
-export const getAllPlays = (players) => {
-  const playUUIDs = new Set();
-  let allPlays = players.map(player => player.plays).reduce((acc, curr) => acc.concat(curr), []).filter(play => {
-    if (!playUUIDs.has(play.uuid)) {
-      playUUIDs.add(play.uuid);
-      return true;
-    }
-    return false;
-  }).sort((a, b) => parseDate(b.date) - parseDate(a.date));
-  return allPlays;
-}
-
-export const defaultPlayerRoles = [
-  {
-    name: `Player`,
-    level: 1,
-  },
-  {
-    name: `User`,
-    level: 2,
-  },
-  {
-    name: `Admin`,
-    level: 3,
-  },
-  {
-    name: `Developer`,
-    level: 4,
-  },
-  {
-    name: `Owner`,
-    level: 5,
-  },
-];
 
 export const generateUniqueID = (existingIDs) => {
   const generateID = () => {
@@ -440,8 +394,6 @@ export const showAlert = async (title, component, width, height) => {
     }
   });
 }
-
-export const defaultPlayers = [];
 
 export default function CreativeWorkshop({ Component, pageProps, router }) {
     let brwser = ``;

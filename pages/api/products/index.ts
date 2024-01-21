@@ -24,6 +24,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return dateB - dateA;
       }).map(({ ...pr }) => ({ 
         ...pr, 
+        name: pr.title,
+        category: pr.product_type,
+        description: pr.body_html,
         created: new Date(pr.created_at).toLocaleString(), 
         updated: new Date(pr.updated_at).toLocaleString(),
       }));

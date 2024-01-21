@@ -17,18 +17,18 @@ export default function CodeBlock(props) {
             setTimeout(() => setCMDClicked(false), 1500);
         } else {
             setClicked(true);
-            let command = props.children;
-            let commandParams = command.split(` `);
+            // let command = props.children;
+            // let commandParams = command.split(` `);
             const parameters = new Parameters({
                 user,
                 plays,
-                command,
+                // command,
                 players, 
                 commands,
                 setPlays,
                 setPlayers, 
                 useDatabase, 
-                commandParams, 
+                // commandParams, 
                 databasePlayers, 
                 deleteCompletely,
                 setLoadingPlayers, 
@@ -47,7 +47,7 @@ export default function CodeBlock(props) {
                 <code style={{whiteSpace: `pre-wrap`, lineHeight: 1.3}} className="nx-border-black nx-border-opacity-[0.04] nx-bg-opacity-[0.03] nx-bg-black nx-break-words nx-rounded-md nx-border nx-py-0.5 nx-px-[.25em] nx-text-[.9em] dark:nx-border-white/10 dark:nx-bg-white/10" dir="ltr" data-language={props.language} data-theme="default">
                     <span className="line">
                         {props.codeTitle && <span className="codeTitle">{props.codeTitle}</span>}
-                        <span id={props.id}>{props.children}</span>
+                        <span className={`commandDesc`} id={props.id}>{props.children}</span>
                     </span>
                 </code>
             </pre>
@@ -57,12 +57,12 @@ export default function CodeBlock(props) {
                         <svg viewBox="0 0 20 20" width="1em" height="1em" fill="currentColor" className="checkmark nextra-copy-icon nx-pointer-events-none nx-h-4 nx-w-4">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
                         </svg>
-                        <div style={{pointerEvents: `none`}} className="copyText">{props.codeTitle ? `Sent` : `Copied`}</div>
+                        <div style={{pointerEvents: `none`}} className="copyText">{props.codeTitle ? `Added` : `Opening`}</div>
                     </> : <>
                         {props.codeTitle ? (
                             <>
-                                <i style={{fontSize: 15}} className="fas fa-paper-plane"></i>
-                                <div className="copyText alertActionButton">Send</div>
+                                <i style={{fontSize: 15}} className={`fas fa-shopping-cart`}></i>
+                                <div className="copyText alertActionButton">Cart</div>
                             </>
                         ) : (
                             <>
@@ -70,7 +70,8 @@ export default function CodeBlock(props) {
                                     <rect x="9" y="9" width="13" height="13" rx="2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></rect>
                                     <path d="M5 15H4C2.89543 15 2 14.1046 2 13V4C2 2.89543 2.89543 2 4 2H13C14.1046 2 15 2.89543 15 4V5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
                                 </svg>
-                                <div className="copyText alertActionButton">Copy</div>
+                                {/* <i style={{fontSize: 15}} className="fas fa-dollar-sign"></i> */}
+                                <div className="copyText alertActionButton">Buy</div>
                             </>
                         )}
                     </>}
@@ -82,12 +83,12 @@ export default function CodeBlock(props) {
                         <svg viewBox="0 0 20 20" width="1em" height="1em" fill="currentColor" className="checkmark nextra-copy-icon nx-pointer-events-none nx-h-4 nx-w-4">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
                         </svg>
-                        <div className="copyText">{(!props.codeTitle && props.commandToCopy) ? `Copy` : `Copied`}</div>
+                        <div className="copyText">{(!props.codeTitle && props.commandToCopy) ? `Buy` : `Opening`}</div>
                     </> : <>
                         {(!props.codeTitle && props.commandToCopy) ? (
                             <>
-                                <i style={{fontSize: 15}} className="fas fa-paper-plane"></i>
-                                <div className="copyText alertActionButton">Send</div>
+                                <i style={{fontSize: 15}} className={`fas fa-shopping-cart`}></i>
+                                <div className="copyText alertActionButton">Cart</div>
                             </>
                         ) : (
                             <>
@@ -95,7 +96,8 @@ export default function CodeBlock(props) {
                                     <rect x="9" y="9" width="13" height="13" rx="2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></rect>
                                     <path d="M5 15H4C2.89543 15 2 14.1046 2 13V4C2 2.89543 2.89543 2 4 2H13C14.1046 2 15 2.89543 15 4V5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
                                 </svg>
-                                <div className="copyText alertActionButton">Copy</div>
+                                {/* <i style={{fontSize: 15}} className="fas fa-search-dollar"></i> */}
+                                <div className="copyText alertActionButton">Buy</div>
                             </>
                         )}
                     </>}

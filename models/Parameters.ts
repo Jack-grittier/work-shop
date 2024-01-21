@@ -6,14 +6,14 @@ export default class Parameters {
     [key: string]: any;
     constructor(parameterObject: {
         user: User | Player,
-        command: any, 
+        command?: any, 
         players: any, 
-        commands: any,
+        commands?: any,
         plays: Play[],
         setPlays: any,
         setPlayers: any, 
         useDatabase: any,
-        commandParams: any,
+        commandParams?: any,
         deleteCompletely: any, 
         setLoadingPlayers: any,
         sameNamePlayeredEnabled: any,
