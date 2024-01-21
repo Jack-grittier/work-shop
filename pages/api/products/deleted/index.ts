@@ -3,10 +3,10 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 const pusher = new Pusher({
   useTLS: true,
-  key: process.env.NEXT_PUBLIC_PUSHER_APP_KEY,
-  appId: process.env.NEXT_PUBLIC_PUSHER_APP_ID,
-  secret: process.env.NEXT_PUBLIC_PUSHER_APP_SECRET,
-  cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER,
+  key: process.env.PUSHER_APP_KEY,
+  appId: process.env.PUSHER_APP_ID,
+  secret: process.env.PUSHER_APP_SECRET,
+  cluster: process.env.PUSHER_APP_CLUSTER,
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
