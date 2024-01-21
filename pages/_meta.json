@@ -1,0 +1,18 @@
+{
+  "index": {
+    "title": "Creative Workshop",
+    "type": "page",
+    "theme": {
+      "pagination": false,
+      "layout": "full"
+    }
+  },
+  "about": {
+    "title": "About",
+    "type": "page",
+    "theme": {
+      "pagination": false,
+      "layout": "full"
+    }
+  }
+}

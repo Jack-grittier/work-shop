@@ -1,0 +1,27 @@
+name: Count Lines of Code
+
+on:
+  push:
+    branches:
+      - testing
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup cloc
+        run: sudo apt install cloc
+
+      - name: Count lines of code
+        id: cloc
+        run: echo "::set-output name=lines::$(cloc --include-lang=JavaScript,TypeScript,HTML,CSS --exclude-dir=node_modules,.next --by-file . | tail -n 1 | awk '{print $5}')"
+
+      - name: Update line count badge
+        uses: README-Workflows/update-dynamic-content@v2.1.0
+        with:
+          filePath: README.md
+          substitutions: "total-lines-${{ steps.cloc.outputs.lines }}"
