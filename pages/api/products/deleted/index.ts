@@ -27,9 +27,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         message: `products deleted`,
       }).then(() => {
         console.log(`Pusher trigger successful`);
-      })
-      .catch(e => {
-        console.error(`Error triggering Pusher`, e);
+      }).catch(pusherError => {
+        console.error(`Error Triggering Delete Pusher`, { pusherError, pusher, pusherOptions });
       });
 
       res.status(200).json({ message: `Products Deleted Webhook`, change: productsDeletedSignal });
