@@ -61,7 +61,7 @@ export default function CodeBlock(props) {
                     </> : <>
                         {props.codeTitle ? (
                             <>
-                                <i style={{fontSize: 15}} className={`fas fa-shopping-cart`}></i>
+                                <i style={{fontSize: 13}} className={`fas fa-shopping-cart`}></i>
                                 <div className="copyText alertActionButton">Cart</div>
                             </>
                         ) : (
@@ -87,7 +87,7 @@ export default function CodeBlock(props) {
                     </> : <>
                         {(!props.codeTitle && props.commandToCopy) ? (
                             <>
-                                <i style={{fontSize: 15}} className={`fas fa-shopping-cart`}></i>
+                                <i style={{fontSize: 13}} className={`fas fa-shopping-cart`}></i>
                                 <div className="copyText alertActionButton">Cart</div>
                             </>
                         ) : (

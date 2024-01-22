@@ -20,9 +20,9 @@ export default function Products(props) {
                                 <CodeBlock key={productIndex} commandToCopy={true} custombutton={true} border={`solid 2px white`} id={`commandToRender-${product.id}`} language={`json`} codeTitle={(
                                 <>
                                     <i className="fab fa-shopify"></i>
-                                    <div className={`desc`}>
-                                        <span className={`oflow`}>{product?.title}</span> - 
-                                        <span className={`price`}><span className={`dollar`}>$</span>{product?.variants[0]?.price}</span>
+                                    <div className={`desc productTitleAndPrice`}>
+                                        <span className={`oflow`}>{product?.title}</span>
+                                        <span className={`price`}> - <span className={`dollar`}>$</span>{product?.variants[0]?.price}</span>
                                     </div>
                                 </>
                                 )}>

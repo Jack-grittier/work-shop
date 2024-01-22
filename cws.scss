@@ -2055,7 +2055,9 @@ div[role="presentation"] {
     .commandsList {
         li {
             .desc {
-                display: none;
+                &:not(.productTitleAndPrice) {
+                    display: none;
+                }
             }
         }
         &.commandToCopy {

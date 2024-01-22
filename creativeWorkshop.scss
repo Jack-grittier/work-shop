@@ -84,12 +84,14 @@ nav a.nx-text-sm {
             width: 100%;
             margin: 0 auto;
             max-width: 100%;
-            min-width: 565px;
             position: relative;
             text-align: center;
             align-items: center;
             max-width: fit-content;
             justify-content: center;
+            @media (min-width: 600px) {
+                min-width: 565px;
+            }
             .heroLogo {
                 padding-bottom: 35px;
             }
@@ -265,6 +267,44 @@ hr {
     .floatingCat {
       opacity: 0;
       pointer-events: none;
+    }
+}
+
+@media (max-width: 1100px) {
+    .floatingCat {
+        animation: none;
+        display: none !important;
+    }
+}
+
+@media (max-width: 1050px) {
+    .productBlocks {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .cwsMainBanner {
+        .hero {
+            background-position: 100% 100% !important;
+        }
+        img {
+            max-width: 100%;
+        }
+    }
+    .heroTitleSubText {
+        font-size: 40px !important;
+    }
+    .productCode {
+        .desc {
+            font-size: 14px;
+        }
+    }
+    .price {
+        font-size: 13px;
+    }
+    .productDesc {
+        display: none;
     }
 }
   
