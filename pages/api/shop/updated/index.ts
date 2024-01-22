@@ -19,19 +19,19 @@ const pusher = new Pusher(pusherOptions);
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === `POST`) {
     try {
-      const productsUpdatedSignal = req.body;
-      console.log(`Products Updated Webhook`, { pusher, pusherOptions, productsUpdatedSignal });
+      const shopUpdatedSignal = req.body;
+      console.log(`Shop Updated Webhook`, shopUpdatedSignal);
 
-      await pusher.trigger(`products`, `updated`, {
-        productsUpdatedSignal,
-        message: `products updated`,
+      await pusher.trigger(`shop`, `updated`, {
+        shopUpdatedSignal,
+        message: `shop updated`,
       }).then(() => {
         console.log(`Pusher trigger successful`);
       }).catch(pusherError => {
         console.error(`Error Triggering Update Pusher`, { pusherError, pusher, pusherOptions });
       });
 
-      res.status(200).json({ message: `Products Updated Webhook`, change: productsUpdatedSignal });
+      res.status(200).json({ message: `Shop Updated Webhook`, change: shopUpdatedSignal });
     } catch (error) {
       res.status(500).json({ error: `Failed to get Webhook.` });
     }

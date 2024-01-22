@@ -396,264 +396,246 @@ export const showAlert = async (title, component, width, height) => {
 }
 
 export default function CreativeWorkshop({ Component, pageProps, router }) {
-    let brwser = ``;
-    let loaded = useRef(false);
-    let mobileMenuBreakPoint = 697;
-    let [IDs, setIDs] = useState([]);
-    let [rte, setRte] = useState(``);
-    let [page, setPage] = useState(``);
-    let [qotd, setQotd] = useState(``);
-    let [width, setWidth] = useState(0);
-    let [color, setColor] = useState(``);
-    let [users, setUsers] = useState([]);
-    let [plays, setPlays] = useState([]);
-    let [user, setUser] = useState(null);
-    let [dark, setDark] = useState(false);
-    let [updates, setUpdates] = useState(0);
-    let [onMac, setOnMac] = useState(false);
-    let [focus, setFocus] = useState(false);
-    let [browser, setBrowser] = useState(``);
-    let [players, setPlayers] = useState([]);
-    let [devEnv, setDevEnv] = useState(false);
-    let [mobile, setMobile] = useState(false);
-    let [loading, setLoading] = useState(true);
-    let [iPhone, set_iPhone] = useState(false);
-    let [highScore, setHighScore] = useState(0);
-    let [platform, setPlatform] = useState(null);
-    let [anim, setAnimComplete] = useState(false);
-    let [categories, setCategories] = useState([]);
-    let [colorPref, setColorPref] = useState(user);
-    let [useFramer, setUseFramer] = useState(true);
-    let [alertOpen, setAlertOpen] = useState(false);
-    let [authState, setAuthState] = useState(`Next`);
-    let [bodyClasses, setBodyClasses] = useState(``);
-    let [mobileMenu, setMobileMenu] = useState(false);
-    let [gameFormStep, setGameFormStep] = useState(1);
-    let [emailField, setEmailField] = useState(false);
-    let [systemStatus, setSystemStatus] = useState(``);
-    let [buttonText, setButtonText] = useState(`Next`);
-    let [rearranging, setRearranging] = useState(false);
-    let [content, setContent] = useState(`defaultContent`)
-    let [year, setYear] = useState(new Date().getFullYear());
-    let [playersToSelect, setPlayersToSelect] = useState([]);
-    let [databasePlayers, setDatabasePlayers] = useState([]);
-    let [playersLoading, setPlayersLoading] = useState(true);
-    let [filteredPlayers, setFilteredPlayers] = useState(players);
-    let [deleteCompletely, setDeleteCompletely] = useState(false);
-    let [sameNamePlayeredEnabled, setSameNamePlayeredEnabled] = useState(false);
-    let [noPlayersFoundMessage, setNoPlayersFoundMessage] = useState(`No Players Found`);
+  let brwser = ``;
+  let loaded = useRef(false);
+  let mobileMenuBreakPoint = 697;
+  let [IDs, setIDs] = useState([]);
+  let [rte, setRte] = useState(``);
+  let [page, setPage] = useState(``);
+  let [qotd, setQotd] = useState(``);
+  let [width, setWidth] = useState(0);
+  let [color, setColor] = useState(``);
+  let [users, setUsers] = useState([]);
+  let [plays, setPlays] = useState([]);
+  let [user, setUser] = useState(null);
+  let [dark, setDark] = useState(false);
+  let [updates, setUpdates] = useState(0);
+  let [onMac, setOnMac] = useState(false);
+  let [focus, setFocus] = useState(false);
+  let [browser, setBrowser] = useState(``);
+  let [players, setPlayers] = useState([]);
+  let [devEnv, setDevEnv] = useState(false);
+  let [mobile, setMobile] = useState(false);
+  let [loading, setLoading] = useState(true);
+  let [iPhone, set_iPhone] = useState(false);
+  let [highScore, setHighScore] = useState(0);
+  let [platform, setPlatform] = useState(null);
+  let [anim, setAnimComplete] = useState(false);
+  let [categories, setCategories] = useState([]);
+  let [colorPref, setColorPref] = useState(user);
+  let [useFramer, setUseFramer] = useState(true);
+  let [alertOpen, setAlertOpen] = useState(false);
+  let [authState, setAuthState] = useState(`Next`);
+  let [bodyClasses, setBodyClasses] = useState(``);
+  let [mobileMenu, setMobileMenu] = useState(false);
+  let [gameFormStep, setGameFormStep] = useState(1);
+  let [emailField, setEmailField] = useState(false);
+  let [systemStatus, setSystemStatus] = useState(``);
+  let [buttonText, setButtonText] = useState(`Next`);
+  let [rearranging, setRearranging] = useState(false);
+  let [content, setContent] = useState(`defaultContent`)
+  let [year, setYear] = useState(new Date().getFullYear());
+  let [playersToSelect, setPlayersToSelect] = useState([]);
+  let [databasePlayers, setDatabasePlayers] = useState([]);
+  let [playersLoading, setPlayersLoading] = useState(true);
+  let [filteredPlayers, setFilteredPlayers] = useState(players);
+  let [deleteCompletely, setDeleteCompletely] = useState(false);
+  let [sameNamePlayeredEnabled, setSameNamePlayeredEnabled] = useState(false);
+  let [noPlayersFoundMessage, setNoPlayersFoundMessage] = useState(`No Players Found`);
 
-    let [useLazyLoad, setUseLazyLoad] = useState(false);
-    let [useDatabase, setUseDatabase] = useState(useDB());
-    let [useLocalStorage, setUseLocalStorage] = useState(true);
+  let [useLazyLoad, setUseLazyLoad] = useState(false);
+  let [useDatabase, setUseDatabase] = useState(useDB());
+  let [useLocalStorage, setUseLocalStorage] = useState(true);
 
-    let [shop, setShop] = useState({});
-    let [products, setProducts] = useState([]);
+  let [shop, setShop] = useState({});
+  let [products, setProducts] = useState([]);
 
-    // const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
-    // const [message, setMessage] = useState<string>(''); // State to store incoming WebSocket messages
+  const setBrowserUI = () => {
+    if (brwser == `` && (navigator.userAgent.match(/edg/i) || navigator.userAgent.includes(`edg`) || navigator.userAgent.includes(`Edg`))) {
+      brwser = `edge`;
+      setBrowser(`edge`);
+    } if (brwser == `` && navigator.userAgent.match(/chrome|chromium|crios/i)) {
+      brwser = `chrome`;
+      setBrowser(`chrome`);
+    } else if (brwser == `` && navigator.userAgent.match(/firefox|fxios/i)) {
+      brwser = `firefox`;
+      setBrowser(`firefox`);
+    } else if (brwser == `` && navigator.userAgent.match(/safari/i)) {
+      brwser = `safari`;
+      setBrowser(`safari`);
+    } else if (brwser == `` && navigator.userAgent.match(/opr\//i)) {
+      brwser = `opera`;
+      setBrowser(`opera`);
+    }
+  }
 
-    // useEffect(() => {
-    //   // Create a WebSocket connection when the component mounts
-    //   // let serverPort = 3000;
-    //   // let liveLink = dev() ? `http://localhost:${serverPort}` : window.location.origin;
-    //   const ws = new WebSocket('ws://localhost:3000'); // Replace with your WebSocket server URL
+  // Catch Shop Updates
+  useEffect(() => {
+    if (Object.keys(shop).length > 0) {
+      localStorage.setItem(`shop`, JSON.stringify(shop));
+      console.log(`Shop`, shop);
+    }
+  }, [shop])
 
-    //   ws.onopen = () => {
-    //     console.log('WebSocket connection opened');
-    //   };
+  // Catch Product Updates
+  useEffect(() => {
+    if (products.length > 0) {
+      localStorage.setItem(`products`, JSON.stringify(products));
+      console.log(`Products`, products);
+    }
+  }, [products])
 
-    //   ws.onmessage = (event) => {
-    //     const data = JSON.parse(event.data);
-    //     console.log('Received WebSocket message:', data);
+  // App and User Updater
+  useEffect(() => {
+    // App
+    setLoading(true);
+    setAnimComplete(false);
+    setSystemStatus(`Page Loading!`);
+    if (loaded.current) return;
+    loaded.current = true;
+    
+    setDevEnv(dev());
+    setUpdates(updates);
+    setPlatform(navigator?.userAgent);
+    setYear(new Date().getFullYear());
+    setSystemStatus(`System Status Ok.`);
+    setRte(replaceAll(router.route, `/`, `_`));
+    setOnMac(navigator.platform.includes(`Mac`));
+    set_iPhone(/iPhone/.test(navigator.userAgent));
+    setPage(window.location.pathname.replace(`/`,``));
+    setMobile((typeof window.orientation !== `undefined`) || (navigator.userAgent.indexOf(`IEMobile`) !== -1));
+    
+    setThemeUI();
+    setBrowserUI();
+    setSideBarUI();
 
-    //     // Update state or perform actions based on the received message
-    //     // setMessage(data.message);
-    //   };
+    setBodyClasses(`${rte = `` ? rte : `Index`} pageWrapContainer ${page != `` ? page?.toUpperCase() : `Home`} ${devEnv ? `devMode` : `prodMode`} ${onMac ? `isMac` : `isWindows`} ${mobile ? `mobile` : `desktop`} ${useDB() == true ? `useDB` : `noDB`} ${iPhone ? `on_iPhone` : `notOn_iPhone`}`);
+    
+    setLoading(false);
+    setPlayersLoading(false);
+    setSystemStatus(`${getPage()} Loaded.`);
+    setTimeout(() => setLoading(false), 1500);
 
-    //   ws.onclose = () => {
-    //     console.log('WebSocket connection closed');
-    //   };
-
-    //   // setWebSocket(ws);
-
-    //   // Cleanup the WebSocket connection when the component unmounts
-    //   return () => {
-    //     if (ws) {
-    //       ws.close();
-    //     }
-    //   };
-    // }, []);
-
-    const setBrowserUI = () => {
-      if (brwser == `` && (navigator.userAgent.match(/edg/i) || navigator.userAgent.includes(`edg`) || navigator.userAgent.includes(`Edg`))) {
-        brwser = `edge`;
-        setBrowser(`edge`);
-      } if (brwser == `` && navigator.userAgent.match(/chrome|chromium|crios/i)) {
-        brwser = `chrome`;
-        setBrowser(`chrome`);
-      } else if (brwser == `` && navigator.userAgent.match(/firefox|fxios/i)) {
-        brwser = `firefox`;
-        setBrowser(`firefox`);
-      } else if (brwser == `` && navigator.userAgent.match(/safari/i)) {
-        brwser = `safari`;
-        setBrowser(`safari`);
-      } else if (brwser == `` && navigator.userAgent.match(/opr\//i)) {
-        brwser = `opera`;
-        setBrowser(`opera`);
+    const refreshShopDataFromAPI = async () => {
+      let shopDataFromAPI = await getShopDataFromAPI();
+      if (shopDataFromAPI) {
+        setShop(shopDataFromAPI);
+      } else {
+        setShop([]);
       }
     }
 
-    // Catch Shop Updates
-    useEffect(() => {
-      if (Object.keys(shop).length > 0) {
-        localStorage.setItem(`shop`, JSON.stringify(shop));
-        console.log(`Shop`, shop);
-      }
-    }, [shop])
+    refreshShopDataFromAPI();
   
-    // Catch Product Updates
-    useEffect(() => {
-      if (products.length > 0) {
-        localStorage.setItem(`products`, JSON.stringify(products));
-        console.log(`Products`, products);
+    const refreshProductsFromAPI = async () => {
+      let productsFromAPI = await getProductsFromAPI();
+      if (productsFromAPI) {
+        setProducts(productsFromAPI);
+      } else {
+        setProducts([]);
       }
-    }, [products])
+    }
 
-    // App and User Updater
-    useEffect(() => {
-      // App
-      setLoading(true);
-      setAnimComplete(false);
-      setSystemStatus(`Page Loading!`);
-      if (loaded.current) return;
-      loaded.current = true;
-      
-      setDevEnv(dev());
-      setUpdates(updates);
-      setPlatform(navigator?.userAgent);
-      setYear(new Date().getFullYear());
-      setSystemStatus(`System Status Ok.`);
-      setRte(replaceAll(router.route, `/`, `_`));
-      setOnMac(navigator.platform.includes(`Mac`));
-      set_iPhone(/iPhone/.test(navigator.userAgent));
-      setPage(window.location.pathname.replace(`/`,``));
-      setMobile((typeof window.orientation !== `undefined`) || (navigator.userAgent.indexOf(`IEMobile`) !== -1));
-      
-      setThemeUI();
-      setBrowserUI();
-      setSideBarUI();
+    refreshProductsFromAPI();
 
-      setBodyClasses(`${rte = `` ? rte : `Index`} pageWrapContainer ${page != `` ? page?.toUpperCase() : `Home`} ${devEnv ? `devMode` : `prodMode`} ${onMac ? `isMac` : `isWindows`} ${mobile ? `mobile` : `desktop`} ${useDB() == true ? `useDB` : `noDB`} ${iPhone ? `on_iPhone` : `notOn_iPhone`}`);
-      
-      setLoading(false);
-      setPlayersLoading(false);
-      setSystemStatus(`${getPage()} Loaded.`);
-      setTimeout(() => setLoading(false), 1500);
+  }, [rte, user, users, authState, dark])
 
-      const refreshShopDataFromAPI = async () => {
-        let shopDataFromAPI = await getShopDataFromAPI();
-        if (shopDataFromAPI) {
-          setShop(shopDataFromAPI);
-        } else {
-          setShop([]);
-        }
+  // useEffect(() => {
+  //   let serverPort = 3000;
+  //   let liveLink = dev() ? `http://localhost:${serverPort}` : window.location.origin;
+  //   const eventSource = new EventSource(`${liveLink}/api/server`);
+
+  //   eventSource.onmessage = (onMessageEvent) => {
+  //     console.log(`Event Source Message`, onMessageEvent);
+  //     if (onMessageEvent.data === `Connection successful`) {
+  //       console.log(`Event Source Successful`, onMessageEvent);
+  //     }
+  //   };
+
+  //   return () => eventSource.close();
+  // }, [])
+
+  useEffect(() => {
+    const refreshShopDataFromAPI = async () => {
+      let shopDataFromAPI = await getShopDataFromAPI();
+      if (shopDataFromAPI) {
+        setShop(shopDataFromAPI);
+      } else {
+        setShop([]);
       }
+    }
 
-      refreshShopDataFromAPI();
+    const refreshProductsFromAPI = async () => {
+      let productsFromAPI = await getProductsFromAPI();
+      if (productsFromAPI) {
+        setProducts(productsFromAPI);
+      } else {
+        setProducts([]);
+      }
+    }
+
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY || process.env.PUSHER_APP_KEY, {
+      cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER || process.env.PUSHER_APP_CLUSTER,
+      encrypted: true,
+    });
     
-      const refreshProductsFromAPI = async () => {
-        let productsFromAPI = await getProductsFromAPI();
-        if (productsFromAPI) {
-          setProducts(productsFromAPI);
-        } else {
-          setProducts([]);
-        }
-      }
+    const shopChannel = pusher.subscribe(`shop`);
+    const productsChannel = pusher.subscribe(`products`);
 
+    // channel.bind(`created`, (data) => {
+    //   console.log(`Products Created`, data);
+    //   refreshProductsFromAPI();
+    // });
+
+    shopChannel.bind(`updated`, (data) => {
+      console.log(`Shop Updated`, data);
+      refreshShopDataFromAPI();
+    });
+
+    productsChannel.bind(`updated`, (data) => {
+      console.log(`Products Updated`, data);
       refreshProductsFromAPI();
+    });
 
-    }, [rte, user, users, authState, dark])
+    productsChannel.bind(`deleted`, (data) => {
+      console.log(`Products Deleted`, data);
+      refreshProductsFromAPI();
+    });
 
-    // useEffect(() => {
-    //   let serverPort = 3000;
-    //   let liveLink = dev() ? `http://localhost:${serverPort}` : window.location.origin;
-    //   const eventSource = new EventSource(`${liveLink}/api/server`);
+    return () => {
+      // channel.unbind(`created`);
+      productsChannel.unbind(`updated`);
+      productsChannel.unbind(`deleted`);
+      pusher.unsubscribe(`products`);
+      shopChannel.unbind(`updated`);
+      pusher.unsubscribe(`shop`);
+    };
+  }, [])
 
-    //   eventSource.onmessage = (onMessageEvent) => {
-    //     console.log(`Event Source Message`, onMessageEvent);
-    //     if (onMessageEvent.data === `Connection successful`) {
-    //       console.log(`Event Source Successful`, onMessageEvent);
-    //     }
-    //   };
-
-    //   return () => eventSource.close();
-    // }, [])
-
-    useEffect(() => { 
-      const refreshProductsFromAPI = async () => {
-        let productsFromAPI = await getProductsFromAPI();
-        if (productsFromAPI) {
-          setProducts(productsFromAPI);
-        } else {
-          setProducts([]);
-        }
-      }
-
-      const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY || process.env.PUSHER_APP_KEY, {
-        cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER || process.env.PUSHER_APP_CLUSTER,
-        encrypted: true,
-      });
-  
-      const channel = pusher.subscribe(`products`);
-  
-      // channel.bind(`created`, (data) => {
-      //   console.log(`Products Created`, data);
-      //   refreshProductsFromAPI();
-      // });
-
-      channel.bind(`updated`, (data) => {
-        console.log(`Products Updated`, data);
-        refreshProductsFromAPI();
-      });
-
-      channel.bind(`deleted`, (data) => {
-        console.log(`Products Deleted`, data);
-        refreshProductsFromAPI();
-      });
-  
-      return () => {
-        // channel.unbind(`created`);
-        channel.unbind(`updated`);
-        channel.unbind(`deleted`);
-        pusher.unsubscribe(`products`);
-      };
-    }, [])
-
-    return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, highScore, setHighScore, color, setColor, dark, setDark, colorPref, setColorPref, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, gameFormStep, setGameFormStep, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, playersToSelect, setPlayersToSelect, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, playersLoading, setPlayersLoading, iPhone, set_iPhone, plays, setPlays, shop, setShop, products, setProducts }}>
-      {useFramer && (browser != `chrome` || onMac) ? (
-        <div className={bodyClasses}>
-          <AnimatePresence mode={`wait`}>
-            <motion.div className={bodyClasses} key={router.route} initial="pageInitial" animate="pageAnimate" exit="pageExit" transition={{ duration: 0.35 }} variants={{
-              pageInitial: {
-                opacity: 0,
-                clipPath: `polygon(0 0, 100% 0, 100% 100%, 0% 100%)`,
-              },
-              pageAnimate: {
-                opacity: 1,
-                clipPath: `polygon(0 0, 100% 0, 100% 100%, 0% 100%)`,
-              },
-              pageExit: {
-                opacity: 0,
-                clipPath: `polygon(50% 0, 50% 0, 50% 100%, 50% 100%)`,
-              },
-            }}>
-              <Component {...pageProps} />
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      ) : <div className={bodyClasses}>
-        <Component {...pageProps} />
-      </div>}
-    </StateContext.Provider>
+  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, highScore, setHighScore, color, setColor, dark, setDark, colorPref, setColorPref, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, gameFormStep, setGameFormStep, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, playersToSelect, setPlayersToSelect, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, playersLoading, setPlayersLoading, iPhone, set_iPhone, plays, setPlays, shop, setShop, products, setProducts }}>
+    {useFramer && (browser != `chrome` || onMac) ? (
+      <div className={bodyClasses}>
+        <AnimatePresence mode={`wait`}>
+          <motion.div className={bodyClasses} key={router.route} initial="pageInitial" animate="pageAnimate" exit="pageExit" transition={{ duration: 0.35 }} variants={{
+            pageInitial: {
+              opacity: 0,
+              clipPath: `polygon(0 0, 100% 0, 100% 100%, 0% 100%)`,
+            },
+            pageAnimate: {
+              opacity: 1,
+              clipPath: `polygon(0 0, 100% 0, 100% 100%, 0% 100%)`,
+            },
+            pageExit: {
+              opacity: 0,
+              clipPath: `polygon(50% 0, 50% 0, 50% 100%, 50% 100%)`,
+            },
+          }}>
+            <Component {...pageProps} />
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    ) : <div className={bodyClasses}>
+      <Component {...pageProps} />
+    </div>}
+  </StateContext.Provider>
 }
