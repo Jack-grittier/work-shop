@@ -259,7 +259,7 @@ html[class~="dark"] {
 }
 
 article {
-    padding: 1em 0 !important;
+    padding: 0 !important;
     main {
         max-width: 100% !important;
         width: 100% !important;
@@ -816,22 +816,24 @@ body {
 }
 
 section {
-    width: 100%;
-    height: auto;
-    display: flex;
-    grid-gap: 1em;
-    margin: 0 auto;
-    padding: 1em 0;
-    overflow: visible;
-    align-items: center;
-    justify-content: space-between;
-
-    * {
+    &:not(.customSection) {
         width: 100%;
         height: auto;
         display: flex;
-        grid-gap: 5px;
-        flex-direction: column;
+        grid-gap: 1em;
+        margin: 0 auto;
+        padding: 1em 0;
+        overflow: visible;
+        align-items: center;
+        justify-content: space-between;
+    
+        * {
+            width: 100%;
+            height: auto;
+            display: flex;
+            grid-gap: 5px;
+            flex-direction: column;
+        }
     }
 }
 

@@ -1,5 +1,5 @@
 import '../main.scss';
-import '../xuruko.scss';
+import '../cws.scss';
 import '../concentration.scss';
 import Pusher from 'pusher-js';
 import '../creativeWorkshop.scss';
@@ -423,6 +423,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     let [anim, setAnimComplete] = useState(false);
     let [categories, setCategories] = useState([]);
     let [colorPref, setColorPref] = useState(user);
+    let [useFramer, setUseFramer] = useState(true);
     let [alertOpen, setAlertOpen] = useState(false);
     let [authState, setAuthState] = useState(`Next`);
     let [bodyClasses, setBodyClasses] = useState(``);
@@ -448,6 +449,41 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
 
     let [shop, setShop] = useState({});
     let [products, setProducts] = useState([]);
+
+    // const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
+    // const [message, setMessage] = useState<string>(''); // State to store incoming WebSocket messages
+
+    // useEffect(() => {
+    //   // Create a WebSocket connection when the component mounts
+    //   // let serverPort = 3000;
+    //   // let liveLink = dev() ? `http://localhost:${serverPort}` : window.location.origin;
+    //   const ws = new WebSocket('ws://localhost:3000'); // Replace with your WebSocket server URL
+
+    //   ws.onopen = () => {
+    //     console.log('WebSocket connection opened');
+    //   };
+
+    //   ws.onmessage = (event) => {
+    //     const data = JSON.parse(event.data);
+    //     console.log('Received WebSocket message:', data);
+
+    //     // Update state or perform actions based on the received message
+    //     // setMessage(data.message);
+    //   };
+
+    //   ws.onclose = () => {
+    //     console.log('WebSocket connection closed');
+    //   };
+
+    //   // setWebSocket(ws);
+
+    //   // Cleanup the WebSocket connection when the component unmounts
+    //   return () => {
+    //     if (ws) {
+    //       ws.close();
+    //     }
+    //   };
+    // }, []);
 
     const setBrowserUI = () => {
       if (brwser == `` && (navigator.userAgent.match(/edg/i) || navigator.userAgent.includes(`edg`) || navigator.userAgent.includes(`Edg`))) {
@@ -511,6 +547,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
       setBodyClasses(`${rte = `` ? rte : `Index`} pageWrapContainer ${page != `` ? page?.toUpperCase() : `Home`} ${devEnv ? `devMode` : `prodMode`} ${onMac ? `isMac` : `isWindows`} ${mobile ? `mobile` : `desktop`} ${useDB() == true ? `useDB` : `noDB`} ${iPhone ? `on_iPhone` : `notOn_iPhone`}`);
       
       setLoading(false);
+      setPlayersLoading(false);
       setSystemStatus(`${getPage()} Loaded.`);
       setTimeout(() => setLoading(false), 1500);
 
@@ -538,10 +575,20 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
 
     }, [rte, user, users, authState, dark])
 
-    // Player & Plays Updater
-    useEffect(() => {
-      setPlayersLoading(false);
-    }, [])
+    // useEffect(() => {
+    //   let serverPort = 3000;
+    //   let liveLink = dev() ? `http://localhost:${serverPort}` : window.location.origin;
+    //   const eventSource = new EventSource(`${liveLink}/api/server`);
+
+    //   eventSource.onmessage = (onMessageEvent) => {
+    //     console.log(`Event Source Message`, onMessageEvent);
+    //     if (onMessageEvent.data === `Connection successful`) {
+    //       console.log(`Event Source Successful`, onMessageEvent);
+    //     }
+    //   };
+
+    //   return () => eventSource.close();
+    // }, [])
 
     useEffect(() => { 
       const refreshProductsFromAPI = async () => {
@@ -584,26 +631,28 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     }, [])
 
     return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, highScore, setHighScore, color, setColor, dark, setDark, colorPref, setColorPref, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, gameFormStep, setGameFormStep, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, playersToSelect, setPlayersToSelect, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, playersLoading, setPlayersLoading, iPhone, set_iPhone, plays, setPlays, shop, setShop, products, setProducts }}>
-      {(browser != `chrome` || onMac) ? <div className={bodyClasses}>
-        <AnimatePresence mode={`wait`}>
-          <motion.div className={bodyClasses} key={router.route} initial="pageInitial" animate="pageAnimate" exit="pageExit" transition={{ duration: 0.35 }} variants={{
-            pageInitial: {
-              opacity: 0,
-              clipPath: `polygon(0 0, 100% 0, 100% 100%, 0% 100%)`,
-            },
-            pageAnimate: {
-              opacity: 1,
-              clipPath: `polygon(0 0, 100% 0, 100% 100%, 0% 100%)`,
-            },
-            pageExit: {
-              opacity: 0,
-              clipPath: `polygon(50% 0, 50% 0, 50% 100%, 50% 100%)`,
-            },
-          }}>
-            <Component {...pageProps} />
-          </motion.div>
-        </AnimatePresence>
-      </div> : <div className={bodyClasses}>
+      {useFramer && (browser != `chrome` || onMac) ? (
+        <div className={bodyClasses}>
+          <AnimatePresence mode={`wait`}>
+            <motion.div className={bodyClasses} key={router.route} initial="pageInitial" animate="pageAnimate" exit="pageExit" transition={{ duration: 0.35 }} variants={{
+              pageInitial: {
+                opacity: 0,
+                clipPath: `polygon(0 0, 100% 0, 100% 100%, 0% 100%)`,
+              },
+              pageAnimate: {
+                opacity: 1,
+                clipPath: `polygon(0 0, 100% 0, 100% 100%, 0% 100%)`,
+              },
+              pageExit: {
+                opacity: 0,
+                clipPath: `polygon(50% 0, 50% 0, 50% 100%, 50% 100%)`,
+              },
+            }}>
+              <Component {...pageProps} />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      ) : <div className={bodyClasses}>
         <Component {...pageProps} />
       </div>}
     </StateContext.Provider>
