@@ -423,7 +423,6 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   let [anim, setAnimComplete] = useState(false);
   let [categories, setCategories] = useState([]);
   let [colorPref, setColorPref] = useState(user);
-  let [useFramer, setUseFramer] = useState(true);
   let [alertOpen, setAlertOpen] = useState(false);
   let [authState, setAuthState] = useState(`Next`);
   let [bodyClasses, setBodyClasses] = useState(``);
@@ -443,6 +442,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   let [sameNamePlayeredEnabled, setSameNamePlayeredEnabled] = useState(false);
   let [noPlayersFoundMessage, setNoPlayersFoundMessage] = useState(`No Players Found`);
 
+  let [useFramer, setUseFramer] = useState(true);
   let [useLazyLoad, setUseLazyLoad] = useState(false);
   let [useDatabase, setUseDatabase] = useState(useDB());
   let [useLocalStorage, setUseLocalStorage] = useState(true);
@@ -521,7 +521,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
       if (shopDataFromAPI) {
         setShop(shopDataFromAPI);
       } else {
-        setShop([]);
+        setShop({});
       }
     }
 
@@ -561,7 +561,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
       if (shopDataFromAPI) {
         setShop(shopDataFromAPI);
       } else {
-        setShop([]);
+        setShop({});
       }
     }
 
@@ -613,7 +613,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   }, [])
 
   return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, highScore, setHighScore, color, setColor, dark, setDark, colorPref, setColorPref, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, gameFormStep, setGameFormStep, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, playersToSelect, setPlayersToSelect, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, playersLoading, setPlayersLoading, iPhone, set_iPhone, plays, setPlays, shop, setShop, products, setProducts }}>
-    {useFramer && (browser != `chrome` || onMac) ? (
+    {useFramer == true && (browser != `chrome` || onMac) ? (
       <div className={bodyClasses}>
         <AnimatePresence mode={`wait`}>
           <motion.div className={bodyClasses} key={router.route} initial="pageInitial" animate="pageAnimate" exit="pageExit" transition={{ duration: 0.35 }} variants={{
@@ -634,8 +634,10 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
           </motion.div>
         </AnimatePresence>
       </div>
-    ) : <div className={bodyClasses}>
-      <Component {...pageProps} />
-    </div>}
+    ) : (
+      <div className={bodyClasses}>
+        <Component {...pageProps} />
+      </div>
+    )}
   </StateContext.Provider>
 }
