@@ -7,12 +7,13 @@
 ![Release](https://img.shields.io/github/release/strawhat19/CreativeWorkshop)
 
 ![NextJS](https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
-![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 ![SASS](https://img.shields.io/badge/SASS-hotpink.svg?style=for-the-badge&logo=SASS&logoColor=white)
+![Shopify](https://img.shields.io/badge/Shopify-7AB55C?style=for-the-badge&logo=Shopify&logoColor=white)
 ![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)
 
-![Screenshot of Creative Workshop](./public/assets/images/gifs/FloatingCat.gif)
+![Screenshot of Creative Workshop](./public/assets/images/gifs/FloatingCatNew.gif)
 
 ## About
 This application was made using the Shopify API with React and Websockets for Real Time Functionality for the store, Creative Workshop. Creative Workshop is a dynamic collective of artists, designers, and fabricators dedicated to bringing your ideas into full color. Whether you need a graphic designer or illustrator, help with merch production, or branding and decor for your entire event, Creative Workshop can do it all!

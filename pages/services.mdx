@@ -1,12 +1,19 @@
 import Main from '../components/Main'
+import Banner from '../components/Banner'
 import TopButton from '../components/TopButton'
 
-<div style={{textAlign: `center`}}>
-  # Services
+<Banner title={`Services`} />
+
+<div style={{textAlign: `center`, display: `none`}}>
+  # Serviices
 </div>
 
-<Main className={`cwsContent`} showTopButton={false}>
-  Creative Workshop is a dashboard for tracking orders through Trello Boards, Lists, Cards API and having it be connected directly and programmatically to the Client which communicates back to the TypeForm API to create new orders.
-</Main>
+<section className={`productsSection customSection`}>
+  <Main className={`cwsContent`} showTopButton={false}>
+    <div className={`pageContentContainer`}>
+      Creative Workshop is a dashboard for tracking orders through Trello Boards, Lists, Cards API and having it be connected directly and programmatically to the Client which communicates back to the TypeForm API to create new orders.
+    </div>
+  </Main>
+</section>
 
 <TopButton />

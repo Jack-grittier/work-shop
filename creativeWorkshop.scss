@@ -46,7 +46,9 @@ body {
 }
 
 nav a.nx-text-sm {
-    display: none;
+    &[href="/"] {
+        display: none !important;
+    }
 }
 
 .fa-twitter {
@@ -57,6 +59,12 @@ nav a.nx-text-sm {
 .fa-instagram {
     font-size: 24px;
     color: var(--cwsPink);
+}
+
+.pageContentContainer {
+    font-size: 25px;
+    width: 80%;
+    margin: 0 auto;
 }
 
 .cwsMainBanner {
@@ -76,6 +84,7 @@ nav a.nx-text-sm {
             width: 100%;
             margin: 0 auto;
             max-width: 100%;
+            min-width: 565px;
             position: relative;
             text-align: center;
             align-items: center;
