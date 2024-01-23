@@ -442,8 +442,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   let [sameNamePlayeredEnabled, setSameNamePlayeredEnabled] = useState(false);
   let [noPlayersFoundMessage, setNoPlayersFoundMessage] = useState(`No Players Found`);
 
-  let [useFramer, setUseFramer] = useState(true);
-  let [useLazyLoad, setUseLazyLoad] = useState(false);
+  let [useLazyLoad, setUseLazyLoad] = useState(true);
   let [useDatabase, setUseDatabase] = useState(useDB());
   let [useLocalStorage, setUseLocalStorage] = useState(true);
 
@@ -613,7 +612,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   }, [])
 
   return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, highScore, setHighScore, color, setColor, dark, setDark, colorPref, setColorPref, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, gameFormStep, setGameFormStep, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, playersToSelect, setPlayersToSelect, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, playersLoading, setPlayersLoading, iPhone, set_iPhone, plays, setPlays, shop, setShop, products, setProducts }}>
-    {useFramer == true && (browser != `chrome` || onMac) ? (
+    {(browser != `chrome` || onMac && browser != `chrome`) ? (
       <div className={bodyClasses}>
         <AnimatePresence mode={`wait`}>
           <motion.div className={bodyClasses} key={router.route} initial="pageInitial" animate="pageAnimate" exit="pageExit" transition={{ duration: 0.35 }} variants={{
