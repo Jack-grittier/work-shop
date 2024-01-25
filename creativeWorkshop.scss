@@ -263,6 +263,50 @@ hr {
     animation: floatingCat 3s ease-in-out infinite;
 }
 
+.productForm {
+    width: 90%;
+    padding: 0 15px 15px;
+    input, textarea {
+        width: 100%;
+        min-height: 32px;
+        font-weight: 600;
+        border-radius: 6px;
+        padding: 5px 0 5px 10px;
+        background: white !important;
+        border: 2px solid var(--cwsNavy);
+        color: var(--cwsNavy) !important;
+        &.productTitle {
+            max-width: 200px;
+        }
+        &.productCategory {
+            max-width: 225px;
+        }
+        &.productPrice {
+            max-width: 85px;
+        }
+        &.productQuantity {
+            max-width: 95px;
+        }
+        &::placeholder {
+            color: darkslategray;
+            // color: var(--cwsNavy);
+        }
+    }
+    .productFormSubmitButton {
+        min-height: 30px;
+        max-height: 30px;
+        padding: 0px 10px;
+        border-radius: 6px;
+        background: white;
+        color: darkslategray;
+        transition: var(--transition);
+        &:hover {
+            background: var(--cwsBlue);
+            color: white;
+        }
+    }
+}
+
 @media (max-width: 1220px) {
     .productCode .desc {
         top: -8px;

@@ -1,6 +1,7 @@
 import Banner from "./Banner";
 import Products from "./Products";
 import { useContext } from "react";
+import ProductForm from "./ProductForm";
 import { StateContext } from "../pages/_app";
 
 export default function CreativeWorkshop(props) {
@@ -18,6 +19,7 @@ export default function CreativeWorkshop(props) {
       <Banner title={`We're Out Of This World`} />
       <section className={`productsSection customSection`}>
         <h1 className={`shopTitle`}>{shop?.name}</h1>
+        <ProductForm />
         <Products products={products} />
       </section>
     </main>

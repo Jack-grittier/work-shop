@@ -448,6 +448,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
 
   let [shop, setShop] = useState({});
   let [products, setProducts] = useState([]);
+  let [productToEdit, setProductToEdit] = useState(null);
 
   const setBrowserUI = () => {
     if (brwser == `` && (navigator.userAgent.match(/edg/i) || navigator.userAgent.includes(`edg`) || navigator.userAgent.includes(`Edg`))) {
@@ -581,14 +582,14 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     const shopChannel = pusher.subscribe(`shop`);
     const productsChannel = pusher.subscribe(`products`);
 
-    // channel.bind(`created`, (data) => {
-    //   console.log(`Products Created`, data);
-    //   refreshProductsFromAPI();
-    // });
-
     shopChannel.bind(`updated`, (data) => {
       console.log(`Shop Updated`, data);
       refreshShopDataFromAPI();
+    });
+
+    productsChannel.bind(`created`, (data) => {
+      console.log(`Products Created`, data);
+      refreshProductsFromAPI();
     });
 
     productsChannel.bind(`updated`, (data) => {
@@ -602,7 +603,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     });
 
     return () => {
-      // channel.unbind(`created`);
+      productsChannel.unbind(`created`);
       productsChannel.unbind(`updated`);
       productsChannel.unbind(`deleted`);
       pusher.unsubscribe(`products`);
@@ -611,7 +612,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     };
   }, [])
 
-  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, highScore, setHighScore, color, setColor, dark, setDark, colorPref, setColorPref, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, gameFormStep, setGameFormStep, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, playersToSelect, setPlayersToSelect, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, playersLoading, setPlayersLoading, iPhone, set_iPhone, plays, setPlays, shop, setShop, products, setProducts }}>
+  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, highScore, setHighScore, color, setColor, dark, setDark, colorPref, setColorPref, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, gameFormStep, setGameFormStep, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, playersToSelect, setPlayersToSelect, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, playersLoading, setPlayersLoading, iPhone, set_iPhone, plays, setPlays, shop, setShop, products, setProducts, productToEdit, setProductToEdit }}>
     {(browser != `chrome` || onMac && browser != `chrome`) ? (
       <div className={`framerMotion ${bodyClasses}`}>
         <AnimatePresence mode={`wait`}>

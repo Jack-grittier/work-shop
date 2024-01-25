@@ -20,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === `POST`) {
     try {
       const productsDeletedSignal = req.body;
-      console.log(`Products Deleted Webhook`, { pusher, pusherOptions, productsDeletedSignal });
+      console.log(`Products Deleted Webhook`, productsDeletedSignal);
 
       await pusher.trigger(`products`, `deleted`, {
         productsDeletedSignal,
@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }).then(() => {
         console.log(`Pusher trigger successful`);
       }).catch(pusherError => {
-        console.error(`Error Triggering Delete Pusher`, { pusherError, pusher, pusherOptions });
+        console.log(`Error Triggering Delete Pusher`, pusherError);
       });
 
       res.status(200).json({ message: `Products Deleted Webhook`, change: productsDeletedSignal });
