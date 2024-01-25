@@ -1,5 +1,5 @@
-import User from '../models/User';
-import Player from '../models/Player';
+import { toast } from 'react-toastify';
+import { checkRole } from '../firebase';
 import { StateContext, dev } from '../pages/_app';
 import React, { useState, useContext } from 'react';
 
@@ -39,18 +39,19 @@ export default function CodeBlock(props) {
         }
     }
 
-    const handleShopifyCart = (e, type?: string, user?: User | Player) => {
+    const handleShopifyCart = (e, type?: string) => {
         if (type == `delete`) {
             setCMDClicked(true);
             deleteProduct();
         } else {
             setClicked(true);
             dev() && console.log(`Add to Cart`, {e, type, user});
+            toast.success(`Add to Cart is in development...`);
             setTimeout(() => setClicked(false), 1500);
         }
     };
     return (
-        <div className="nextra-code-block nx-relative nx-mt-6 first:nx-mt-0">
+        <div className={`productCodeBlock nextra-code-block nx-relative nx-mt-6 first:nx-mt-0`}>
             <pre style={{border: props.border ? props.border : `none`}} className="nx-bg-primary-700/5 nx-mb-4 nx-overflow-x-auto nx-rounded-xl nx-font-medium nx-subpixel-antialiased dark:nx-bg-primary-300/10 nx-text-[.9em] contrast-more:nx-border contrast-more:nx-border-primary-900/20 contrast-more:nx-contrast-150 contrast-more:dark:nx-border-primary-100/40 nx-py-4" data-language="js" data-theme="default">
                 <code style={{whiteSpace: `pre-wrap`, lineHeight: 1.3}} className="nx-border-black nx-border-opacity-[0.04] nx-bg-opacity-[0.03] nx-bg-black nx-break-words nx-rounded-md nx-border nx-py-0.5 nx-px-[.25em] nx-text-[.9em] dark:nx-border-white/10 dark:nx-bg-white/10" dir="ltr" data-language={props.language} data-theme="default">
                     <span className="line">
@@ -60,7 +61,7 @@ export default function CodeBlock(props) {
                 </code>
             </pre>
             {props.codeTitle && <div id={`copySendCommandButton`} data-custombutton={props.custombutton} className="dataCustomButton copyCustom nx-flex nx-gap-1 nx-absolute nx-m-[11px] nx-right-0 nx-top-0">
-                <button onClick={(e) => handleShopifyCart(e, `add`, user)} className="nextra-button nx-transition-all active:nx-opacity-50 nx-bg-primary-700/5 nx-border nx-border-black/5 nx-text-gray-600 hover:nx-text-gray-900 nx-rounded-md nx-p-1.5 dark:nx-bg-primary-300/10 dark:nx-border-white/10 dark:nx-text-gray-400 dark:hover:nx-text-gray-50" title={`${props.codeTitle ? `Send` : `Copy`} Command`}>
+                <button onClick={(e) => handleShopifyCart(e, `add`)} className="nextra-button nx-transition-all active:nx-opacity-50 nx-bg-primary-700/5 nx-border nx-border-black/5 nx-text-gray-600 hover:nx-text-gray-900 nx-rounded-md nx-p-1.5 dark:nx-bg-primary-300/10 dark:nx-border-white/10 dark:nx-text-gray-400 dark:hover:nx-text-gray-50" title={`${props.codeTitle ? `Send` : `Copy`} Command`}>
                     {clicked ? <>
                         <svg viewBox="0 0 20 20" width="1em" height="1em" fill="currentColor" className="checkmark nextra-copy-icon nx-pointer-events-none nx-h-4 nx-w-4">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
@@ -85,9 +86,9 @@ export default function CodeBlock(props) {
                     </>}
                 </button>
             </div>}
-            {dev() && <>
+            {user && checkRole(user.roles, `Admin`) && <>
                 <div id={`copyCommandButton`} data-custombutton={props.custombutton} className="dataCustomButton copySubmit nx-flex nx-gap-1 nx-absolute nx-m-[11px] nx-right-0 nx-top-0">
-                    <button onClick={(e) => handleShopifyCart(e, `delete`, user)} className="nextra-button nx-transition-all active:nx-opacity-50 nx-bg-primary-700/5 nx-border nx-border-black/5 nx-text-gray-600 hover:nx-text-gray-900 nx-rounded-md nx-p-1.5 dark:nx-bg-primary-300/10 dark:nx-border-white/10 dark:nx-text-gray-400 dark:hover:nx-text-gray-50" title={`${(!props.codeTitle && props.commandToCopy) ? `Send` : `Copy`} Command`}>
+                    <button onClick={(e) => handleShopifyCart(e, `delete`)} className="nextra-button nx-transition-all active:nx-opacity-50 nx-bg-primary-700/5 nx-border nx-border-black/5 nx-text-gray-600 hover:nx-text-gray-900 nx-rounded-md nx-p-1.5 dark:nx-bg-primary-300/10 dark:nx-border-white/10 dark:nx-text-gray-400 dark:hover:nx-text-gray-50" title={`${(!props.codeTitle && props.commandToCopy) ? `Send` : `Copy`} Command`}>
                         {CMDClicked ? <>
                             {/* <svg viewBox="0 0 20 20" width="1em" height="1em" fill="currentColor" className="checkmark nextra-copy-icon nx-pointer-events-none nx-h-4 nx-w-4">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>

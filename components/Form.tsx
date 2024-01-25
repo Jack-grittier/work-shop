@@ -1,7 +1,12 @@
-import { useContext, useEffect, useRef, useState } from 'react';
-import { StateContext, signUpOrSignIn } from '../pages/_app';
-import GoogleButton from 'react-google-button';
+import User from "../models/User";
+import { toast } from "react-toastify";
 import LoadingSpinner from './LoadingSpinner';
+import GoogleButton from 'react-google-button';
+import PasswordRequired from './PasswordRequired';
+import { addUserToDatabase, auth } from '../firebase';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { StateContext, showAlert, signUpOrSignIn } from '../pages/_app';
 
 export const renderErrorMessage = (erMsg) => {
   if (erMsg.toLowerCase().includes(`invalid-email`)) {
@@ -24,13 +29,129 @@ export default function Form(props?: any) {
   const loadedRef = useRef(false);
   const [, setLoaded] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const { user, authState, emailField, users, playersLoading } = useContext<any>(StateContext);
-
+  const { mobile, useDatabase, user, users, setUser, authState, emailField, playersLoading, setAuthState, setEmailField, setFocus } = useContext<any>(StateContext);
+  
   const trackKeyDown = () => {
     if (isFocused) {
       const scrollY = window.scrollY; // Capture the current scroll position
       window.onscroll = function () { window.scrollTo(window.scrollX, scrollY); };
     }
+  }
+
+  const authForm = (e?: any) => {
+    e.preventDefault();
+    let formFields = e.target.children;
+    let clicked = e?.nativeEvent?.submitter;
+    let email = formFields?.email?.value ?? `email`;
+    let password = formFields?.password?.value ?? `password`;
+  
+    switch(clicked?.value) {
+      default:
+        console.log(clicked?.value);
+        break;
+      case `Next`:
+        setEmailField(true);
+        let userEmails = users.filter(usr => usr?.email).map(usr => usr?.email?.toLowerCase());
+        if (userEmails.includes(email?.toLowerCase())) {
+          setAuthState(`Sign In`);
+        } else {
+          setAuthState(`Sign Up`);
+        }
+        break;
+      case `Back`:
+        setAuthState(`Next`);
+        setEmailField(false);
+        break;
+      case `Sign Out`:
+        if (useDatabase == true) signOut(auth);
+        setUser(null);
+        setAuthState(`Next`);
+        setEmailField(false);
+        break;
+      case `Save`:
+        let emptyFields = [];
+        let fieldsToUpdate = [];
+        console.log(`Save`, formFields);
+        for (let i = 0; i < formFields.length; i++) {
+          const input = formFields[i];
+          if (input?.classList?.contains(`userData`)) {
+            if (input.value === ``) {
+              emptyFields.push(input?.placeholder);
+            } else {
+              fieldsToUpdate.push(input);
+            }
+          }
+        }
+        if (fieldsToUpdate.length == 0) {
+          showAlert(`The Form was NOT Saved.`, `You Can Fill`, emptyFields);
+        } else {
+          console.log(`Fields To Update`, fieldsToUpdate);
+        }
+        break;
+      case `Sign In`:
+        if (password == ``) {
+          showAlert(`Password Required`, <PasswordRequired />, (mobile || window.innerWidth <= 768) ? `88%` : `55%`, (mobile || window.innerWidth <= 768) ? `60%` : `auto`);
+          return;
+        } else { // Sign User In
+          if (useDatabase == true) {
+            signInWithEmailAndPassword(auth, email, password).then((userCredential: any) => {
+              if (userCredential != null) {
+                let existingUser = users.find(usr => usr?.email?.toLowerCase() == email?.toLowerCase());
+                if (existingUser != null) {
+                  setFocus(false);
+                  setAuthState(`Sign Out`);
+                  setUser(existingUser);
+                  toast.success(`Successfully Signed In`);
+                } else {
+                  setEmailField(true);
+                  setAuthState(`Sign Up`);
+                }
+              }
+            }).catch((error) => {
+              const errorCode = error.code;
+              const errorMessage = error.message;
+              if (errorMessage) {
+                toast.error(renderErrorMessage(errorMessage));
+                console.log(`Error Signing In`, {
+                  error,
+                  errorCode,
+                  errorMessage
+                });
+              }
+              return;
+            });
+          }
+        }
+        break;
+      case `Sign Up`:
+        if (password == ``) {
+          showAlert(`Password Required`, <PasswordRequired />, (mobile || window.innerWidth <= 768) ? `88%` : `55%`, (mobile || window.innerWidth <= 768) ? `60%` : `auto`);
+          return;
+        } else {
+          if (useDatabase == true) {
+            createUserWithEmailAndPassword(auth, email, password).then((userCredential: any) => {
+              if (userCredential != null) {
+                let newUser = new User({ ...userCredential, email: email, type: `Firebase`, uniqueIndex: users.length });
+                // newUser.properties = countPropertiesInObject(newUser);
+                console.log(`User Signed Up`, newUser);
+                addUserToDatabase(JSON.parse(JSON.stringify(newUser)));
+                setAuthState(`Sign Out`);
+                setUser(newUser);
+              }
+            }).catch((error) => {
+              console.log(`Error Signing Up`, error);
+              const errorMessage = error.message;
+              if (errorMessage) {
+                toast.error(renderErrorMessage(errorMessage));             
+              } else {
+                toast.error(`Error Signing Up`);
+              }
+              return;
+            });
+          }
+        }
+      break;
+    };
   }
 
   useEffect(() => {
@@ -64,7 +185,7 @@ export default function Form(props?: any) {
     {playersLoading ? (
       <LoadingSpinner override={true} size={18} />
     ) : (
-      <form onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} onKeyDown={() => trackKeyDown()} id={props.id} className={`flex authForm ${authState == `Next` ? `Next` : ``} ${emailField == true ? `hasPasswordField` : `noPasswordYet`} ${props.className} ${authState == `Sign Up` || authState == `Sign In` ? `threeInputs` : ``} ${user ? `userSignedIn` : `userSignedOut`}`} style={style}>
+      <form onSubmit={(e) => authForm(e)} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} onKeyDown={() => trackKeyDown()} id={props.id} className={`flex authForm ${authState == `Next` ? `Next` : ``} ${emailField == true ? `hasPasswordField` : `noPasswordYet`} ${props.className} ${authState == `Sign Up` || authState == `Sign In` ? `threeInputs` : ``} ${user ? `userSignedIn` : `userSignedOut`}`} style={style}>
         {!user && <>
           <div className={`authStateForm`}>
             <span className={`authFormLabel`}>
@@ -79,7 +200,7 @@ export default function Form(props?: any) {
         </>}
         {!user && <input placeholder="Email Address" className={`emailAddressField`} type="email" name="email" autoComplete={`email`} required />}
         {!user && emailField && (
-          <input placeholder="Password" type="password" name="password" autoComplete={`current-password`} />
+          <input className={`authFormPassworrdField`} autoFocus={emailField} placeholder="Password" type="password" name="password" autoComplete={`current-password`} />
         )}
         {user && window?.location?.href?.includes(`profile`) && <input id="name" className={`name userData`} placeholder="Name" type="text" name="status" />}
         {user && window?.location?.href?.includes(`profile`) && <input id="status" className={`status userData`} placeholder="Status" type="text" name="status" />}

@@ -236,6 +236,18 @@ hr {
     }
 }
 
+.productDetails {
+    height: 100%;
+}
+
+.productCodeBlock {
+    height: 100%;
+}
+
+pre {
+    height: 100%;
+}
+
 .productImageContainer {
     position: relative;
     &:has(.productAltImage) {

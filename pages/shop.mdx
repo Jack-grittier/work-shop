@@ -1,7 +1,6 @@
 import Main from '../components/Main'
 import Banner from '../components/Banner'
 import Products from '../components/Products'
-import TopButton from '../components/TopButton'
 
 <Banner title={`Shop`} />
 
@@ -10,9 +9,7 @@ import TopButton from '../components/TopButton'
 </div>
 
 <section className={`productsSection customSection`}>
-  <Main className={`cwsContent`} showTopButton={false}>
+  <Main className={`cwsContent`} showTopButton={true}>
     <Products />
   </Main>
 </section>
-
-<TopButton />

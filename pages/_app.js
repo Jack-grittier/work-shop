@@ -3,7 +3,13 @@ import '../cws.scss';
 import '../concentration.scss';
 import Pusher from 'pusher-js';
 import '../creativeWorkshop.scss';
+import Shop from '../models/Shop';
+import User from '../models/User';
 import ReactDOM from 'react-dom/client';
+import Product from '../models/Product';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth, db, usersDatabase } from '../firebase';
 import { AnimatePresence, motion } from 'framer-motion';
 import { createContext, useRef, useState, useEffect } from 'react';
 
@@ -11,33 +17,7 @@ export const useDB = () => true;
 export const StateContext = createContext({});
 export const signUpOrSignIn = `Sign Up or Sign In`;
 
-export const environments = {
-  dev: {
-    usersDatabase: `devUsers`,
-    productsDatabase: `devProducts`,
-  },
-  test: {
-    usersDatabase: `testUsers`,
-    productsDatabase: `testProducts`,
-  },
-  alpha: {
-    usersDatabase: `alphaUsers`,
-    productsDatabase: `alphaProducts`,
-  },
-  beta: {
-    usersDatabase: `betaUsers`,
-    productsDatabase: `betaProducts`,
-  },
-  prod: {
-    usersDatabase: `users`,
-    productsDatabase: `products`,
-  },
-};
-
-export const environment = environments.alpha;
-export const usersDatabase = environment.usersDatabase;
-export const productsDatabase = environment.productsDatabase;
-
+export const dev = () => process.env.NODE_ENV === `development`;
 export const getPage = () => capitalizeAllWords(window.location.pathname.replace(`/`,``));
 export const replaceAll = (str, search, replacement) => str.replace(new RegExp(search, `g`), replacement);
 export const renderLogMessage = (string, useDatabase) => `${useDatabase == true ? `Database ` : ``}${string}`;
@@ -53,7 +33,7 @@ export const getShopDataFromAPI = async () => {
       let shopResponse = await fetch(`${liveLink}/api/shop`);
       if (shopResponse.status === 200) {
         let shopData = await shopResponse.json();
-        if (shopData) return shopData;
+        if (shopData) return new Shop(shopData);
       }
     } else {
       let shop = JSON.parse(localStorage.getItem(`shop`));
@@ -73,7 +53,12 @@ export const getProductsFromAPI = async () => {
       let productsResponse = await fetch(`${liveLink}/api/products`);
       if (productsResponse.status === 200) {
         let productsData = await productsResponse.json();
-        if (productsData) return productsData;
+        if (productsData) {
+         if (Array.isArray(productsData)) {
+            let modifiedProducts = productsData.map(prod => new Product(prod));
+            return modifiedProducts;
+          }
+        }
       }
     } else {
       let products = JSON.parse(localStorage.getItem(`products`));
@@ -184,25 +169,6 @@ export const setSideBarUI = () => {
   }
 }
 
-export const dev = () => process.env.NODE_ENV === `development`;
-
-// export const dev = (item, source) => {
-//   if (window) {
-//     if (window && window.location.host.includes(`local`)) {
-//       if (item) {
-//         console.log(`Dev Log`, item);
-//       } else if (item && source) {
-//         console.log(`Dev Log`, item, `From`, source);
-//       }
-//       return true;
-//     } else {
-//       return false;
-//     }
-//   } else {
-//     return process.env.NODE_ENV === 'development';
-//   }
-// }
-
 export const generateUniqueID = (existingIDs) => {
   const generateID = () => {
     let id = Math.random().toString(36).substr(2, 9);
@@ -283,52 +249,6 @@ export const formatDate = (date, specificPortion) => {
 
   return completedDate;
 };
-
-export const getRGBAColorFromHue = (hue, alpha) => {
-  const saturation = 1;
-  const lightness = 0.5;
-
-  const chroma = (1 - Math.abs(2 * lightness - 1)) * saturation;
-  const x = chroma * (1 - Math.abs(((hue / 60) % 2) - 1));
-  const m = lightness - chroma / 2;
-
-  let r, g, b;
-  if (hue >= 0 && hue < 60) {
-    r = chroma;
-    g = x;
-    b = 0;
-  } else if (hue >= 60 && hue < 120) {
-    r = x;
-    g = chroma;
-    b = 0;
-  } else if (hue >= 120 && hue < 180) {
-    r = 0;
-    g = chroma;
-    b = x;
-  } else if (hue >= 180 && hue < 240) {
-    r = 0;
-    g = x;
-    b = chroma;
-  } else if (hue >= 240 && hue < 300) {
-    r = x;
-    g = 0;
-    b = chroma;
-  } else if (hue >= 300 && hue < 360) {
-    r = chroma;
-    g = 0;
-    b = x;
-  } else {
-    r = 0;
-    g = 0;
-    b = 0;
-  }
-
-  const red = Math.round((r + m) * 255);
-  const green = Math.round((g + m) * 255);
-  const blue = Math.round((b + m) * 255);
-
-  return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
-}
 
 export const showAlert = async (title, component, width, height) => {
   let isAlertOpen = JSON.parse(localStorage.getItem(`alertOpen`)) == true;
@@ -442,7 +362,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   let [year, setYear] = useState(new Date().getFullYear());
   let [playersToSelect, setPlayersToSelect] = useState([]);
   let [databasePlayers, setDatabasePlayers] = useState([]);
-  let [playersLoading, setPlayersLoading] = useState(true);
+  let [usersLoading, setUsersLoading] = useState(true);
   let [filteredPlayers, setFilteredPlayers] = useState(players);
   let [deleteCompletely, setDeleteCompletely] = useState(false);
   let [sameNamePlayeredEnabled, setSameNamePlayeredEnabled] = useState(false);
@@ -474,6 +394,37 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
       setBrowser(`opera`);
     }
   }
+
+  // Users
+  useEffect(() => {
+    if (useDatabase == true) {
+      const unsubscribeFromDatabaseUsersListener = onSnapshot(collection(db, usersDatabase), (querySnapshot) => {
+        const usersFromDatabase = [];
+        querySnapshot.forEach((doc) => usersFromDatabase.push(new User({...doc.data()})));
+        setUsersLoading(false);
+        console.log(`Users From Database`, usersFromDatabase);
+        setUsers(usersFromDatabase);
+        if (user && user != null) {
+          let currentUser = usersFromDatabase.find(u => u.uid == user.uid);
+          if (currentUser) {
+            setUser(currentUser);
+          }
+        }
+      });
+
+      return () => {
+        unsubscribeFromDatabaseUsersListener();
+      };
+    } else {
+      let storedUsers = JSON.parse(localStorage.getItem(`users`));
+      if (storedUsers && storedPlays && useLocalStorage) {
+        setUsers(storedUsers);
+        setUsersLoading(false); 
+      } else {
+        setUsersLoading(false); 
+      }
+    }
+  }, [])
 
   // Catch Shop Updates
   useEffect(() => {
@@ -518,7 +469,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     setBodyClasses(`${rte = `` ? rte : `Index`} pageWrapContainer ${page != `` ? page?.toUpperCase() : `Home`} ${devEnv ? `devMode` : `prodMode`} ${onMac ? `isMac` : `isWindows`} ${mobile ? `mobile` : `desktop`} ${useDB() == true ? `useDB` : `noDB`} ${iPhone ? `on_iPhone` : `notOn_iPhone`}`);
     
     setLoading(false);
-    setPlayersLoading(false);
+    setUsersLoading(false);
     setSystemStatus(`${getPage()} Loaded.`);
     setTimeout(() => setLoading(false), 1500);
 
@@ -544,22 +495,32 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
 
     refreshProductsFromAPI();
 
+    // User
+    if (useDatabase == true) {
+
+      if (users.length > 0) {
+        localStorage.setItem(`users`, JSON.stringify(users));
+        console.log(`Users`, users);
+      }
+      
+      const unsubscribeFromAuthStateListener = onAuthStateChanged(auth, userCredential => {
+        if (userCredential) {
+          let currentUser = users && Array.isArray(users) && users.length > 0 ? users.find(u => u.uid == userCredential.uid) : new User(userCredential);
+          // currentUser.properties = countPropertiesInObject(currentUser);
+          console.log(`User`, currentUser);
+          setUser(currentUser);
+          setAuthState(`Sign Out`);
+        } else {
+          setUser(null);
+          setAuthState(`Next`);
+        }
+      })
+      return () => {
+        unsubscribeFromAuthStateListener();
+      }
+    }
+
   }, [rte, user, users, authState, dark])
-
-  // useEffect(() => {
-  //   let serverPort = 3000;
-  //   let liveLink = dev() ? `http://localhost:${serverPort}` : window.location.origin;
-  //   const eventSource = new EventSource(`${liveLink}/api/server`);
-
-  //   eventSource.onmessage = (onMessageEvent) => {
-  //     console.log(`Event Source Message`, onMessageEvent);
-  //     if (onMessageEvent.data === `Connection successful`) {
-  //       console.log(`Event Source Successful`, onMessageEvent);
-  //     }
-  //   };
-
-  //   return () => eventSource.close();
-  // }, [])
 
   useEffect(() => {
     const refreshShopDataFromAPI = async () => {
@@ -618,7 +579,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     };
   }, [])
 
-  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, highScore, setHighScore, color, setColor, dark, setDark, colorPref, setColorPref, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, gameFormStep, setGameFormStep, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, playersToSelect, setPlayersToSelect, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, playersLoading, setPlayersLoading, iPhone, set_iPhone, plays, setPlays, shop, setShop, products, setProducts, productToEdit, setProductToEdit }}>
+  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, highScore, setHighScore, color, setColor, dark, setDark, colorPref, setColorPref, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, gameFormStep, setGameFormStep, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, playersToSelect, setPlayersToSelect, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, usersLoading, setUsersLoading, iPhone, set_iPhone, plays, setPlays, shop, setShop, products, setProducts, productToEdit, setProductToEdit }}>
     {(browser != `chrome` || onMac && browser != `chrome`) ? (
       <div className={`framerMotion ${bodyClasses}`}>
         <AnimatePresence mode={`wait`}>

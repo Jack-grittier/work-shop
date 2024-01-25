@@ -1,11 +1,13 @@
+import Main from "./Main";
 import Banner from "./Banner";
 import Products from "./Products";
 import { useContext } from "react";
 import ProductForm from "./ProductForm";
-import { StateContext, dev } from "../pages/_app";
+import { checkRole } from "../firebase";
+import { StateContext } from "../pages/_app";
 
 export default function CreativeWorkshop(props) {
-  let { shop, products } = useContext<any>(StateContext);
+  let { user, shop, products } = useContext<any>(StateContext);
 
   // useEffect(() => {
   //   const detectWindowResizeChanges = () => setWidth(window.innerWidth);
@@ -15,13 +17,13 @@ export default function CreativeWorkshop(props) {
   // }, [])
 
   return (
-    <main {...props}>
+    <Main {...props}>
       <Banner title={`We're Out Of This World`} />
       <section className={`productsSection customSection`}>
         <h1 className={`shopTitle`}>{shop?.name}</h1>
-        {dev() && <ProductForm />}
+        {user && checkRole(user.roles, `Admin`) && <ProductForm />}
         <Products products={products} />
       </section>
-    </main>
+    </Main>
   )
 }
