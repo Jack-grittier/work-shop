@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+export const productPlaceholderImage = `https://cdn.shopify.com/s/files/1/0857/2839/5586/files/CatTripleWhiteBG.png?v=1706157387`;
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === `GET`) {
     try {
@@ -7,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const accessToken = process.env.NEXT_PUBLIC_SHOPIFY_ACCESS_TOKEN || process.env.SHOPIFY_ACCESS_TOKEN;
       const url = `https://${storeName}.myshopify.com/admin/api/${apiVersion}/products.json`;
 
-      const response = await fetch(url, {
+      const getProductsResponse = await fetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -15,20 +16,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       });
 
-      const data = await response.json();
+      const allShopifyProductsData = await getProductsResponse.json();
 
-      let modifiedProducts = data.products.sort((a, b) => {
+      let modifiedProducts = allShopifyProductsData.products.sort((a, b) => {
         let dateA: any = new Date(a.created_at);
         let dateB: any = new Date(b.created_at);
 
         return dateB - dateA;
       }).map(({ ...pr }) => ({ 
-        ...pr, 
+        ...pr,
         name: pr.title,
         category: pr.product_type,
         description: pr.body_html,
         created: new Date(pr.created_at).toLocaleString(), 
         updated: new Date(pr.updated_at).toLocaleString(),
+
+        ...(pr.images && pr.images.length > 1 && {
+          altImage: pr.images[1]
+        })
       }));
 
       res.status(200).json(modifiedProducts);

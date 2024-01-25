@@ -1,6 +1,6 @@
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { StateContext, dev } from "../pages/_app";
-import { productPlaceholderImage } from "./Image";
+import { productPlaceholderImage } from "../pages/api/products";
 
 export const addProductsToShopify = async (productToAdd) => {
     let { title, price, image, category, quantity, description } = productToAdd;
@@ -30,15 +30,17 @@ export const addProductsToShopify = async (productToAdd) => {
     } catch (error) {
       console.log(`Server Error on Get Products`, error);
     }
-  }
+}
 
 export default function ProductForm(props) {
 
+    let [processing, setProcessing] = useState(false);
     let { productToEdit, setProductToEdit } = useContext<any>(StateContext);
 
     const onProductFormSubmit = async (e) => {
         e.preventDefault();
         try {
+            setProcessing(true);
             let form = e.target;
             let { title: titleField, category: categoryField, price: priceField, quantity: quantityField, image: imageField, description: descriptionField } = form;
 
@@ -64,12 +66,16 @@ export default function ProductForm(props) {
                 if (addedProductResponse) {
                     let productsAdded = addedProductResponse && addedProductResponse.product ? addedProductResponse.product : addedProductResponse;
                     console.log(`Added Product`, productsAdded);
+                    setProcessing(false);
+                    form.reset();
                     return addedProductResponse;
                 }
             } else {
+                setProcessing(false);
                 console.log(`Edit Product`, productToEdit);
             }
         } catch (error) {
+            setProcessing(false);
             console.log(`Error Submitting Product Form`, error);
         }
     }
@@ -130,7 +136,7 @@ export default function ProductForm(props) {
                 placeholder={`Public Image URL...`} 
                 defaultValue={productToEdit == null ? `` : productToEdit.image} 
             />
-            <button className={`productFormSubmitButton blackButton`} type={`submit`}>{productToEdit == null ? `Add` : `Save`}</button>
+            <button disabled={processing} className={`productFormSubmitButton blackButton`} type={`submit`}>{productToEdit == null ? processing ? `Adding` : `Add` : `Save`}</button>
             {productToEdit != null && <button type={`button`} onClick={() => setProductToEdit(null)} className={`productFormCancelButton blackButton`}>Cancel</button>}
         </form>
     )

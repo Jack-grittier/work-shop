@@ -177,7 +177,6 @@ hr {
     text-align: center;
 }
 
-
 .shopSubtitle {
     color: white;
     font-size: 30px;
@@ -237,9 +236,33 @@ hr {
     }
 }
 
+.productImageContainer {
+    position: relative;
+    &:has(.productAltImage) {
+        .productAltImage {
+            position: absolute;
+            opacity: 0;
+            left: 0;
+            top: 0;
+        }
+        &:hover {
+            .productMainImage {
+                opacity: 0;
+            }
+        }
+    }
+}
+
 .productPic {
+    cursor: pointer;
     border-radius: 20px;
     margin-bottom: 20px;
+    transition: var(--transition);
+    &.productAltImage {
+        &:hover {
+            opacity: 1;
+        }
+    }
 }
 
 .productDesc {
@@ -305,6 +328,15 @@ hr {
             color: white;
         }
     }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.spinThis {
+    animation: spin 1s linear infinite;
 }
 
 @media (max-width: 1220px) {

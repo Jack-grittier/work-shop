@@ -2345,9 +2345,11 @@ div[role="presentation"] {
             min-height: 80%;
             align-items: flex-start;
             justify-content: center;
+            transition: var(--transition);
             button {
                 left: -7px;
-                max-width: 71px;
+                min-width: 80x;
+                max-width: 80x;
                 * {
                     height: 56%;
                 }

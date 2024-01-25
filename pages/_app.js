@@ -184,18 +184,24 @@ export const setSideBarUI = () => {
   }
 }
 
-export const dev = (item, source) => {
-  if (window && window.location.host.includes(`local`)) {
-    if (item) {
-      console.log(`Dev Log`, item);
-    } else if (item && source) {
-      console.log(`Dev Log`, item, `From`, source);
-    }
-    return true;
-  } else {
-    return false;
-  }
-}
+export const dev = () => process.env.NODE_ENV === `development`;
+
+// export const dev = (item, source) => {
+//   if (window) {
+//     if (window && window.location.host.includes(`local`)) {
+//       if (item) {
+//         console.log(`Dev Log`, item);
+//       } else if (item && source) {
+//         console.log(`Dev Log`, item, `From`, source);
+//       }
+//       return true;
+//     } else {
+//       return false;
+//     }
+//   } else {
+//     return process.env.NODE_ENV === 'development';
+//   }
+// }
 
 export const generateUniqueID = (existingIDs) => {
   const generateID = () => {
