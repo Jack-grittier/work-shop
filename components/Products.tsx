@@ -1,7 +1,8 @@
-import Image from "./Image";
+
 import { useContext } from "react";
 import CodeBlock from "./CodeBlock";
 import { StateContext } from "../pages/_app";
+import Image, { productPlaceholderImage } from "./Image";
 
 export default function Products(props) {
     let { products } = props;
@@ -18,23 +19,23 @@ export default function Products(props) {
                         <li className={`productCode listedCommand`} key={productIndex} title={product?.title}>
                             <div className="commandDetails flex gap15">
                                 <CodeBlock key={productIndex} commandToCopy={true} custombutton={true} border={`solid 2px white`} id={`commandToRender-${product.id}`} language={`json`} codeTitle={(
-                                <>
-                                    <i className="fab fa-shopify"></i>
-                                    <div className={`desc productTitleAndPrice`}>
-                                        <span className={`oflow`}>{product?.title}</span>
-                                        <span className={`price`}> - <span className={`dollar`}>$</span>{product?.variants[0]?.price}</span>
-                                    </div>
-                                </>
+                                    <>
+                                        <i className="fab fa-shopify"></i>
+                                        <div className={`desc productTitleAndPrice`}>
+                                            <span className={`oflow`}>{product?.title}</span>
+                                            <span className={`price`}> - <span className={`dollar`}>$</span>{product?.variants[0]?.price}</span>
+                                        </div>
+                                    </>
                                 )}>
-                                <>
-                                    {product.image ? (
-                                        <Image src={product.image.src} className={`productPic`} alt={`Product Image`} />
-                                    ) : (
-                                        <Image src={`/assets/images/CatTripleWhiteBG.svg`} className={`productPic`} alt={`Product Image`} />
-                                    )}
-                                    <h1 className={`productDesc`}>Description</h1>
-                                    {product.description != `` ? product.description : product?.title}
-                                </>
+                                    <>
+                                        {product.image ? (
+                                            <Image src={product.image.src} className={`productPic customImage`} alt={`Product Image`} />
+                                        ) : (
+                                            <Image src={productPlaceholderImage} className={`productPic customImage`} alt={`Product Image`} />
+                                        )}
+                                        <h1 className={`productDesc`}>Description</h1>
+                                        {product.description != `` ? product.description : product?.title}
+                                    </>
                                 </CodeBlock>
                             </div>
                         </li>

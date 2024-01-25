@@ -38,7 +38,7 @@
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.43",
     "net": "^1.0.2",
-    "next": "^13.0.6",
+    "next": "^14.1.0",
     "nextra": "latest",
     "nextra-theme-docs": "^2.12.3",
     "npm": "^10.3.0",
