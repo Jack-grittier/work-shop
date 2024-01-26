@@ -44,16 +44,16 @@ export const environments = {
 };
 
 export const roles = {
-    User: 1,
-    Mod: 2,
-    Admin: 3,
-    Developer: 4,
-    Owner: 5
+  User: 1,
+  Mod: 2,
+  Admin: 3,
+  Developer: 4,
+  Owner: 5
 }
 
 export const checkRole = (userRoles, role) => {
-    let userHasMinimumRole = userRoles.some(rol => roles[rol] >= roles[role]);
-    return userHasMinimumRole;
+  let userHasMinimumRole = userRoles && Array.isArray(userRoles) ? userRoles.some(rol => roles[rol] >= roles[role]) : false;
+  return userHasMinimumRole;
 }
   
 export const environment = environments.prod;

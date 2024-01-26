@@ -23,6 +23,7 @@ export default class User {
     emailVerified: boolean,
 
     auth?: any,
+    user?: any,
     ID?: string,
     id?: string,
     name?: string,
@@ -32,6 +33,7 @@ export default class User {
     updated?: any,
     roles?: any[],
     image?: string,
+    metadata?: any,
     createdAt?: any,
     updatedAt?: any,
     source?: string,
@@ -48,6 +50,7 @@ export default class User {
     uniqueIndex: number,
     playerUUID?: string,
     lastRefreshAt?: any,
+    reloadUserInfo?: any,
     playerLink?: boolean,
     lastSignInTime?: any,
     userCredential?: any,
@@ -65,18 +68,23 @@ export default class User {
     if (this.currentDateTimeStampNoSpaces == undefined) this.currentDateTimeStampNoSpaces = formatDate(new Date(), `timezoneNoSpaces`);
     if (this.updated == undefined) this.updated = this.currentDateTimeStamp;
     if (this.lastUpdated == undefined) this.lastUpdated = this.currentDateTimeStamp;
+    if (this.metadata == undefined) this.metadata = this.user && this.user?.metadata;
+    if (this.user == undefined) this.user = this.userCredential && this.userCredential?.user;
+    if (this.reloadUserInfo == undefined) this.reloadUserInfo = this.user && this.user.reloadUserInfo;
     if (this.creationTime == undefined) this.creationTime = this.metadata && this.metadata?.creationTime;
     if (this.created == undefined) this.created = formatDateFromFirebase(this.creationTime);
     if (this.lastSignInTime == undefined) this.lastSignInTime = this.metadata && this.metadata?.lastSignInTime;
     if (this.lastSignIn == undefined) this.lastSignIn = formatDateFromFirebase(this.lastSignInTime);
     if (this.lastRefreshAt == undefined) this.lastRefreshAt = this.reloadUserInfo && this.reloadUserInfo?.lastRefreshAt;
     if (this.lastRefresh == undefined) this.lastRefresh = formatDateFromFirebase(this.lastRefreshAt);
-    if (this.validSince == undefined) this.validSince = formatDateFromFirebase(this.reloadUserInfo && this.reloadUserInfo?.validSince);
+    if (this.validSince == undefined) this.validSince = this.reloadUserInfo?.validSince;
 
     if (this.name == undefined) {
       this.name = capWords(this.email.split(`@`)[0]);
       this.displayName = capWords(this.email.split(`@`)[0]);
     }
+
+    if (this.uid == undefined) this.uid = this.user?.uid;
 
     if (this.uuid == undefined) {
       this.uuid = `${this.uid}_${generateUniqueID()}`;

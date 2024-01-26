@@ -404,10 +404,17 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
         setUsersLoading(false);
         console.log(`Users From Database`, usersFromDatabase);
         setUsers(usersFromDatabase);
-        if (user && user != null) {
-          let currentUser = usersFromDatabase.find(u => u.uid == user.uid);
+        let storedUser = localStorage.getItem(`user`) ? JSON.parse(localStorage.getItem(`user`)) : null;
+        let userToCheck = (user == null || user == undefined) ? storedUser : user;
+        if (userToCheck) {
+          let currentUser = usersFromDatabase.find(u => u.uid == userToCheck.uid);
           if (currentUser) {
-            setUser(currentUser);
+            let userUpdatedRoles = new User({
+              ...userToCheck,
+              roles: currentUser.roles,
+            });
+            console.log(`Current User`, userUpdatedRoles);
+            setUser(userUpdatedRoles);
           }
         }
       });
@@ -505,9 +512,11 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
       
       const unsubscribeFromAuthStateListener = onAuthStateChanged(auth, userCredential => {
         if (userCredential) {
-          let currentUser = users && Array.isArray(users) && users.length > 0 ? users.find(u => u.uid == userCredential.uid) : new User(userCredential);
+          let currentUser = users && Array.isArray(users) && users.length > 0 ? users.find(u => u.uid == userCredential.uid) : userCredential;
           // currentUser.properties = countPropertiesInObject(currentUser);
-          console.log(`User`, currentUser);
+          currentUser = new User(currentUser);
+          // console.log(`Logged In User`, currentUser);
+          localStorage.setItem(`user`, JSON.stringify(currentUser));
           setUser(currentUser);
           setAuthState(`Sign Out`);
         } else {
