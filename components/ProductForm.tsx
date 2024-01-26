@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { useContext, useState } from "react"
 import { StateContext, dev } from "../pages/_app";
 import { productPlaceholderImage } from "../pages/api/products";
@@ -66,6 +67,7 @@ export default function ProductForm(props) {
                 if (addedProductResponse) {
                     let productsAdded = addedProductResponse && addedProductResponse.product ? addedProductResponse.product : addedProductResponse;
                     console.log(`Added Product`, productsAdded);
+                    toast.success(`Product Successfully Added`);
                     setProcessing(false);
                     form.reset();
                     return addedProductResponse;
@@ -76,6 +78,7 @@ export default function ProductForm(props) {
             }
         } catch (error) {
             setProcessing(false);
+            toast.error(`Error Submitting Product Form`);
             console.log(`Error Submitting Product Form`, error);
         }
     }

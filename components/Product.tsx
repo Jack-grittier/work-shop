@@ -1,8 +1,8 @@
 import Image from "./Image";
+import { toast } from "react-toastify";
 import { useContext, useState } from "react";
 import { StateContext, dev } from "../pages/_app";
-import { toast } from "react-toastify";
-import { checkRole } from "../firebase";
+import { checkRole, maxAnimationTime } from "../firebase";
 import { productPlaceholderImage } from "../pages/api/products";
 
 export default function Product(props) {
@@ -26,17 +26,19 @@ export default function Product(props) {
 
             if (!deleteProductResponse.ok) {
                 console.log(`Deleting Product Error...`, product);
-                setTimeout(() => setDelClicked(false), 2500);
+                toast.error(`Error Deleting Product`);
+                setTimeout(() => setDelClicked(false), maxAnimationTime);
                 return deleteProductResponse;
             } else {
                 const responseData = await deleteProductResponse.json();
+                toast.success(`Product Successfully Deleted`);
                 setProductToEdit(null);
-                setTimeout(() => setDelClicked(false), 2500);
+                setTimeout(() => setDelClicked(false), maxAnimationTime);
                 return responseData;
             }
         } catch (error) {
             console.log(`Deleting Product Error on Server...`, product);
-            setTimeout(() => setDelClicked(false), 2500);
+            setTimeout(() => setDelClicked(false), maxAnimationTime);
         }
     }
 
@@ -44,12 +46,12 @@ export default function Product(props) {
         if (type == `Delete`) {
             setDelClicked(true);
             deleteProduct();
-            // setTimeout(() => setDelClicked(false), 2500);
+            // setTimeout(() => setDelClicked(false), maxAnimationTime);
         } else {
             setCartClicked(true);
             dev() && console.log(`Add to Cart`, {e, type, user});
             toast.success(`Add to Cart is in Development...`);
-            setTimeout(() => setCartClicked(false), 2500);
+            setTimeout(() => setCartClicked(false), maxAnimationTime);
         }
     }
 

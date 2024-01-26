@@ -22,44 +22,47 @@ export default class User {
     providerId: string,
     emailVerified: boolean,
 
-    auth?: any,
-    user?: any,
     ID?: string,
     id?: string,
+    roles?: any[],
     name?: string,
     type?: string,
     uuid?: string,
     created?: any,
     updated?: any,
-    roles?: any[],
+    validSince?: any,
+    lastSignIn?: any,
+    lastRefresh?: any,
+    creationTime?: any,
+    uniqueIndex: number,
+    displayName?: string,
+    operationType?: string,
+    
+    auth?: any,
+    user?: any,
     image?: string,
     metadata?: any,
     createdAt?: any,
     updatedAt?: any,
     source?: string,
     active?: boolean,
-    lastSignIn?: any,
-    validSince?: any,
-    lastRefresh?: any,
     lastUpdated?: any,
     password?: string,
     firebaseUser?: any,
-    creationTime?: any,
     passwordHash?: any,
     properties?: number,
-    uniqueIndex: number,
     playerUUID?: string,
     lastRefreshAt?: any,
     reloadUserInfo?: any,
-    playerLink?: boolean,
     lastSignInTime?: any,
     userCredential?: any,
-    operationType?: string,
     passwordUpdatedAt?: any,
     currentDateTimeStamp?: any,
     currentDateTimeStampNoSpaces?: any,
   }) {
     Object.assign(this, userObj);
+
+    this.email = this.email.toLowerCase();
 
     if (this.uniqueIndex == undefined) this.uniqueIndex = 1;
     if (this.type == undefined) this.type = capWords(this.providerId);
@@ -68,8 +71,10 @@ export default class User {
     if (this.currentDateTimeStampNoSpaces == undefined) this.currentDateTimeStampNoSpaces = formatDate(new Date(), `timezoneNoSpaces`);
     if (this.updated == undefined) this.updated = this.currentDateTimeStamp;
     if (this.lastUpdated == undefined) this.lastUpdated = this.currentDateTimeStamp;
-    if (this.metadata == undefined) this.metadata = this.user && this.user?.metadata;
     if (this.user == undefined) this.user = this.userCredential && this.userCredential?.user;
+    if (this.providerId == undefined) this.providerId = this.user && this.user?.providerId;
+    if (this.emailVerified == undefined) this.emailVerified = this.user && this.user?.emailVerified;
+    if (this.metadata == undefined) this.metadata = this.user && this.user?.metadata;
     if (this.reloadUserInfo == undefined) this.reloadUserInfo = this.user && this.user.reloadUserInfo;
     if (this.creationTime == undefined) this.creationTime = this.metadata && this.metadata?.creationTime;
     if (this.created == undefined) this.created = formatDateFromFirebase(this.creationTime);

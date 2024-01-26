@@ -7,11 +7,12 @@ import Shop from '../models/Shop';
 import User from '../models/User';
 import ReactDOM from 'react-dom/client';
 import Product from '../models/Product';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { simplifyUser } from '../components/Form';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth, db, usersDatabase } from '../firebase';
 import { AnimatePresence, motion } from 'framer-motion';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { createContext, useRef, useState, useEffect } from 'react';
+import { auth, dataSize, db, maxDataSize, usersDatabase } from '../firebase';
 
 export const useDB = () => true;
 export const StateContext = createContext({});
@@ -146,6 +147,15 @@ export const updateOrAdd = (obj, arr) => {
   }
   return arr;
 };
+
+export const removeNullAndUndefinedProperties = (object) => {
+  return Object.entries(object).reduce((accumulator, [key, value]) => {
+    if (value !== null && value !== undefined) {
+      accumulator[key] = value;
+    }
+    return accumulator;
+  }, {});
+}
 
 export const removeDuplicateObjectFromArray = (arrayOfObjects) => {
   const uniqueArray = arrayOfObjects?.filter((value, index) => {
@@ -358,11 +368,11 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   let [systemStatus, setSystemStatus] = useState(``);
   let [buttonText, setButtonText] = useState(`Next`);
   let [rearranging, setRearranging] = useState(false);
-  let [content, setContent] = useState(`defaultContent`)
+  let [usersLoading, setUsersLoading] = useState(true);
+  let [content, setContent] = useState(`defaultContent`);
   let [year, setYear] = useState(new Date().getFullYear());
   let [playersToSelect, setPlayersToSelect] = useState([]);
   let [databasePlayers, setDatabasePlayers] = useState([]);
-  let [usersLoading, setUsersLoading] = useState(true);
   let [filteredPlayers, setFilteredPlayers] = useState(players);
   let [deleteCompletely, setDeleteCompletely] = useState(false);
   let [sameNamePlayeredEnabled, setSameNamePlayeredEnabled] = useState(false);
@@ -399,10 +409,11 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   useEffect(() => {
     if (useDatabase == true) {
       const unsubscribeFromDatabaseUsersListener = onSnapshot(collection(db, usersDatabase), (querySnapshot) => {
-        const usersFromDatabase = [];
+        let usersFromDatabase = [];
         querySnapshot.forEach((doc) => usersFromDatabase.push(new User({...doc.data()})));
+        // usersFromDatabase = usersFromDatabase.map(usr => simplifyUser(usr));
         setUsersLoading(false);
-        console.log(`Users From Database`, usersFromDatabase);
+        dev() && console.log(`Database Users`, usersFromDatabase);
         setUsers(usersFromDatabase);
         let storedUser = localStorage.getItem(`user`) ? JSON.parse(localStorage.getItem(`user`)) : null;
         let userToCheck = (user == null || user == undefined) ? storedUser : user;
@@ -413,7 +424,8 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
               ...userToCheck,
               roles: currentUser.roles,
             });
-            console.log(`Current User`, userUpdatedRoles);
+            let simplifiedUser = simplifyUser(userUpdatedRoles);
+            dev() ? console.log(`Current User`, userUpdatedRoles) : console.log(`Current User`, simplifiedUser);
             setUser(userUpdatedRoles);
           }
         }
@@ -436,16 +448,16 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   // Catch Shop Updates
   useEffect(() => {
     if (Object.keys(shop).length > 0) {
-      localStorage.setItem(`shop`, JSON.stringify(shop));
-      console.log(`Shop`, shop);
+      if (dataSize(shop) <= maxDataSize) localStorage.setItem(`shop`, JSON.stringify(shop));
+      dev() && console.log(`Shop`, shop);
     }
   }, [shop])
 
   // Catch Product Updates
   useEffect(() => {
     if (products.length > 0) {
-      localStorage.setItem(`products`, JSON.stringify(products));
-      console.log(`Products`, products);
+      if (dataSize(products) <= maxDataSize) localStorage.setItem(`products`, JSON.stringify(products));
+      dev() && console.log(`Products`, products);
     }
   }, [products])
 
@@ -506,8 +518,8 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     if (useDatabase == true) {
 
       if (users.length > 0) {
-        localStorage.setItem(`users`, JSON.stringify(users));
-        console.log(`Users`, users);
+        if (dataSize(users) <= maxDataSize) localStorage.setItem(`users`, JSON.stringify(users));
+        dev() && console.log(`Users`, users);
       }
       
       const unsubscribeFromAuthStateListener = onAuthStateChanged(auth, userCredential => {
@@ -559,22 +571,22 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     const productsChannel = pusher.subscribe(`products`);
 
     shopChannel.bind(`updated`, (data) => {
-      console.log(`Shop Updated`, data);
+      dev() && console.log(`Shop Updated`, removeNullAndUndefinedProperties(data));
       refreshShopDataFromAPI();
     });
 
     productsChannel.bind(`created`, (data) => {
-      console.log(`Products Created`, data);
+      console.log(`Products Created`, removeNullAndUndefinedProperties(data));
       refreshProductsFromAPI();
     });
 
     productsChannel.bind(`updated`, (data) => {
-      console.log(`Products Updated`, data);
+      console.log(`Products Updated`, removeNullAndUndefinedProperties(data));
       refreshProductsFromAPI();
     });
 
     productsChannel.bind(`deleted`, (data) => {
-      console.log(`Products Deleted`, data);
+      console.log(`Products Deleted`, removeNullAndUndefinedProperties(data));
       refreshProductsFromAPI();
     });
 

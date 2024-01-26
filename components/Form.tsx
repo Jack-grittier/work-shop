@@ -3,10 +3,35 @@ import { toast } from "react-toastify";
 import LoadingSpinner from './LoadingSpinner';
 import GoogleButton from 'react-google-button';
 import PasswordRequired from './PasswordRequired';
-import { addUserToDatabase, auth } from '../firebase';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { StateContext, showAlert, signUpOrSignIn } from '../pages/_app';
+import { addUserToDatabase, auth, dataSize, googleProvider, maxDataSize } from '../firebase';
+import { StateContext, dev, removeNullAndUndefinedProperties, showAlert, signUpOrSignIn } from '../pages/_app';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
+
+export const simplifyUser = (expandedUser: User) => {
+  let simplifiedUser = {
+    ID: expandedUser?.ID,
+    id: expandedUser?.id,
+    uid: expandedUser?.uid,
+    name: expandedUser?.name,
+    type: expandedUser?.type,
+    uuid: expandedUser?.uuid,
+    roles: expandedUser?.roles,
+    email: expandedUser?.email,
+    created: expandedUser?.created,
+    updated: expandedUser?.updated,
+    providerId: expandedUser?.providerId,
+    lastSignIn: expandedUser?.lastSignIn,
+    validSince: expandedUser?.validSince,
+    lastRefresh: expandedUser?.lastRefresh,
+    uniqueIndex: expandedUser?.uniqueIndex,
+    displayName: expandedUser?.displayName,
+    creationTime: expandedUser?.creationTime,
+    emailVerified: expandedUser?.emailVerified,
+    operationType: expandedUser?.operationType,
+  };
+  return simplifiedUser as User;
+}
 
 export const renderErrorMessage = (erMsg) => {
   if (erMsg.toLowerCase().includes(`invalid-email`)) {
@@ -38,6 +63,34 @@ export default function Form(props?: any) {
     }
   }
 
+  const googleSignInOrSignUp = async (e) => {
+   try {
+    let googleUser = await signInWithPopup(auth, googleProvider);
+    if (googleUser) {
+      setFocus(false);
+      setAuthState(`Sign Out`);
+      let userWithGoogle = new User({ ...(googleUser as any), email: googleUser?.user?.email, type: `Google`, uniqueIndex: users.length + 1 });
+      setUser(userWithGoogle);
+      userWithGoogle = removeNullAndUndefinedProperties(userWithGoogle);
+      // newUser.properties = countPropertiesInObject(userWithGoogle);
+      let userToStoreInDatabase = simplifyUser(userWithGoogle);
+      if (dataSize(userToStoreInDatabase) <= maxDataSize) localStorage.setItem(`user`, JSON.stringify(userToStoreInDatabase));
+      let playerExistsInDatabase = users && users.length > 0 && users.find(usr => usr.uid == userToStoreInDatabase.uid || usr.email.toLowerCase() == userToStoreInDatabase.email.toLowerCase());
+      if (playerExistsInDatabase == true) {
+        console.log(`Successfully Signed In with Google`, dev() ? userWithGoogle : userToStoreInDatabase);
+        toast.success(`Successfully Signed In with Google`);
+      } else {
+        addUserToDatabase(JSON.parse(JSON.stringify(userToStoreInDatabase)));
+        console.log(`Successfully Signed Up with Google`, dev() ? userWithGoogle : userToStoreInDatabase);
+        toast.success(`Successfully Signed Up with Google`);
+      }
+    }
+   } catch (error) {
+    console.log(`Error Signing In with Google`, error);
+    toast.error(`Error Signing In with Google`);
+   }
+  }
+
   const authForm = (e?: any) => {
     e.preventDefault();
     let formFields = e.target.children;
@@ -67,6 +120,7 @@ export default function Form(props?: any) {
         setUser(null);
         setAuthState(`Next`);
         setEmailField(false);
+        localStorage.removeItem(`user`);
         break;
       case `Save`:
         let emptyFields = [];
@@ -131,10 +185,12 @@ export default function Form(props?: any) {
           if (useDatabase == true) {
             createUserWithEmailAndPassword(auth, email, password).then((userCredential: any) => {
               if (userCredential != null) {
-                let newUser = new User({ ...userCredential, email: email, type: `Firebase`, uniqueIndex: users.length });
+                let newUser = new User({ ...userCredential, email: email, type: `Firebase`, uniqueIndex: users.length + 1 });
+                newUser = removeNullAndUndefinedProperties(newUser);
                 // newUser.properties = countPropertiesInObject(newUser);
-                console.log(`User Signed Up`, newUser);
-                addUserToDatabase(JSON.parse(JSON.stringify(newUser)));
+                let userToStoreInDatabase = simplifyUser(newUser);
+                console.log(`User Signed Up`, dev() ? newUser : userToStoreInDatabase);
+                addUserToDatabase(JSON.parse(JSON.stringify(userToStoreInDatabase)));
                 setAuthState(`Sign Out`);
                 setUser(newUser);
               }
@@ -210,7 +266,7 @@ export default function Form(props?: any) {
         <input title={user ? `Sign Out` : authState} className={`${(user && window?.location?.href?.includes(`profile`) || (authState == `Sign In` || authState == `Sign Up`)) ? `submit half` : `submit full`} ${user ? `userSignedInSubmit` : `userSignedOutSubmit`}`} type="submit" name="authFormSubmit" value={user ? `Sign Out` : authState} />
         {/* {(authState == `Sign In` || authState == `Sign Up`) && <input id={`back`} className={`back`} type="submit" name="authFormBack" value={`Back`} />} */}
         {!user && authState == `Next` && <div title={`${signUpOrSignIn} With Google`} className={`customUserSection`}>
-          <GoogleButton type="dark" />
+          <GoogleButton onClick={(e) => googleSignInOrSignUp(e)} type="dark" />
         </div>}
         {user && <div title={`Welcome, ${user?.name}`} className={`customUserSection`}>
           {user?.image ? <img alt={user?.email} src={user?.image}  className={`userImage`} /> : <div className={`userCustomAvatar`}>{user?.name?.charAt(0).toUpperCase()}</div>}
