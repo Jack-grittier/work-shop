@@ -192,6 +192,64 @@ hr {
     width: 96%;
 }
 
+.product {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    border-radius: 10px;
+    flex-direction: column;
+    padding: 15px 20px 25px;
+    border: solid 3px white;
+    justify-content: space-between;
+}
+
+.productTitle {
+    width: 100%;
+    display: flex;
+    grid-gap: 15px;
+    padding: 0 0 10px 10px;
+    justify-content: flex-start;
+}
+
+.productContent {
+    height: 84%;
+    font-size: 20px;
+}
+
+.productButtons {
+    width: 100%;
+    display: flex;
+    grid-gap: 15px;
+    font-size: 18px;
+    justify-content: flex-end;
+}
+
+.productButton {
+    display: flex;
+    grid-gap: 7px;
+    border-radius: 5px;
+    font-weight: bolder;
+    align-items: center;
+    padding: 2px 8px 0 8px;
+    border: 2px solid white;
+    transition: var(--transition);
+    &:hover {
+        background: var(--cwsPink);
+        border: 2px solid var(--cwsPink);
+    }
+}
+
+.productIcon {
+    top: -1px;
+    font-size: 15px;
+    font-weight: 600;
+    position: relative;
+}
+
+.productButtonText {
+    font-size: 18px;
+}
+
 .productsSection {
     display: flex;
     padding: 65px 0;
@@ -219,7 +277,7 @@ hr {
 .productCode {
     .desc {
         top: -5px;
-        font-size: 16px;
+        font-size: 18px;
         position: relative;
     }
     .line {
@@ -228,7 +286,10 @@ hr {
 }
 
 .price {
-    font-size: 15px;
+    top: -1px;
+    font-size: 18px;
+    padding-left: 5px;
+    position: relative;
     .dollar {
         font-size: 17px;
         padding-right: 1px;
@@ -278,12 +339,17 @@ pre {
 }
 
 .productDesc {
+    width: 100%;
+    display: flex;
     font-size: 16px;
+    align-items: center;
     margin-bottom: 15px;
     font-weight: bolder;
     padding: 0 5px 5px 0;
-    max-width: fit-content;
-    border-bottom: solid 1px white;
+    justify-content: space-between;
+    * {
+        border-bottom: solid 1px white;
+    }
 }
 
 .floatingCat {
@@ -352,15 +418,15 @@ pre {
 }
 
 @media (max-width: 1220px) {
-    .productCode .desc {
-        top: -8px;
-        font-size: 14px;
-    }
-    .price {
-        font-size: 13px;
-        position: relative;
-        bottom: -2px;
-    }
+    // .productCode .desc {
+    //     top: -8px;
+    //     font-size: 14px;
+    // }
+    // .price {
+    //     bottom: -2px;
+    //     font-size: 13px;
+    //     position: relative;
+    // }
 }
   
 @media (max-width: 1150px) {
@@ -399,14 +465,14 @@ pre {
         font-size: 30px !important;
     }
     .productCode {
-        max-width: 85%;
-        .desc {
-            font-size: 14px;
-        }
+        max-width: 100%;
+        // .desc {
+        //     font-size: 14px;
+        // }
     }
-    .price {
-        font-size: 13px;
-    }
+    // .price {
+    //     font-size: 13px;
+    // }
     .productDesc {
         display: none;
     }
@@ -418,8 +484,71 @@ pre {
         flex-direction: column;
         justify-content: center;
     }
-    .productPic {
-        max-width: 280px;
+    // .productPic {
+    //     max-width: 280px;
+    // }
+}
+
+@media (max-width: 400px) {
+    .productTitle i {
+        display: none;
+    }
+    .productCode {
+        max-width: 90%;
+    }
+    .heroContent {
+        width: 85% !important;
+    }
+    .heroDescText {
+        font-size: 14px;
+    }
+    .heroTitleSubText {
+        font-size: 28px !important;
+    }
+    .product {
+        padding: 15px 20px 20px;
+    }
+}
+
+@media (max-width: 365px) {
+    footer {
+        .right {
+            display: none;
+        }
+    }
+    .longTitle {
+        max-width: 57% !important;
+    }
+}
+
+@media (max-width: 305px) {
+    .productTitle {
+        padding: 0 0 10px 5px;
+    }
+    .productCode {
+        max-width: 85%;
+        .desc {
+            font-size: 16px;
+        }
+    }
+    .price {
+        font-size: 14px;
+    }
+    .heroDescText {
+        font-size: 12px;
+        font-weight: 400;
+    }
+    .heroTitleSubText {
+        font-size: 24px !important;
+    }
+    .productContent {
+        font-size: 16px;
+    }
+    .productButtonText {
+        font-size: 15px;
+    }
+    .productIcon {
+        font-size: 13px;
     }
 }
   
@@ -443,7 +572,7 @@ pre {
     overflow: hidden;
     max-width: 75%;
     margin: 0;
-    top: 6px;
+    top: 7px;
     &.tflow100 {
       max-width: 100%;
     }

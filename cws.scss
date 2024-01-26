@@ -1785,6 +1785,9 @@ div[role="presentation"] {
     align-items: center;
     text-align: center;
     border-radius: 100px;
+    @media (max-width: 768px) {
+        padding: 12px !important;
+    }
 }
 
 // Google Button

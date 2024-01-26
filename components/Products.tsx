@@ -1,9 +1,11 @@
 
-import Image from "./Image";
+// import Image from "./Image";
 import { useContext } from "react";
-import CodeBlock from "./CodeBlock";
+// import CodeBlock from "./CodeBlock";
 import { StateContext } from "../pages/_app";
-import { productPlaceholderImage } from "../pages/api/products";
+// import { productPlaceholderImage } from "../pages/api/products";
+import ProductCodeBlock from "./ProductCodeBlock";
+import Product from "./Product";
 
 export default function Products(props) {
     let { products } = props;
@@ -19,26 +21,7 @@ export default function Products(props) {
                         return (
                             <li className={`productCode listedCommand`} key={productIndex} title={product?.title}>
                                 <div className={`productDetails commandDetails flex gap15`}>
-                                    <CodeBlock product={product} commandToCopy={true} custombutton={true} border={`solid 2px white`} id={`commandToRender-${product.id}`} language={`json`} codeTitle={(
-                                        <>
-                                            <i className="fab fa-shopify"></i>
-                                            <div className={`desc productTitleAndPrice`}>
-                                                <span className={`oflow`}>{product?.title}</span>
-                                                <span className={`price`}> - <span className={`dollar`}>$</span>{product?.variants[0]?.price}</span>
-                                            </div>
-                                        </>
-                                    )}>
-                                        <>
-                                            {product.image ? <div className={`productImageContainer`}>
-                                                <Image src={product.image.src} className={`productPic productMainImage customImage`} alt={`Product Image`} />
-                                                {product.altImage && <Image src={product.altImage.src} className={`productPic productAltImage customImage`} alt={`Product Alternate Image`} />}
-                                            </div> : (
-                                                <Image src={productPlaceholderImage} className={`productPic customImage`} alt={`Product Image`} />
-                                            )}
-                                            <h1 className={`productDesc`}>Description</h1>
-                                            {product.description != `` ? product.description : product?.title}
-                                        </>
-                                    </CodeBlock>
+                                    <Product product={product} />
                                 </div>
                             </li>
                         )
