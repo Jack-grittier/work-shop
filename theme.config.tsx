@@ -15,7 +15,7 @@ const config: DocsThemeConfig = {
   primaryHue: 195, // Sky Blue
   useNextSeoProps() {
     return {
-      titleTemplate: `%s | ${siteTitle}`,
+      titleTemplate: `${(`%s`) as any == `[id]` ? `hello` : `%s`} | ${siteTitle}`,
     }
   },
   feedback: {

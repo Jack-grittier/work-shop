@@ -10,9 +10,11 @@
     --cwsBlue: #41aee3;
     --cwsNavy: #0F123e;
     --cwsPink: #c71a8f;
+    --cwsPeach: #f8b7a8;
     --containerWidth: 90%;
     --navyBlue: #3e6595;
     --darkGray: #1f1f1f;
+    --cwsYellow: #fdbf14;
     --backLogBG: #e2e2f8;
     --doneSolid: #00a64c;
     --mainColor: #00c2ff;
@@ -59,6 +61,11 @@ nav a.nx-text-sm {
 .fa-instagram {
     font-size: 24px;
     color: var(--cwsPink);
+}
+
+.fa-shopping-cart {
+    font-size: 16px;
+    color: var(--cwsPeach);
 }
 
 .pageContentContainer {
@@ -263,8 +270,8 @@ hr {
     grid-auto-rows: 1fr;
     width: 90% !important;
     grid-template-columns: repeat(2, 1fr);
-    &.noProducts {
-        width: 100% !important;
+    &.noProducts, &.oneProduct {
+        width: 75% !important;
         grid-template-columns: repeat(1, 1fr);
     }
     @media (min-width: 1800px) {

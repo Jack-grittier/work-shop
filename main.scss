@@ -99,6 +99,10 @@ h6 {
     }
 }
 
+aside, .nextra-toc {
+    display: none !important;
+}
+
 :is(html[class~=dark] .dark\:before\:nx-bg-neutral-800):before {
     background: var(--smasherscapeGreen2Transparent2) !important;
 }
@@ -263,8 +267,11 @@ article {
     main {
         max-width: 100% !important;
         width: 100% !important;
+        padding: 0 !important;
         margin: 0 auto;
-        padding: 0;
+        &:has(.cwsContent) {
+            margin: -4px auto -63px;
+        }
     }
 }
 

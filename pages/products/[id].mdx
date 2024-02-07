@@ -1,0 +1,40 @@
+import Main from '../../components/Main'
+import Banner from '../../components/Banner'
+import Products from '../../components/Products'
+
+import { fetchProductsFromAPI } from '../../firebase'
+
+export async function getStaticPaths() {
+    let products = await fetchProductsFromAPI();
+    const paths = products.map(product => ({
+        params: { id: product.id.toString() },
+    }));
+    return { paths, fallback: false };
+}
+
+export async function getStaticProps({ params }) {
+    let products = await fetchProductsFromAPI(false);
+
+    const product = products.find(p => p.id.toString() === params.id);
+
+    if (!product) {
+        return {
+            notFound: true,
+        };
+    }
+
+    return { props: { product } };
+}
+
+# Product
+
+export default function ProductPage({ product }) {
+    return <>
+        <Banner title={product.name} />
+        <section className={`productsSection customSection`}>
+            <Main className={`cwsContent`} showTopButton={true}>
+                <Products products={[product]} />
+            </Main>
+        </section>
+    </>
+}

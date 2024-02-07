@@ -1,0 +1,18 @@
+{
+    "[id]": {
+        "title": "Product",
+        "type": "page",
+        "theme": {
+            "pagination": false,
+            "layout": "full"
+        }
+    },
+    "index": {
+        "title": "Products",
+        "type": "page",
+        "theme": {
+            "pagination": false,
+            "layout": "full"
+        }
+    }
+}

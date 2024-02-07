@@ -13,6 +13,10 @@ export default function NavIcons() {
                 <span className="nx-sr-only">Instagram</span>
                 <span className="nx-sr-only"> (opens in a new tab)</span>
             </a>
+            <a href={`/cart`} rel="noreferrer" className="nx-p-2 nx-text-current">
+                <i title={`Cart | Creative Workshop`} className="fas fa-shopping-cart"></i>
+                {/* <span className={`navIconLabel cart`}>Cart</span> */}
+            </a>
         </div>
     )
 }

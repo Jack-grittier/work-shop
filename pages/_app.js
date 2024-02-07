@@ -3,16 +3,14 @@ import '../cws.scss';
 import '../concentration.scss';
 import Pusher from 'pusher-js';
 import '../creativeWorkshop.scss';
-import Shop from '../models/Shop';
 import User from '../models/User';
 import ReactDOM from 'react-dom/client';
-import Product from '../models/Product';
 import { simplifyUser } from '../components/Form';
 import { onAuthStateChanged } from 'firebase/auth';
 import { AnimatePresence, motion } from 'framer-motion';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { createContext, useRef, useState, useEffect } from 'react';
-import { auth, dataSize, db, maxDataSize, usersDatabase } from '../firebase';
+import { auth, dataSize, db, fetchProductsFromAPI, fetchShopDataFromAPI, maxDataSize, usersDatabase } from '../firebase';
 
 export const useDB = () => true;
 export const StateContext = createContext({});
@@ -29,13 +27,8 @@ export const getShopDataFromAPI = async () => {
   try {
     let getDatabase = true;
     if (getDatabase == true) {
-      let serverPort = 3000;
-      let liveLink = dev() ? `http://localhost:${serverPort}` : window.location.origin;
-      let shopResponse = await fetch(`${liveLink}/api/shop`);
-      if (shopResponse.status === 200) {
-        let shopData = await shopResponse.json();
-        if (shopData) return new Shop(shopData);
-      }
+      let latestShopData = fetchShopDataFromAPI();
+      return latestShopData;
     } else {
       let shop = JSON.parse(localStorage.getItem(`shop`));
       if (shop) return shop;
@@ -49,18 +42,8 @@ export const getProductsFromAPI = async () => {
   try {
     let getDatabase = true;
     if (getDatabase == true) {
-      let serverPort = 3000;
-      let liveLink = dev() ? `http://localhost:${serverPort}` : window.location.origin;
-      let productsResponse = await fetch(`${liveLink}/api/products`);
-      if (productsResponse.status === 200) {
-        let productsData = await productsResponse.json();
-        if (productsData) {
-         if (Array.isArray(productsData)) {
-            let modifiedProducts = productsData.map(prod => new Product(prod));
-            return modifiedProducts;
-          }
-        }
-      }
+      let latestProducts = fetchProductsFromAPI();
+      return latestProducts;
     } else {
       let products = JSON.parse(localStorage.getItem(`products`));
       if (products) return products;
@@ -383,6 +366,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   let [useLocalStorage, setUseLocalStorage] = useState(true);
 
   let [shop, setShop] = useState({});
+  let [cart, setCart] = useState({});
   let [products, setProducts] = useState([]);
   let [productToEdit, setProductToEdit] = useState(null);
 
@@ -402,6 +386,24 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     } else if (brwser == `` && navigator.userAgent.match(/opr\//i)) {
       brwser = `opera`;
       setBrowser(`opera`);
+    }
+  }
+
+  const refreshShopDataFromAPI = async () => {
+    let shopDataFromAPI = await getShopDataFromAPI();
+    if (shopDataFromAPI) {
+      setShop(shopDataFromAPI);
+    } else {
+      setShop({});
+    }
+  }
+
+  const refreshProductsFromAPI = async () => {
+    let productsFromAPI = await getProductsFromAPI();
+    if (productsFromAPI) {
+      setProducts(productsFromAPI);
+    } else {
+      setProducts([]);
     }
   }
 
@@ -492,26 +494,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     setSystemStatus(`${getPage()} Loaded.`);
     setTimeout(() => setLoading(false), 1500);
 
-    const refreshShopDataFromAPI = async () => {
-      let shopDataFromAPI = await getShopDataFromAPI();
-      if (shopDataFromAPI) {
-        setShop(shopDataFromAPI);
-      } else {
-        setShop({});
-      }
-    }
-
     refreshShopDataFromAPI();
-  
-    const refreshProductsFromAPI = async () => {
-      let productsFromAPI = await getProductsFromAPI();
-      if (productsFromAPI) {
-        setProducts(productsFromAPI);
-      } else {
-        setProducts([]);
-      }
-    }
-
     refreshProductsFromAPI();
 
     // User
@@ -544,24 +527,6 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   }, [rte, user, users, authState, dark])
 
   useEffect(() => {
-    const refreshShopDataFromAPI = async () => {
-      let shopDataFromAPI = await getShopDataFromAPI();
-      if (shopDataFromAPI) {
-        setShop(shopDataFromAPI);
-      } else {
-        setShop({});
-      }
-    }
-
-    const refreshProductsFromAPI = async () => {
-      let productsFromAPI = await getProductsFromAPI();
-      if (productsFromAPI) {
-        setProducts(productsFromAPI);
-      } else {
-        setProducts([]);
-      }
-    }
-
     const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY || process.env.PUSHER_APP_KEY, {
       cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER || process.env.PUSHER_APP_CLUSTER,
       encrypted: true,
@@ -600,7 +565,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     };
   }, [])
 
-  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, highScore, setHighScore, color, setColor, dark, setDark, colorPref, setColorPref, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, gameFormStep, setGameFormStep, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, playersToSelect, setPlayersToSelect, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, usersLoading, setUsersLoading, iPhone, set_iPhone, plays, setPlays, shop, setShop, products, setProducts, productToEdit, setProductToEdit }}>
+  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, highScore, setHighScore, color, setColor, dark, setDark, colorPref, setColorPref, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, gameFormStep, setGameFormStep, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, playersToSelect, setPlayersToSelect, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, usersLoading, setUsersLoading, iPhone, set_iPhone, plays, setPlays, shop, setShop, products, setProducts, productToEdit, setProductToEdit, cart, setCart }}>
     {(browser != `chrome` || onMac && browser != `chrome`) ? (
       <div className={`framerMotion ${bodyClasses}`}>
         <AnimatePresence mode={`wait`}>

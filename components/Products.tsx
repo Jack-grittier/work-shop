@@ -1,11 +1,6 @@
-
-// import Image from "./Image";
-import { useContext } from "react";
-// import CodeBlock from "./CodeBlock";
-import { StateContext } from "../pages/_app";
-// import { productPlaceholderImage } from "../pages/api/products";
-import ProductCodeBlock from "./ProductCodeBlock";
 import Product from "./Product";
+import { useContext } from "react";
+import { StateContext } from "../pages/_app";
 
 export default function Products(props) {
     let { products } = props;
@@ -16,7 +11,7 @@ export default function Products(props) {
         <>
             {products && products?.length > 0 && <h2 className={`shopSubtitle`}>{products?.length} Product(s)</h2>}
             {products && (
-                <ul id={`productsCodeBlocks`} className={`productBlocks commandsList commandToCopy ${products?.length > 0 ? `hasProducts` : `noProducts`}`}>  
+                <ul id={`productsCodeBlocks`} className={`productBlocks commandsList commandToCopy ${products?.length > 0 ? `hasProducts ${products?.length > 1 ? `multiProducts` : `oneProduct`}` : `noProducts`}`}>  
                     {products?.length > 0 ? products.map((product, productIndex) => {
                         return (
                             <li className={`productCode listedCommand`} key={productIndex} title={product?.title}>
