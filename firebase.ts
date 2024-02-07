@@ -80,6 +80,11 @@ export const prodURL = process.env.NEXT_PUBLIC_PRODURL || process.env.PRODURL ||
 export const serverPort = process.env.NEXT_PUBLIC_SERVERPORT || process.env.SERVERPORT || 3000;
 export const liveLink = process.env.NODE_ENV == `development` ? `http://localhost:${serverPort}` : prodURL;
 
+export const storeName = process.env.NEXT_PUBLIC_SHOPIFY_STORE_NAME || process.env.SHOPIFY_STORE_NAME;
+export const apiVersion = process.env.NEXT_PUBLIC_SHOPIFY_API_VERSION || process.env.SHOPIFY_API_VERSION;
+export const accessToken = process.env.NEXT_PUBLIC_SHOPIFY_ACCESS_TOKEN || process.env.SHOPIFY_ACCESS_TOKEN;
+export const productPlaceholderImage = `https://cdn.shopify.com/s/files/1/0857/2839/5586/files/CatTripleWhiteBG.png?v=1706157387`;
+
 export const fetchShopDataFromAPI = async (customObject = true) => {
   let shopResponse = await fetch(`${liveLink}/api/shop`);
   if (shopResponse.status === 200) {
@@ -100,6 +105,34 @@ export const fetchProductsFromAPI = async (customObject = true) => {
     }
   }
 }
+
+// export const createShopifyCustomer = async (email) => {
+//   const url = `https://${storeName}.myshopify.com/admin/api/${apiVersion}/customers.json`;
+//   const payload = {
+//     customer: {
+//       email: email,
+//       verified_email: false,
+//       send_email_invite: true,
+//     }
+//   };
+
+//   try {
+//     const response = await fetch(url, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'X-Shopify-Access-Token': process.env.SHOPIFY_ACCESS_TOKEN,
+//       },
+//       body: JSON.stringify(payload),
+//     });
+
+//     const data = await response.json();
+//     console.log('Customer created:', data);
+//     // Handle the response data as needed
+//   } catch (error) {
+//     console.error('Error creating customer:', error);
+//   }
+// }
 
 export const addUserToDatabase = async (userObj) => {
   try {

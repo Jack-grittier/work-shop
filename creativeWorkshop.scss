@@ -68,10 +68,23 @@ nav a.nx-text-sm {
     color: var(--cwsPeach);
 }
 
+.blurredBG {
+    padding: 2em;
+    border: solid 1px white;
+    backdrop-filter: blur(10px);
+}
+
 .pageContentContainer {
-    font-size: 25px;
     width: 80%;
+    display: flex;
     margin: 0 auto;
+    grid-gap: 25px;
+    font-size: 25px;
+    flex-direction: column;
+}
+
+.subtitle {
+    font-size: 38px !important;
 }
 
 .cwsMainBanner {
@@ -199,14 +212,22 @@ hr {
     width: 96%;
 }
 
+.card {
+    border-radius: 10px;
+    padding: 15px 20px 25px;
+    border: solid 3px white;
+    backdrop-filter: blur(10px);
+    &.cardWider {
+        padding: 50px;
+    }
+}
+
 .product {
+    @extend .card;
     width: 100%;
     height: 100%;
     display: flex;
-    border-radius: 10px;
     flex-direction: column;
-    padding: 15px 20px 25px;
-    border: solid 3px white;
     justify-content: space-between;
 }
 
@@ -221,6 +242,7 @@ hr {
 .productContent {
     height: 100%;
     font-size: 20px;
+    padding-bottom: 20px;
 }
 
 .productButtons {
@@ -288,9 +310,6 @@ hr {
         }
         .oflow {
             max-width: 100%;
-        }
-        .productContent {
-            padding-bottom: 20px;
         }
         @media (min-width: 768px) {
             .desc {

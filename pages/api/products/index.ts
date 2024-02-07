@@ -1,11 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-export const productPlaceholderImage = `https://cdn.shopify.com/s/files/1/0857/2839/5586/files/CatTripleWhiteBG.png?v=1706157387`;
+import { accessToken, apiVersion, storeName } from '../../../firebase';
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === `GET`) {
     try {
-      const storeName = process.env.NEXT_PUBLIC_SHOPIFY_STORE_NAME || process.env.SHOPIFY_STORE_NAME;
-      const apiVersion = process.env.NEXT_PUBLIC_SHOPIFY_API_VERSION || process.env.SHOPIFY_API_VERSION;
-      const accessToken = process.env.NEXT_PUBLIC_SHOPIFY_ACCESS_TOKEN || process.env.SHOPIFY_ACCESS_TOKEN;
       const url = `https://${storeName}.myshopify.com/admin/api/${apiVersion}/products.json`;
 
       const getProductsResponse = await fetch(url, {

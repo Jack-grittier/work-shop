@@ -2,12 +2,11 @@ import Image from "./Image";
 import { toast } from "react-toastify";
 import { useContext, useState } from "react";
 import { StateContext, dev } from "../pages/_app";
-import { checkRole, maxAnimationTime } from "../firebase";
-import { productPlaceholderImage } from "../pages/api/products";
+import { checkRole, liveLink, maxAnimationTime, productPlaceholderImage } from "../firebase";
 
 export default function Product(props) {
     let { product } = props;
-    let { user, router, setProductToEdit } = useContext<any>(StateContext);
+    let { user, router, setProducts, setProductToEdit } = useContext<any>(StateContext);
 
     let [delClicked, setDelClicked] = useState(false);
     let [prodClicked, setProdClicked] = useState(false);
@@ -15,9 +14,6 @@ export default function Product(props) {
 
     const deleteProduct = async () => {
         try {
-            let serverPort = 3000;
-            let liveLink = dev() ? `http://localhost:${serverPort}` : window.location.origin;
-
             let deleteProductResponse = await fetch(`${liveLink}/api/products/delete/${product.id}`, {
                 method: 'DELETE',
                 headers: {
@@ -33,8 +29,10 @@ export default function Product(props) {
             } else {
                 const responseData = await deleteProductResponse.json();
                 toast.success(`Product Successfully Deleted`);
+                setProducts(prevProducts => prevProducts.filter(prevProduct => prevProduct.id != product.id));
                 setProductToEdit(null);
-                setTimeout(() => setDelClicked(false), maxAnimationTime);
+                setDelClicked(false);
+                // setTimeout(() => setDelClicked(false), maxAnimationTime);
                 return responseData;
             }
         } catch (error) {

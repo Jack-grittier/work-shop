@@ -33,6 +33,15 @@
       "layout": "full"
     }
   },
+  "cart": {
+    "title": "Cart",
+    "type": "page",
+    "display": "hidden",
+    "theme": {
+      "pagination": false,
+      "layout": "full"
+    }
+  },
   "services": {
     "title": "Services",
     "type": "page",

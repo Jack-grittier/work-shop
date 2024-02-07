@@ -12,7 +12,7 @@ export default function Banner(props) {
               <p className={`heroDescText`}>Graphic Design - Event Design - Custom Printing</p>
             </div>
             <div className={`heroTitle`}>
-              <div className={`heroTitleSubText`}>{title}</div>
+              <h1 className={`heroTitleSubText`}>{title}</h1>
             </div>
           </div>
         </div>

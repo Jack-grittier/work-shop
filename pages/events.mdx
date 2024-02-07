@@ -1,7 +1,7 @@
 import Main from '../components/Main'
 import Banner from '../components/Banner'
 
-<Banner title={`Upcoming Events`} />
+<Banner title={`Events`} />
 
 <div style={{textAlign: `center`, display: `none`}}>
   # Events
@@ -9,8 +9,16 @@ import Banner from '../components/Banner'
 
 <section className={`productsSection customSection`}>
   <Main className={`cwsContent`} showTopButton={true}>
-    <div className={`pageContentContainer`}>
-      Creative Workshop is a dashboard for tracking orders through Trello Boards, Lists, Cards API and having it be connected directly and programmatically to the Client which communicates back to the TypeForm API to create new orders.
+    <div className={`pageContentContainer card cardWider`}>
+      <h2 className={`subtitle shopSubtitle`}>Past and Future Events</h2>
+      <p style={{ textAlign: `center`, paddingBottom: 5 }}>We've partnered with some incredible events, desiging and printing on-site.</p>
+      <p style={{ textAlign: `center`, paddingBottom: 5 }}>Catch us at the next one!</p>
+      <p style={{ textAlign: `center`, paddingBottom: 5 }}><strong><i>Momocon (Atlanta, GA)</i></strong> - May 2023</p>
+      <p style={{ textAlign: `center`, paddingBottom: 5 }}><strong><i>CEO (Daytona, FL)</i></strong> - June 2023</p>
+      <p style={{ textAlign: `center`, paddingBottom: 5 }}><strong><i>Rise N' Grind (Waco, TX)</i></strong> - October 2023</p>
+      <p style={{ textAlign: `center`, paddingBottom: 5 }}><strong><i>Luminosity Makes Moves Miami (Miami, FL)</i></strong> - October 2023</p>
+      <p style={{ textAlign: `center`, paddingBottom: 5 }}><strong><i>Holiday Matsuri (Orlando, FL)</i></strong> - December 20-22, 2023</p>
+      <p style={{ textAlign: `center`, paddingBottom: 5 }}><strong><i>KamiCon (Birmingham, AL)</i></strong> - February 9-11, 2024</p>
     </div>
   </Main>
 </section>

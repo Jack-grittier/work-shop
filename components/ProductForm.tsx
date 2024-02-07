@@ -1,14 +1,12 @@
 import { toast } from "react-toastify";
+import Product from "../models/Product";
 import { useContext, useState } from "react"
-import { StateContext, dev } from "../pages/_app";
-import { productPlaceholderImage } from "../pages/api/products";
+import { StateContext } from "../pages/_app";
+import { liveLink, productPlaceholderImage } from "../firebase";
 
 export const addProductsToShopify = async (productToAdd) => {
     let { title, price, image, category, quantity, description } = productToAdd;
     try {
-        let serverPort = 3000;
-        let liveLink = dev() ? `http://localhost:${serverPort}` : window.location.origin;
-
         let addProductsResponse = await fetch(`${liveLink}/api/products/add`, {
             method: 'POST',
             headers: {
@@ -36,7 +34,7 @@ export const addProductsToShopify = async (productToAdd) => {
 export default function ProductForm(props) {
 
     let [processing, setProcessing] = useState(false);
-    let { productToEdit, setProductToEdit } = useContext<any>(StateContext);
+    let { setProducts, productToEdit, setProductToEdit } = useContext<any>(StateContext);
 
     const onProductFormSubmit = async (e) => {
         e.preventDefault();
@@ -68,6 +66,7 @@ export default function ProductForm(props) {
                     let productsAdded = addedProductResponse && addedProductResponse.product ? addedProductResponse.product : addedProductResponse;
                     console.log(`Added Product`, productsAdded);
                     toast.success(`Product Successfully Added`);
+                    setProducts(prevProducts => [new Product(productsAdded), ...prevProducts]);
                     setProcessing(false);
                     form.reset();
                     return addedProductResponse;
