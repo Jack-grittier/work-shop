@@ -99,10 +99,6 @@ h6 {
     }
 }
 
-aside, .nextra-toc {
-    display: none !important;
-}
-
 :is(html[class~=dark] .dark\:before\:nx-bg-neutral-800):before {
     background: var(--smasherscapeGreen2Transparent2) !important;
 }
@@ -531,12 +527,22 @@ input {
 }
 
 @media (min-width: 768px) {
-    aside {
+    aside, .nextra-toc {
         width: auto !important;
+        display: none !important;
     }
 }
 
 @media (max-width: 768px) {
+    aside {
+        ul {
+            li {
+                &:not(.nx-flex) {
+                    display: none;
+                }
+            }
+        }
+    }
     nav {
         * {
             &.nx-relative {

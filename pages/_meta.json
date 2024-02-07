@@ -24,6 +24,15 @@
       "layout": "full"
     }
   },
+  "products": {
+    "title": "Products",
+    "type": "page",
+    "display": "hidden",
+    "theme": {
+      "pagination": false,
+      "layout": "full"
+    }
+  },
   "services": {
     "title": "Services",
     "type": "page",
