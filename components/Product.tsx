@@ -7,9 +7,10 @@ import { productPlaceholderImage } from "../pages/api/products";
 
 export default function Product(props) {
     let { product } = props;
-    let { user, setProductToEdit } = useContext<any>(StateContext);
+    let { user, router, setProductToEdit } = useContext<any>(StateContext);
 
     let [delClicked, setDelClicked] = useState(false);
+    let [prodClicked, setProdClicked] = useState(false);
     let [cartClicked, setCartClicked] = useState(false);
 
     const deleteProduct = async () => {
@@ -47,6 +48,12 @@ export default function Product(props) {
             setDelClicked(true);
             deleteProduct();
             // setTimeout(() => setDelClicked(false), maxAnimationTime);
+        } else if (type == `Product`) {
+            setProdClicked(true);
+            dev() && console.log(`Navigating to Product ${product.name}`, {e, type, user, router, route: router.route});
+            toast.info(`Navigating to Product ${product.name}...`);
+            router.push(`/products/${product.id}`);
+            setTimeout(() => setProdClicked(false), maxAnimationTime);
         } else {
             setCartClicked(true);
             dev() && console.log(`Add to Cart`, {e, type, user});
@@ -58,7 +65,7 @@ export default function Product(props) {
     return (
         <div className={`product`}>
             <div className={`productTitle`}>
-                <i className={`fab fa-shopify`}></i>
+                <i className={`topIcon fab fa-shopify`}></i>
                 <div className={`desc productTitleAndPrice`}>
                     <span className={`prodTitle oflow ${product?.title.length > 15 ? `longTitle` : `shortTitle`}`}>{product?.title}</span>
                     <span className={`price`}> - <span className={`dollar`}>$</span>{product?.variants[0]?.price}</span>
@@ -82,6 +89,10 @@ export default function Product(props) {
                 {user && checkRole(user.roles, `Admin`) && <button onClick={(e) => handleShopifyAction(e, `Delete`)} className={`productButton btn btn-secondary`}>
                     <i className={`productIcon fas ${delClicked ? `spinThis fas fa-spinner` : `fa-trash-alt`}`}></i>
                     <div className={`productButtonText alertActionButton`}>{delClicked ? `Deleting` : `Delete`}</div>
+                </button>}
+                {!router.route.includes(`products`) && <button onClick={(e) => handleShopifyAction(e, `Product`)} className={`productButton btn btn-primary`}>
+                    <i className={`productIcon fas ${prodClicked ? `spinThis fas fa-spinner` : `fa-tags`}`}></i>
+                    <div className={`productButtonText alertActionButton`}>{prodClicked ? `Navigating` : `Details`}</div>
                 </button>}
                 <button onClick={(e) => handleShopifyAction(e, `Cart`)} className={`productButton btn btn-primary`}>
                     <i className={`productIcon fas ${cartClicked ? `fa-check` : `fa-cart-plus`}`}></i>

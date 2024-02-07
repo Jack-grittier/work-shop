@@ -219,7 +219,7 @@ hr {
 }
 
 .productContent {
-    height: 84%;
+    height: 100%;
     font-size: 20px;
 }
 
@@ -273,7 +273,7 @@ hr {
     &.noProducts, &.oneProduct {
         width: 75% !important;
         grid-template-columns: repeat(1, 1fr);
-        i {
+        .topIcon {
             position: relative;
             top: 5px;
         }
@@ -293,7 +293,7 @@ hr {
         }
     }
     @media (min-width: 1800px) {
-        &:not(.noProducts) {
+        &:not(.noProducts):not(.oneProduct) {
             grid-template-columns: repeat(3, 1fr);
         }
     }

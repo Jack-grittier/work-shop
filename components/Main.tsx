@@ -8,11 +8,11 @@ export default function Main(props) {
     return <main className={className} style={style}>
         <ToastContainer 
             autoClose={maxAnimationTime}
+            pauseOnFocusLoss={false}
             hideProgressBar={false}
             position={`top-right`}
             pauseOnHover={false}
             newestOnTop={false}
-            pauseOnFocusLoss
             closeOnClick
             theme="dark"
             rtl={false}
