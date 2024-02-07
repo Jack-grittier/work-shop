@@ -76,8 +76,9 @@ export const checkRole = (userRoles, role) => {
   return userHasMinimumRole;
 }
 
+export const prodURL = window ? window.location.origin : process.env.NEXT_PUBLIC_PRODURL || process.env.PRODURL || `https://creative-workshop.vercel.app`;
 export const serverPort = process.env.NEXT_PUBLIC_SERVERPORT || process.env.SERVERPORT || 3000;
-export const liveLink = process.env.NODE_ENV == `development` ? `http://localhost:${serverPort}` : window.location.origin;
+export const liveLink = process.env.NODE_ENV == `development` ? `http://localhost:${serverPort}` : prodURL;
 
 export const fetchShopDataFromAPI = async (customObject = true) => {
   let shopResponse = await fetch(`${liveLink}/api/shop`);

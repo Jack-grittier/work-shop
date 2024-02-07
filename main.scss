@@ -264,6 +264,9 @@ html[class~="dark"] {
 
 article {
     padding: 0 !important;
+    &:has(.oneProduct) {
+        padding: 0 0 60px 0 !important;
+    }
     main {
         max-width: 100% !important;
         width: 100% !important;
