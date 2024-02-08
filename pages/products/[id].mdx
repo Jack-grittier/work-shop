@@ -1,8 +1,8 @@
 import Main from '../../components/Main'
 import Banner from '../../components/Banner'
 import Products from '../../components/Products'
-
 import { fetchProductsFromAPI } from '../../firebase'
+import Product from '../../models/Product';
 
 export async function getStaticPaths() {
     let products = await fetchProductsFromAPI();
@@ -29,11 +29,12 @@ export async function getStaticProps({ params }) {
 # Product
 
 export default function ProductPage({ product }) {
+    let filteredProducts = [new Product(product)];
     return <>
         <Banner title={product.name} />
         <section className={`productsSection customSection`}>
             <Main className={`cwsContent`} showTopButton={true}>
-                <Products products={[product]} />
+                <Products products={filteredProducts} />
             </Main>
         </section>
     </>

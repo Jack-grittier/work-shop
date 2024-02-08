@@ -4,7 +4,6 @@ import { StateContext } from "../pages/_app";
 
 export default function Products(props) {
     let { products } = props;
-
     if (!products) products = useContext<any>(StateContext)?.products;
 
     return (
@@ -16,7 +15,7 @@ export default function Products(props) {
                         return (
                             <li className={`productCode listedCommand`} key={productIndex} title={product?.title}>
                                 <div className={`productDetails commandDetails flex gap15`}>
-                                    <Product product={product} />
+                                    <Product product={product} filteredProducts={products} />
                                 </div>
                             </li>
                         )

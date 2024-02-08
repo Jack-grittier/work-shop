@@ -43,15 +43,35 @@ module.exports = withNextra({
         permanent: true,
       },
       {
+        source: `/contactus`,
+        destination: `/contact`,
+        permanent: true,
+      },
+      {
+        source: `/contact-us`,
+        destination: `/contact`,
+        permanent: true,
+      },
+      {
+        source: `/contactme`,
+        destination: `/contact`,
+        permanent: true,
+      },
+      {
+        source: `/contact-me`,
+        destination: `/contact`,
+        permanent: true,
+      },
+      {
         source: `/product`,
         destination: `/shop`,
         permanent: true,
       },
-      // {
-      //   source: `/products`,
-      //   destination: `/shop`,
-      //   permanent: true,
-      // },
+      {
+        source: `/goods`,
+        destination: `/shop`,
+        permanent: true,
+      },
       {
         source: `/product/:id`,
         destination: `/products/:id`, 

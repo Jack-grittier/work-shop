@@ -3,14 +3,23 @@ import { toast } from "react-toastify";
 import { useContext, useState } from "react";
 import { StateContext, dev } from "../pages/_app";
 import { checkRole, liveLink, maxAnimationTime, productPlaceholderImage } from "../firebase";
+import { ButtonGroup } from "@mui/material";
 
 export default function Product(props) {
-    let { product } = props;
-    let { user, router, setProducts, setProductToEdit } = useContext<any>(StateContext);
+    let { product, filteredProducts } = props;
+    let { user, router, products, setProducts, setProductToEdit } = useContext<any>(StateContext);
+
+    if (!filteredProducts) filteredProducts = products;
 
     let [delClicked, setDelClicked] = useState(false);
     let [prodClicked, setProdClicked] = useState(false);
     let [cartClicked, setCartClicked] = useState(false);
+    let [featuredProduct, setFeaturedProduct] = useState(filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length > 1);
+
+    let [options, setOptions] = useState({});
+    let [optionGroups, setOptionGroups] = useState(product.options);
+
+    console.log(`Product`, {product, options, optionGroups});
 
     const deleteProduct = async () => {
         try {
@@ -60,8 +69,18 @@ export default function Product(props) {
         }
     }
 
+    const onProductOptionFormSubmit = (e) => {
+        e.preventDefault();
+        let { selectColorField } = e.target;
+        console.log(`onProductOptionFormSubmit`, { e, selectColorField, val: selectColorField.value });
+    }
+
+    const isCartButtonDisabled = () => {
+        return Object.keys(options).length == 0;
+    }
+
     return (
-        <div className={`product`}>
+        <div className={`product ${featuredProduct ? `multiProduct` : `featuredProduct`}`}>
             <div className={`productTitle`}>
                 <i className={`topIcon fab fa-shopify`}></i>
                 <div className={`desc productTitleAndPrice`}>
@@ -83,20 +102,45 @@ export default function Product(props) {
                 </div>
                 {product.description != `` ? product.description : product?.title}
             </div>
-            <div className={`productOptions productButtons`}>
-                {user && checkRole(user.roles, `Admin`) && <button onClick={(e) => handleShopifyAction(e, `Delete`)} className={`productButton btn btn-secondary`}>
-                    <i className={`productIcon fas ${delClicked ? `spinThis fas fa-spinner` : `fa-trash-alt`}`}></i>
-                    <div className={`productButtonText alertActionButton`}>{delClicked ? `Deleting` : `Delete`}</div>
-                </button>}
-                {!router.route.includes(`products`) && <button onClick={(e) => handleShopifyAction(e, `Product`)} className={`productButton btn btn-primary`}>
-                    <i className={`productIcon fas ${prodClicked ? `spinThis fas fa-spinner` : `fa-tags`}`}></i>
-                    <div className={`productButtonText alertActionButton`}>{prodClicked ? `Navigating` : `Details`}</div>
-                </button>}
-                <button onClick={(e) => handleShopifyAction(e, `Cart`)} className={`productButton btn btn-primary`}>
-                    <i className={`productIcon fas ${cartClicked ? `fa-check` : `fa-cart-plus`}`}></i>
-                    <div className={`productButtonText alertActionButton`}>{cartClicked ? `Added` : `Cart`}</div>
-                </button>
-            </div>
+            <form onSubmit={(e) => onProductOptionFormSubmit(e)} className={`productOptions`}>
+                {optionGroups && Array.isArray(optionGroups) && optionGroups.length > 0 && optionGroups.map((optGroup, optGroupIndex) => {
+                    return (
+                        <fieldset key={optGroupIndex} name={`select${optGroup?.name}Field`} className={`selectToggle select${optGroup?.name}Field`}>
+                            <h3>Select {optGroup?.name}</h3>
+                            <ButtonGroup className={`toggleButtons productButtons`} variant={`outlined`} aria-label={`Product Options`}>
+                            {optGroup.values && Array.isArray(optGroup.values) && optGroup.values.length > 0 && optGroup.values.map((option, optionIndex) => {
+                                return (
+                                    <button key={optionIndex} type={`button`} className={`productButton ${optGroup?.name}-${option}`} value={option}>{option}</button>
+                                )
+                            })}
+                            </ButtonGroup>
+                        </fieldset>
+                    )
+                })}
+                {/* <fieldset name={`selectColorField`} className={`selectToggle selectColorField`}>
+                    <h3>Select Color</h3>
+                    <ButtonGroup className={`toggleButtons productButtons`} variant={`outlined`} aria-label={`Product Options`}>
+                        <button type={`button`} className={`productButton`} value={`Blue`}>Blue</button>
+                        <button type={`button`} className={`productButton`} value={`Red`}>Red</button>
+                        <button type={`button`} className={`productButton`} value={`Green`}>Green</button>
+                        <button type={`button`} className={`productButton`} value={`Yellow`}>Yellow</button>
+                    </ButtonGroup>
+                </fieldset> */}
+                <div className={`productActions productButtons`}>
+                    {user && checkRole(user.roles, `Admin`) && <button onClick={(e) => handleShopifyAction(e, `Delete`)} className={`productButton btn btn-secondary`} type={`button`}>
+                        <i className={`productIcon fas ${delClicked ? `spinThis fas fa-spinner` : `fa-trash-alt`}`}></i>
+                        <div className={`productButtonText alertActionButton`}>{delClicked ? `Deleting` : `Delete`}</div>
+                    </button>}
+                    {!router.route.includes(`products`) && <button onClick={(e) => handleShopifyAction(e, `Product`)} className={`productButton`} type={`button`}>
+                        <i className={`productIcon fas ${prodClicked ? `spinThis fas fa-spinner` : `fa-tags`}`}></i>
+                        <div className={`productButtonText alertActionButton`}>{prodClicked ? `Navigating` : `Details`}</div>
+                    </button>}
+                    {router.route.includes(`products`) && <button onClick={(e) => handleShopifyAction(e, `Cart`)} className={`productButton ${isCartButtonDisabled() ? `disabled` : ``}`} type={`submit`} disabled={isCartButtonDisabled()}>
+                        <i className={`productIcon fas ${cartClicked ? `fa-check` : `fa-cart-plus`}`}></i>
+                        <div className={`productButtonText alertActionButton`}>{cartClicked ? `Added` : `Cart`}</div>
+                    </button>}
+                </div>
+            </form>
         </div>
     )
 }

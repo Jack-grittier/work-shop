@@ -22,7 +22,7 @@ export default function CreativeWorkshop(props) {
       <section className={`productsSection customSection`}>
         <h1 className={`shopTitle`}>{shop?.name}</h1>
         {user && checkRole(user.roles, `Admin`) && <ProductForm />}
-        <Products products={products} />
+        <Products />
       </section>
     </Main>
   )

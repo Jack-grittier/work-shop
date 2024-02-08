@@ -62,7 +62,7 @@ export default class Product {
     images: Image[],
     image: Image,
     variants: Variant[],
-    type?: number,
+    type?: any,
     quantity?: number,
     description?: string,
     category?: string,
