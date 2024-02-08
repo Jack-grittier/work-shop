@@ -260,6 +260,9 @@ hr {
 
 .toggleButtons {
     grid-gap: 0;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
     button {
         border: 0;
         border-radius: 0;
@@ -267,13 +270,12 @@ hr {
             border: 2px solid white;
         }
         &:first-child {
-            border-top-width: 2px;
-            border-left-width: 2px;
-            border-bottom-width: 2px;
+            border-left-width: 3px;
             border-top-left-radius: 5px;
             border-bottom-left-radius: 5px;
         }
         &:last-child {
+            border-right-width: 3px;
             border-top-right-radius: 5px;
             border-bottom-right-radius: 5px;
         }
@@ -286,12 +288,18 @@ hr {
     border-radius: 5px;
     font-weight: bolder;
     align-items: center;
-    padding: 2px 8px 0 8px;
+    padding: 4px 10px 2px;
     border: 2px solid white;
     transition: var(--transition);
     &:hover {
+        color: white;
         background: var(--cwsPink);
         border: 2px solid var(--cwsPink);
+    }
+    &:active, &.active {
+        color: white;
+        background: var(--cwsBlue);
+        border: 2px solid var(--cwsBlue);
     }
 }
 
@@ -502,17 +510,11 @@ pre {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    h3 {
+    .selectText {
         width: 100%;
         font-size: 20px;
         text-align: right;
-        // margin: 0 auto;
-    }
-    div {
-        width: 100%;
-        display: flex;
-        justify-content: flex-start;
-        // margin: 0 auto;
+        max-width: fit-content;
     }
 }
 

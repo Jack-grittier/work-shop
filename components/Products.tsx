@@ -13,7 +13,7 @@ export default function Products(props) {
                 <ul id={`productsCodeBlocks`} className={`productBlocks commandsList commandToCopy ${products?.length > 0 ? `hasProducts ${products?.length > 1 ? `multiProducts` : `oneProduct`}` : `noProducts`}`}>  
                     {products?.length > 0 ? products.map((product, productIndex) => {
                         return (
-                            <li className={`productCode listedCommand`} key={productIndex} title={product?.title}>
+                            <li className={`productContainer productCode listedCommand`} key={productIndex}>
                                 <div className={`productDetails commandDetails flex gap15`}>
                                     <Product product={product} filteredProducts={products} />
                                 </div>

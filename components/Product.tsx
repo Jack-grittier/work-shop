@@ -14,10 +14,10 @@ export default function Product(props) {
     let [delClicked, setDelClicked] = useState(false);
     let [prodClicked, setProdClicked] = useState(false);
     let [cartClicked, setCartClicked] = useState(false);
-    let [featuredProduct, setFeaturedProduct] = useState(filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length > 1);
+    let [featuredProduct, setFeaturedProduct] = useState(filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1);
 
-    let [options, setOptions] = useState({});
     let [optionGroups, setOptionGroups] = useState(product.options);
+    let [options, setOptions] = useState(product.options.reduce((acc, {name, values}) => Object.assign(acc, {[name.toLowerCase()]: values[0]}), {}));
 
     console.log(`Product`, {product, options, optionGroups});
 
@@ -57,14 +57,14 @@ export default function Product(props) {
             // setTimeout(() => setDelClicked(false), maxAnimationTime);
         } else if (type == `Product`) {
             setProdClicked(true);
-            dev() && console.log(`Navigating to Product ${product.name}`, {e, type, user, router, route: router.route});
-            toast.info(`Navigating to Product ${product.name}...`);
+            dev() && console.log(`Navigating to ${product.name}`, {e, type, user, router, route: router.route});
+            toast.info(`Navigating to ${product.name}`);
             router.push(`/products/${product.id}`);
             setTimeout(() => setProdClicked(false), maxAnimationTime);
         } else {
             setCartClicked(true);
             dev() && console.log(`Add to Cart`, {e, type, user});
-            toast.success(`Add to Cart is in Development...`);
+            toast.info(`Add to Cart is in Development`);
             setTimeout(() => setCartClicked(false), maxAnimationTime);
         }
     }
@@ -79,8 +79,17 @@ export default function Product(props) {
         return Object.keys(options).length == 0;
     }
 
+    const updateOptions = (optName, opt) => {
+        setOptions(prevOptions => {
+            return {
+                ...prevOptions,
+                [optName.toLowerCase()]: opt
+            }
+        })
+    }
+
     return (
-        <div className={`product ${featuredProduct ? `multiProduct` : `featuredProduct`}`}>
+        <div className={`product ${featuredProduct ? `featuredProduct` : `multiProduct`}`}>
             <div className={`productTitle`}>
                 <i className={`topIcon fab fa-shopify`}></i>
                 <div className={`desc productTitleAndPrice`}>
@@ -103,29 +112,20 @@ export default function Product(props) {
                 {product.description != `` ? product.description : product?.title}
             </div>
             <form onSubmit={(e) => onProductOptionFormSubmit(e)} className={`productOptions`}>
-                {optionGroups && Array.isArray(optionGroups) && optionGroups.length > 0 && optionGroups.map((optGroup, optGroupIndex) => {
+                {featuredProduct && optionGroups && Array.isArray(optionGroups) && optionGroups.length > 1 && optionGroups.map((optGroup, optGroupIndex) => {
                     return (
                         <fieldset key={optGroupIndex} name={`select${optGroup?.name}Field`} className={`selectToggle select${optGroup?.name}Field`}>
-                            <h3>Select {optGroup?.name}</h3>
+                            <h3 className={`selectText`}>Select {optGroup?.name}</h3>
                             <ButtonGroup className={`toggleButtons productButtons`} variant={`outlined`} aria-label={`Product Options`}>
                             {optGroup.values && Array.isArray(optGroup.values) && optGroup.values.length > 0 && optGroup.values.map((option, optionIndex) => {
                                 return (
-                                    <button key={optionIndex} type={`button`} className={`productButton ${optGroup?.name}-${option}`} value={option}>{option}</button>
+                                    <button onClick={(e) => updateOptions(optGroup?.name, option)} key={optionIndex} type={`button`} className={`productButton ${Object.values(options).includes(option) ? `active` : ``} ${optGroup?.name}-${option}`} value={option}>{option}</button>
                                 )
                             })}
                             </ButtonGroup>
                         </fieldset>
                     )
                 })}
-                {/* <fieldset name={`selectColorField`} className={`selectToggle selectColorField`}>
-                    <h3>Select Color</h3>
-                    <ButtonGroup className={`toggleButtons productButtons`} variant={`outlined`} aria-label={`Product Options`}>
-                        <button type={`button`} className={`productButton`} value={`Blue`}>Blue</button>
-                        <button type={`button`} className={`productButton`} value={`Red`}>Red</button>
-                        <button type={`button`} className={`productButton`} value={`Green`}>Green</button>
-                        <button type={`button`} className={`productButton`} value={`Yellow`}>Yellow</button>
-                    </ButtonGroup>
-                </fieldset> */}
                 <div className={`productActions productButtons`}>
                     {user && checkRole(user.roles, `Admin`) && <button onClick={(e) => handleShopifyAction(e, `Delete`)} className={`productButton btn btn-secondary`} type={`button`}>
                         <i className={`productIcon fas ${delClicked ? `spinThis fas fa-spinner` : `fa-trash-alt`}`}></i>
