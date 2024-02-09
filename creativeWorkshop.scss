@@ -56,23 +56,43 @@ nav a.nx-text-sm {
 }
 
 .red {
-    color: var(--red);
+    color: var(--cwsRed);
+}
+
+.redbg, .redBg, .redBG {
+    background: var(--cwsRed);
 }
 
 .blue {
     color: var(--cwsBlue);
 }
 
+.bluebg, .blueBg, .blueBG {
+    background: var(--cwsBlue);
+}
+
 .pink {
     color: var(--cwsPink);
+}
+
+.pinkbg, .pinkBg, .pinkBG {
+    background: var(--cwsPink);
 }
 
 .peach {
     color: var(--cwsPeach);
 }
 
+.peachbg, .peachBg, .peachBG {
+    background: var(--cwsPeach);
+}
+
 .green {
     color: var(--cwsGreen);
+}
+
+.greenbg, .greenBg, .greenBG {
+    background: var(--cwsGreen);
 }
 
 .googleButton {
@@ -326,14 +346,14 @@ hr {
             border: 2px solid white;
         }
         &:first-child, &.firstOption {
-            border-left-width: 3px;
             border-top-left-radius: 5px;
             border-bottom-left-radius: 5px;
+            border-left-width: 3px !important;
         }
         &:last-child {
-            border-right-width: 3px;
             border-top-right-radius: 5px;
             border-bottom-right-radius: 5px;
+            border-right-width: 3px !important;
         }
     }
 }
@@ -351,28 +371,30 @@ hr {
     padding: 4px 10px 2px;
     border: 2px solid white;
     transition: var(--transition);
-    &:hover {
-        color: white;
-        background: var(--cwsBlue);
-        border: 2px solid var(--cwsBlue);
-        &.addToCartButton {
-            .dollar {
-                @extend .pink;
-            }
-            .addToCartIcon {
-                @extend .pink;
+    &:not(:disabled) {
+        &:hover {
+            color: white;
+            background: var(--cwsBlue);
+            border: 2px solid var(--cwsBlue);
+            &.addToCartButton {
+                .dollar {
+                    @extend .pink;
+                }
+                .addToCartIcon {
+                    @extend .pink;
+                }
             }
         }
-    }
-    &:active {
-        color: white;
-        background: var(--cwsGreen);
-        border: 2px solid var(--cwsGreen);
-    }
-    &.active {
-        color: white;
-        background: var(--cwsPink);
-        border: 2px solid var(--cwsPink);
+        &:active {
+            color: white;
+            background: var(--cwsGreen);
+            border: 2px solid var(--cwsGreen);
+        }
+        &.active {
+            color: white;
+            background: var(--cwsPink);
+            border: 2px solid var(--cwsPink);
+        }
     }
 }
 
@@ -394,6 +416,43 @@ hr {
         text-align: right;
         padding-right: 25px;
         max-width: fit-content;
+    }
+}
+
+.qtyButton {
+    &.subQty {
+        color: black;
+        background: white;
+        border-color: white !important;
+        // background: var(--cwsPink);
+        // border-color: var(--cwsPink) !important;
+        &:not(:disabled) {
+            &:hover {
+                background: var(--cwsPink);
+                border-color: var(--cwsPink) !important;
+            }
+            &:active {
+                background: var(--cwsRed);
+                border-color: var(--cwsRed) !important;
+            }
+        }
+    }
+    &.addQty {
+        color: black;
+        background: white;
+        border-color: white !important;
+        // background: var(--cwsBlue);
+        // border-color: var(--cwsBlue) !important;
+        &:not(:disabled) {
+            &:hover {
+                background: var(--cwsBlue);
+                border-color: var(--cwsBlue) !important;
+            }
+            &:active {
+                background: var(--cwsGreen);
+                border-color: var(--cwsGreen) !important;
+            }
+        }
     }
 }
 
@@ -508,6 +567,7 @@ pre {
 }
 
 .productImageContainer {
+    cursor: pointer;
     position: relative;
     &:has(.productAltImage) {
         .productAltImage {
@@ -520,20 +580,17 @@ pre {
             .productMainImage {
                 opacity: 0;
             }
+            .productAltImage {
+                opacity: 1;
+            }
         }
     }
 }
 
 .productPic {
-    cursor: pointer;
     border-radius: 20px;
     margin-bottom: 20px;
     transition: var(--transition);
-    &.productAltImage {
-        &:hover {
-            opacity: 1;
-        }
-    }
 }
 
 .productDesc {
@@ -605,6 +662,11 @@ pre {
             color: white;
         }
     }
+}
+
+.nx-mt-16 {
+    margin: 0;
+    display: none;
 }
 
 .disabled {

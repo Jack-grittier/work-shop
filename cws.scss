@@ -14,7 +14,7 @@ html, body {
 }
 
 :root {
-    --red: #f63460;
+    --cwsRed: #f63460;
     --authFormHeight: 20px;
     --googleButtonWidth: 15px;
     --tw-ring-color: #007aa3;
@@ -89,7 +89,7 @@ li {
 }
 
 .preChange {
-    color: var(--red);
+    color: var(--cwsRed);
     text-decoration: line-through;
     text-decoration-thickness: 1px;
     text-decoration-color: white;
@@ -372,7 +372,7 @@ li {
                     justify-content: center;
                     max-width: 97% !important;
                     transition: 300ms ease-in-out;
-                    background: linear-gradient(90deg, var(--red), yellow, lime);
+                    background: linear-gradient(90deg, var(--cwsRed), yellow, lime);
                 }
             }
         }
@@ -1417,7 +1417,7 @@ div[role="presentation"] {
         content: "";
         display: flex;
         font-size: 1.3em;
-        color: var(--red);
+        color: var(--cwsRed);
         position: absolute;
         align-items: center;
         justify-content: center;
@@ -1449,7 +1449,7 @@ div[role="presentation"] {
 }
 
 .redText {
-    color: var(--red) !important;
+    color: var(--cwsRed) !important;
 }
 
 .win, .winner, .positive {
@@ -1459,7 +1459,7 @@ div[role="presentation"] {
 
 .loser, .negative {
     transition: var(--transition);
-    color: var(--red);
+    color: var(--cwsRed);
 }
 
 .challenger {

@@ -17,8 +17,11 @@ export default function Product(props) {
     let [cartClicked, setCartClicked] = useState(false);
     let [backToShopClicked, setBackToShopClicked] = useState(false);
     let [optionGroups, setOptionGroups] = useState(product.options);
-    let [options, setOptions] = useState(product.options.reduce((acc, {name, values}) => Object.assign(acc, {[name]: values[0]}), {}));
     let [featuredProduct, setFeaturedProduct] = useState(filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1);
+    let [options, setOptions] = useState(product.options.reduce((acc, {name, values}) => Object.assign(acc, {[name]: values[0]}), {
+        Quantity: 1,
+        Price: product.price,
+    }));
 
     console.log(`Product`, {product, options, optionGroups});
 
@@ -41,17 +44,9 @@ export default function Product(props) {
         let icon = `blue fas fa-ruler-combined`;
         if (optName == `Color`) icon = `blue fas fa-palette`; 
         else if (optName == `Size`) icon = `blue fas fa-signal`; 
+        else if (optName == `Quantity`) icon = `blue fas fa-hashtag`;
 
         return icon;
-    }
-
-    const updateOptions = (optName, opt) => {
-        setOptions(prevOptions => {
-            return {
-                ...prevOptions,
-                [optName]: opt
-            }
-        })
     }
 
     const backToShop = () => {
@@ -60,6 +55,39 @@ export default function Product(props) {
         toast.info(`Navigating to Shop`);
         router.push(`/shop`);
         setTimeout(() => setBackToShopClicked(false), maxAnimationTime);
+    }
+
+    const updateOptions = (optName, opt) => {
+        setOptions(prevOptions => {
+            let Quantity = prevOptions.Quantity;
+            let Price: any = parseFloat(product.price);
+            let Size = optName == `Size` ? opt : prevOptions.Size;
+
+            let sizeMultiplier = parseFloat(Size.charAt(0));
+            let sizeMultiplierIsNumber = !isNaN(sizeMultiplier);
+            if (sizeMultiplierIsNumber) {
+                Price = Price + (sizeMultiplier * 1.5);
+            }
+
+            if (optName == `QuantitySub`) {
+                Quantity = Quantity <= 1 ? 1 : Quantity - 1;
+            } else if (optName == `QuantityAdd`) {
+                Quantity = Quantity + 1;
+            }
+
+            Price = (Quantity * Price).toFixed(2).toString();
+
+            let untrackedOptions = [`QuantitySub`, `QuantityAdd`];
+
+            return {
+                ...prevOptions,
+                ...(!untrackedOptions.includes(optName) && {
+                    [optName]: opt,
+                }),
+                Quantity,
+                Price,
+            }
+        })
     }
 
     const deleteProduct = async () => {
@@ -87,6 +115,7 @@ export default function Product(props) {
                 return responseData;
             }
         } catch (error) {
+            toast.error(`Deleting Product Error on Server...`);
             console.log(`Deleting Product Error on Server...`, product);
             setTimeout(() => setDelClicked(false), maxAnimationTime);
         }
@@ -133,7 +162,7 @@ export default function Product(props) {
                 <div className={`desc productTitleAndPrice`}>
                     <span className={`prodTitle oflow ${product?.title.length > 15 ? `longTitle` : `shortTitle`}`}>{product?.title}</span>
                     <span className={`price cardPrice`}> - 
-                        <span className={`dollar`}>$</span>{product?.variants[0]?.price}
+                        <span className={`dollar`}>$</span>{options?.Price}
                     </span>
                 </div>
             </div>
@@ -155,12 +184,35 @@ export default function Product(props) {
                     </div>
                     <div className={`productDescField productDescQty textWithIcon`}>
                         <i className={`blue fas fa-hashtag`}></i>
-                        {featuredProduct ? `Quantity` : `Qty`} - {product.quantity}
+                        {featuredProduct ? <>
+                            {product.quantity} In Stock
+                        </> : <>
+                            Qty - {product.quantity}
+                        </>}
                     </div>
                 </div>
                 {product.description != `` ? product.description : product?.title}
             </div>
             <form onSubmit={(e) => onProductOptionFormSubmit(e)} className={`productOptions productOptionsForm`}>
+                {featuredProduct && <>
+                    <fieldset name={`selectQuantityField`} className={`selectToggle selectQuantityField`}>
+                        <ButtonGroup className={`toggleButtons productButtons`} variant={`outlined`} aria-label={`Product Options`}>
+                            <h3 className={`selectText textWithIcon`}>
+                                <i className={`selectIcon ${renderSelectIcon(`Quantity`)}`}></i> 
+                                Quantity
+                            </h3>
+                            <button onClick={(e) => updateOptions(`QuantitySub`, options.Quantity)} type={`button`} className={`subQty redBg qtyButton optionButton productButton Quantity-${options.Quantity} firstOption`} value={options.Quantity}>
+                                <span className={`optionText textOverflow`}>-</span>
+                            </button>
+                            <button type={`button`} className={`qtyText optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity} disabled>
+                                <span className={`optionText textOverflow`}>{options.Quantity}</span>
+                            </button>
+                            <button onClick={(e) => updateOptions(`QuantityAdd`, options.Quantity)} type={`button`} className={`addQty greenBg qtyButton optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity}>
+                                <span className={`optionText textOverflow`}>+</span>
+                            </button>
+                        </ButtonGroup>
+                    </fieldset>
+                </>}
                 {featuredProduct && optionGroups && Array.isArray(optionGroups) && optionGroups.length > 1 && optionGroups.map((optGroup, optGroupIndex) => {
                     return (
                         <fieldset key={optGroupIndex} name={`select${optGroup?.name}Field`} className={`selectToggle select${optGroup?.name}Field`}>
@@ -199,7 +251,7 @@ export default function Product(props) {
                         {router.route.includes(`products`) && <button onClick={(e) => handleShopifyAction(e, `Cart`)} className={`productButton addToCartButton ${isCartButtonDisabled() ? `disabled` : ``}`} type={`submit`} disabled={isCartButtonDisabled()}>
                             {!cartClicked && <>
                                 <span className={`price innerPrice`}>
-                                    <span className={`dollar`}>$</span>{product?.variants[0]?.price}
+                                    <span className={`dollar`}>$</span>{options?.Price}
                                 </span>
                             </>}
                             <i className={`productIcon green addToCartIcon fas ${cartClicked ? cartLoaded ? `fa-check` : `pink spinThis fas fa-spinner` : `fa-shopping-cart`}`}></i>
