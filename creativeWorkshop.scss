@@ -428,6 +428,9 @@ hr {
     }
     &.noProducts, &.oneProduct {
         width: 75% !important;
+        @media (min-width: 1500px) {
+            width: 51% !important;
+        }
         grid-template-columns: repeat(1, 1fr);
         .topIcon {
             position: relative;

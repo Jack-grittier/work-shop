@@ -11,7 +11,7 @@ export default function Products(props) {
 
     return (
         <>
-            {products && products?.length > 0 && <h2 className={`shopSubtitle`}>{products?.length} Product(s)</h2>}
+            {products && products?.length > 0 && products?.length != 1 && <h2 className={`shopSubtitle`}>{products?.length} Product(s)</h2>}
             {user && checkRole(user.roles, `Admin`) && products && products?.length > 0 && products?.length != 1 && <ProductForm />}
             {products && (
                 <ul id={`productsCodeBlocks`} className={`productBlocks commandsList commandToCopy ${products?.length > 0 ? `hasProducts ${products?.length > 1 ? `multiProducts` : `oneProduct`}` : `noProducts`}`}>  
