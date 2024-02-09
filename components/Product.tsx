@@ -7,7 +7,7 @@ import { checkRole, liveLink, maxAnimationTime, productPlaceholderImage } from "
 
 export default function Product(props) {
     let { product, filteredProducts } = props;
-    let { user, router, products, setProducts, productToEdit, setProductToEdit } = useContext<any>(StateContext);
+    let { user, router, products, setProducts, adminFeatures, setImageURLAdded, productToEdit, setProductToEdit } = useContext<any>(StateContext);
 
     if (!filteredProducts) filteredProducts = products;
 
@@ -36,8 +36,9 @@ export default function Product(props) {
         deleteProduct();
     }
 
-    const cancelEditProduct = () => {
+    const cancelOrFinishEditProduct = () => {
         setProductToEdit(null);
+        setImageURLAdded(false);
         let productFormElement: any = document.querySelector(`.productForm`);
         productFormElement.reset();
     }
@@ -130,7 +131,7 @@ export default function Product(props) {
                 const responseData = await responseToUse.json();
                 toast.success(`Product Successfully Deleted`);
                 setProducts(prevProducts => prevProducts.filter(prevProduct => prevProduct.id != product.id));
-                setProductToEdit(null);
+                cancelOrFinishEditProduct();
                 setDelClicked(false);
                 return responseData;
             }
@@ -153,7 +154,7 @@ export default function Product(props) {
                         </button>
                     </div>
                 </div>
-            </>, undefined, `330px`);
+            </>, undefined, `400px`);
         } else if (type == `Product`) {
             setProdClicked(true);
             dev() && console.log(`Navigating to ${product.name}`, {e, type, user, router, route: router.route});
@@ -162,13 +163,14 @@ export default function Product(props) {
             setTimeout(() => setProdClicked(false), maxAnimationTime);
         } else if (type == `Edit`) {
             setEditClicked(true);
+            cancelOrFinishEditProduct();
             setProductToEdit(product);
             dev() && console.log(`Editing ${product.name}`, product);
             setEditClicked(false);
             // setTimeout(() => setEditClicked(false), maxAnimationTime);
         } else if (type == `Cancel`) {
             setCancelClicked(true);
-            cancelEditProduct();
+            cancelOrFinishEditProduct();
             dev() && console.log(`Cancel Editing ${product.name}`, product);
             setCancelClicked(false);
             // setTimeout(() => setCancelClicked(false), maxAnimationTime);
@@ -249,14 +251,14 @@ export default function Product(props) {
                                     <i className={`selectIcon ${renderSelectIcon(`Quantity`)}`}></i> 
                                     Quantity
                                 </h3>
-                                <button onClick={(e) => updateOptions(`QuantitySub`, options.Quantity)} type={`button`} className={`subQty redBg qtyButton optionButton productButton Quantity-${options.Quantity} firstOption`} value={options.Quantity}>
+                                <button onClick={(e) => updateOptions(`QuantitySub`, options.Quantity)} type={`button`} className={`subQty redBg qtyButton ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyButtonSlim` : ``} optionButton productButton Quantity-${options.Quantity} firstOption`} value={options.Quantity}>
                                     <span className={`optionText textOverflow`}>-</span>
                                 </button>
-                                <button type={`button`} className={`qtyText optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity} disabled>
+                                <button type={`button`} className={`qtyText ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyTextSlim` : ``} optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity} disabled>
                                     <span className={`optionText textOverflow`}>{options.Quantity}</span>
                                     {/* <input name={`quantity`} type={`number`} value={options.Quantity} /> */}
                                 </button>
-                                <button onClick={(e) => updateOptions(`QuantityAdd`, options.Quantity)} type={`button`} className={`addQty greenBg qtyButton optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity}>
+                                <button onClick={(e) => updateOptions(`QuantityAdd`, options.Quantity)} type={`button`} className={`addQty greenBg qtyButton ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyButtonSlim` : ``} optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity}>
                                     <span className={`optionText textOverflow`}>+</span>
                                 </button>
                             </ButtonGroup>
@@ -304,13 +306,6 @@ export default function Product(props) {
                             </button>
                         )}
 
-                        {!router.route.includes(`products/`) && (
-                            <button title={`Details ${product?.title}`} onClick={(e) => handleShopifyAction(e, `Product`)} className={`productButton detailsProductButton`} type={`button`}>
-                                <i className={`productIcon fas ${prodClicked ? `pink spinThis fa-spinner` : `green fa-tags`}`}></i>
-                                <div className={`productButtonText alertActionButton`}>{prodClicked ? `Navigating` : `Details`}</div>
-                            </button>
-                        )}
-
                         {user && checkRole(user.roles, `Admin`) && (
                             <button 
                                 className={`productButton editProductButton ${productToEdit != null && productToEdit.id == product.id ? `cancelProductButton` : ``}`} type={`button`}
@@ -323,6 +318,13 @@ export default function Product(props) {
                             >
                                 <i className={`productIcon fas ${editClicked || cancelClicked ? `pink spinThis fa-spinner` : productToEdit != null && productToEdit.id == product.id ? `blue fa-ban` : `blue fa-pen`}`}></i>
                                 <div className={`productButtonText alertActionButton`}>{editClicked ? `Editing` : productToEdit != null && productToEdit.id == product.id ? cancelClicked ? `Canceling` : `Cancel` : `Edit`}</div>
+                            </button>
+                        )}
+
+                        {!router.route.includes(`products/`) && (
+                            <button title={`Details ${product?.title}`} onClick={(e) => handleShopifyAction(e, `Product`)} className={`productButton detailsProductButton`} type={`button`}>
+                                <i className={`productIcon fas ${prodClicked ? `pink spinThis fa-spinner` : `green fa-tags`}`}></i>
+                                <div className={`productButtonText alertActionButton`}>{prodClicked ? `Navigating` : `Details`}</div>
                             </button>
                         )}
 

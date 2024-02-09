@@ -39,6 +39,9 @@
     --cwsPinkT: rgba(199, 26, 143, 0.85);
     --fontFamily: 'Sofia Sans', sans-serif;
     --selectionTextColor: var(--softWhite);
+    --cwsPinkTMin: rgba(199, 26, 143, 0.7);
+    --cwsBlueTMin: rgba(65, 174, 227, 0.8);
+    --cwsBlueTMax: rgba(65, 174, 227, 0.99);
     --cwsNavyBlueT: rgba(65, 174, 227, 0.008);
     --selectionBackgroundColor: var(--navyBlue);
     --transition: 0.24s cubic-bezier(0.77, 0.2, 0.05, 1);
@@ -57,6 +60,10 @@ nav a.nx-text-sm {
     &[href="/"] {
         display: none !important;
     }
+}
+
+.white {
+    color: white;
 }
 
 .red {
@@ -168,8 +175,19 @@ nav a.nx-text-sm {
 }
 
 .cwsMainBanner {
+    position: relative;
     background: white;
     padding: 0 !important;
+    &::after {
+        left: 0;
+        bottom: 0;
+        z-index: 0;
+        width: 100%;
+        content: "";
+        height: 2px;
+        position: absolute;
+        background: var(--cwsPinkBlue);
+    }
     .hero {
         height: 645px;
         padding: 1em 0;
@@ -252,14 +270,20 @@ nav a.nx-text-sm {
 .shopBG {
     background-size: auto, cover;
     background-repeat: repeat, repeat;
-    background-image: linear-gradient(to top, var(--navyT), var(--navyT)), url(./public/assets/images/shopBG.jpg);
     background-position: 0% 0%, 50% calc(50% - (((var(--scroll-y, 0) * 1px) - (var(--element-top, 0) * 1px)) * var(--background-parallax-intensity, 0)));
 }
 
-// article {
-    // @extend .shopBG;
-    // background: var(--cwsArticleBackground);
-// }
+.dark {
+    .shopBG {
+        background-image: linear-gradient(to top, var(--navyT), var(--navyT)), url(./public/assets/images/shopBG.jpg);
+    }
+}
+
+.light {
+    .shopBG {
+        background-image: linear-gradient(to top, var(--softWhiteT), var(--softWhiteT)), url(./public/assets/images/shopBG.jpg);
+    }
+}
 
 hr {
     &::before {
@@ -369,9 +393,7 @@ hr {
     button {
         border: 0;
         border-radius: 0;
-        &:not(:first-child), &:not(:last-child) {
-            border: 2px solid white;
-        }
+        border-width: 2px;
         &:first-child, &.firstOption {
             border-top-left-radius: 5px;
             border-bottom-left-radius: 5px;
@@ -381,6 +403,26 @@ hr {
             border-top-right-radius: 5px;
             border-bottom-right-radius: 5px;
             border-right-width: 3px !important;
+        }
+    }
+}
+
+.dark {
+    .toggleButtons {
+        button {
+            &:not(:first-child), &:not(:last-child) {
+                border-color: white;
+            }
+        }
+    }
+}
+
+.light {
+    .toggleButtons {
+        button {
+            &:not(:first-child), &:not(:last-child) {
+                border-color: black;
+            }
         }
     }
 }
@@ -400,13 +442,13 @@ hr {
     border-radius: 5px;
     @extend .textWithIcon;
     padding: 4px 10px 2px;
-    border: 2px solid white;
     transition: var(--transition);
     &:not(:disabled) {
         &:hover {
             color: white;
             background: var(--cwsBlueT);
             border: 2px solid var(--cwsBlueT);
+            border-color: var(--cwsBlueT) !important;
             .productButtonText  {
                 text-shadow: 0 0 1px white;
             }
@@ -433,12 +475,26 @@ hr {
             color: white;
             background: var(--cwsGreen);
             border: 2px solid var(--cwsGreen);
+            border-color: var(--cwsGreen) !important;
         }
         &.active {
             color: white;
             background: var(--cwsPink);
             border: 2px solid var(--cwsPink);
+            border-color: var(--cwsPink) !important;
         }
+    }
+}
+
+.dark {
+    .productButton {
+        border: 2px solid white;
+    }
+}
+
+.light {
+    .productButton {
+        border: 2px solid black;
     }
 }
 
@@ -483,38 +539,44 @@ hr {
         height: 20px;
     }
     &.subQty {
-        color: black;
-        background: white;
-        border-color: white !important;
-        // background: var(--cwsPink);
-        // border-color: var(--cwsPink) !important;
         &:not(:disabled) {
             &:hover {
-                background: var(--cwsPink);
+                background: var(--cwsPink) !important;
                 border-color: var(--cwsPink) !important;
             }
             &:active {
-                background: var(--cwsRed);
+                background: var(--cwsRed) !important;
                 border-color: var(--cwsRed) !important;
             }
         }
     }
     &.addQty {
-        color: black;
-        background: white;
-        border-color: white !important;
-        // background: var(--cwsBlue);
-        // border-color: var(--cwsBlue) !important;
         &:not(:disabled) {
             &:hover {
-                background: var(--cwsBlue);
+                background: var(--cwsBlue) !important;
                 border-color: var(--cwsBlue) !important;
             }
             &:active {
-                background: var(--cwsGreen);
+                background: var(--cwsGreen) !important;
                 border-color: var(--cwsGreen) !important;
             }
         }
+    }
+}
+
+.dark {
+    .qtyButton {
+        color: black;
+        background: white;
+        border-color: white !important;
+    }
+}
+
+.light {
+    .qtyButton {
+        color: white;
+        background: black !important;
+        border-color: black !important;
     }
 }
 
@@ -582,7 +644,14 @@ hr {
         &:not(.noProducts):not(.oneProduct) {
             grid-template-columns: repeat(3, 1fr);
             .productPic {
-                max-height: 380px;
+                max-height: 360px;
+            }
+        }
+    }
+    @media (max-width: 1300px) {
+        &:not(.noProducts):not(.oneProduct) {
+            .productPic {
+                max-height: 360px;
             }
         }
     }
@@ -637,12 +706,18 @@ pre {
     position: relative;
     align-items: center;
     justify-content: center;
+    .lazy-load-image-loaded {
+        align-items: center;
+        justify-content: center;
+        display: flex !important;
+    }
     &:has(.productAltImage) {
         .productAltImage {
+            transform: translate(-50%, -50%);
             position: absolute;
             opacity: 0;
-            left: 0;
-            top: 0;
+            left: 50%;
+            top: 50%;
         }
         &:hover {
             .productMainImage {
@@ -656,9 +731,11 @@ pre {
 }
 
 .productPic {
+    width: auto;
+    height: auto;
     max-height: 425px;
     border-radius: 20px;
-    margin-bottom: 20px;
+    margin: 0 auto 25px;
     transition: var(--transition);
 }
 

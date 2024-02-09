@@ -26,20 +26,56 @@ export const addProductsToShopify = async (productToAdd) => {
         if (addProductsResponse.status === 200) {
           let addedProductsData = await addProductsResponse.json();
           if (addedProductsData) return addedProductsData;
+        } else {
+            const errorResponse = await addProductsResponse.json();
+            console.log(`Error adding product: ${errorResponse.message || addProductsResponse.statusText}`);
+            return null;
         }
     } catch (error) {
       console.log(`Server Error on Get Products`, error);
     }
 }
 
+export const updateProductInShopify = async (productToUpdate) => {
+    let { id, title, price, image, altImage, category, quantity, description } = productToUpdate;
+    try {
+        let updateProductResponse = await fetch(`${liveLink}/api/products/update/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                title,
+                price,
+                image,
+                altImage,
+                quantity,
+                category,
+                description,
+            })
+        });
+
+        if (updateProductResponse.status === 200) {
+            let updatedProductData = await updateProductResponse.json();
+            if (updatedProductData) return updatedProductData;
+        } else {
+            const errorResponse = await updateProductResponse.json();
+            console.log(`Error updating product: ${errorResponse.message || updateProductResponse.statusText}`);
+            return null;
+        }
+    } catch (error) {
+        console.log(`Server Error on Update Product`, error);
+    }
+}
+
 export default function ProductForm(props) {
 
     let [processing, setProcessing] = useState(false);
-    let [imageURLAdded, setImageURLAdded] = useState(false);
-    let { setProducts, productToEdit, setProductToEdit } = useContext<any>(StateContext);
+    let { setProducts, imageURLAdded, setImageURLAdded, productToEdit, setProductToEdit } = useContext<any>(StateContext);
 
-    const cancelEditProduct = () => {
+    const cancelOrFinishEditProduct = () => {
         setProductToEdit(null);
+        setImageURLAdded(false);
         let productFormElement: any = document.querySelector(`.productForm`);
         productFormElement.reset();
     }
@@ -59,40 +95,68 @@ export default function ProductForm(props) {
         try {
             let form = e.target;
             let { title: titleField, category: categoryField, price: priceField, quantity: quantityField, image: imageField, description: descriptionField, altImage: altImageField } = form;
+            
+            let title = titleField.value;
+            let category = categoryField.value;
+            let price = parseFloat(priceField.value);
+            let quantity = quantityField.value != `` ? parseInt(quantityField.value) : 1;
+            let image = imageField.value != `` ? imageField.value : productPlaceholderImage;
+            let altImage = altImageField && altImageField?.value != `` ? altImageField.value : productPlaceholderAltImage;
+            let description = descriptionField.value != `` ? descriptionField.value : `${titleField.value} Description`;
+
+            let productToAddOrUpdate = { 
+                title, 
+                price, 
+                image, 
+                altImage,
+                category, 
+                quantity, 
+                description,
+            };
 
             if (productToEdit == null) {
-                let title = titleField.value;
-                let category = categoryField.value;
-                let price = parseFloat(priceField.value);
-                let quantity = quantityField.value != `` ? parseInt(quantityField.value) : 1;
-                let image = imageField.value != `` ? imageField.value : productPlaceholderImage;
-                let altImage = altImageField && altImageField?.value != `` ? altImageField.value : productPlaceholderAltImage;
-                let description = descriptionField.value != `` ? descriptionField.value : `${titleField.value} Description`;
-
-                let productToAdd = { 
-                    title, 
-                    price, 
-                    image, 
-                    altImage,
-                    category, 
-                    quantity, 
-                    description,
-                };
-
-                let addedProductResponse = await addProductsToShopify(productToAdd);
+                let addedProductResponse = await addProductsToShopify(productToAddOrUpdate);
 
                 if (addedProductResponse) {
-                    let productsAdded = addedProductResponse && addedProductResponse.product ? addedProductResponse.product : addedProductResponse;
-                    console.log(`Added Product`, productsAdded);
-                    toast.success(`Product Successfully Added`);
-                    setProducts(prevProducts => [new Product(productsAdded), ...prevProducts]);
-                    setProcessing(false);
-                    form.reset();
-                    return addedProductResponse;
+                    // if (addedProductResponse.ok) {
+                        let productsAdded = addedProductResponse && addedProductResponse.product ? addedProductResponse.product : addedProductResponse;
+                        console.log(`Added Product`, productsAdded);
+                        toast.success(`Product Successfully Added`);
+                        setProducts(prevProducts => [new Product(productsAdded), ...prevProducts]);
+                        setProcessing(false);
+                        form.reset();
+                        return addedProductResponse;
+                    // } else {
+                        // setProcessing(false);
+                        // toast.error(`Error Adding Product`);
+                        // console.log(`Error Adding Product`, productToAddOrUpdate);
+                    // }
                 }
             } else {
-                setProcessing(false);
-                console.log(`Edit & Update Product`, productToEdit);
+                let updatedProductResponse = await updateProductInShopify({ 
+                    ...productToAddOrUpdate,
+                    id: productToEdit.id, 
+                });
+
+                if (updatedProductResponse) {
+                    // if (updatedProductResponse.ok) {
+                        let productsUpdated = updatedProductResponse && updatedProductResponse.product ? updatedProductResponse.product : updatedProductResponse;
+                        console.log(`Updated Product`, productsUpdated);
+                        toast.success(`Product Successfully Updated`);
+                        setProducts(prevProducts => prevProducts.map(prod => {
+                            if (prod.id == productsUpdated.id) {
+                                return new Product(productsUpdated);
+                            } else return prod;
+                        }));
+                        setProcessing(false);
+                        cancelOrFinishEditProduct();
+                        return updatedProductResponse;
+                    // } else {
+                        // setProcessing(false);
+                        // toast.error(`Error Updating Product`);
+                        // console.log(`Error Updating Product`, productToAddOrUpdate);
+                    // }
+                }
             }
         } catch (error) {
             toast.error(`Error Submitting Product Form`);
@@ -158,7 +222,7 @@ export default function ProductForm(props) {
                 placeholder={`Public Image URL...`} 
                 defaultValue={productToEdit == null ? `` : productToEdit?.image?.src} 
             />
-            {imageURLAdded || productToEdit != null && <input 
+            {(imageURLAdded || productToEdit != null) && <input 
                 type={`text`} 
                 name={`altImage`} 
                 className={`productImage`} 
@@ -167,14 +231,14 @@ export default function ProductForm(props) {
             />}
             <button disabled={processing} className={`productFormSubmitButton blackButton`} type={`submit`}>
                 <div className={`textWithIcon`}>
-                    <i className={`fas ${productToEdit == null ? processing ? `pink spinThis fa-spinner` : `pink fa-plus` : `lightgreen fa-save`}`}></i>
-                    {productToEdit == null ? processing ? `Adding` : `Add` : `Save`}
+                    <i className={`fas ${productToEdit == null ? processing ? `pink spinThis fa-spinner` : `pink fa-plus` : processing ? `pink spinThis fa-spinner` : `lightgreen fa-save`}`}></i>
+                    {productToEdit == null ? processing ? `Adding` : `Add` : processing ? `Saving` : `Save`}
                 </div>
             </button>
             {productToEdit != null && (
-                <button type={`button`} onClick={() => cancelEditProduct()} className={`productFormSubmitButton productFormCancelButton blackButton`}>
+                <button type={`button`} onClick={() => cancelOrFinishEditProduct()} className={`productFormSubmitButton productFormCancelButton blackButton`}>
                     <div className={`textWithIcon`}>
-                        <i className={`pink fas ${processing ? `spinThis fa-spinner` : `fa-ban`}`}></i>
+                        <i className={`pink fas fa-ban`}></i>
                         {productToEdit == null ? processing ? `Canceling` : `Cancel` : `Cancel`}
                     </div>
                 </button>

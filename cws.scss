@@ -47,6 +47,7 @@ html, body {
     --cwsBluePinkTransparent: linear-gradient(90deg, var(--smasherscapeGreen2Transparent), var(--smasherscapeBlue2Transparent));
     --cwsPinkBlueTransparent: linear-gradient(90deg, var(--smasherscapeBlue2Transparent), var(--smasherscapeGreen2Transparent));
     --cwsPinkBlueTransparentSubtle: linear-gradient(90deg, var(--cwsPinkT), var(--cwsBlueT));
+    --cwsPinkBlueTransparentSubtleT: linear-gradient(90deg, var(--cwsPinkTMin), var(--cwsBlueTMin));
 }
 
 li {
@@ -585,6 +586,12 @@ li {
     }
 }
 
+.light {
+    nav {
+        background: white !important;
+    }
+}
+
 nav {
     background: black !important;
     a.nx-text-sm {
@@ -637,10 +644,25 @@ footer {
         z-index: -1;
         width: 100%;
         content: "";
-        height: 1px;
         position: absolute;
         transform-origin: top;
         background: var(--cwsPinkBlue);
+    }
+}
+
+.dark {
+    footer {
+        &::before {
+            height: 1px;
+        }
+    }
+}
+
+.light {
+    footer {
+        &::before {
+            height: 2px;
+        }
     }
 }
 
@@ -969,6 +991,7 @@ form {
                 top: -3px;
                 width: 20%;
                 font-size: 14px;
+                font-weight: 600;
                 position: relative;
                 box-shadow: none !important;
                 height: var(--authFormHeight);
@@ -1719,11 +1742,19 @@ div[role="presentation"] {
 .userSignedIn {
     .customUserSection {
         z-index: 1;
-        grid-gap: 10px;
         display: flex;
+        grid-gap: 10px;
         align-items: center;
         flex-direction: row;
         justify-content: space-between;
+        .profileLink {
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+            justify-content: center;
+            grid-gap: 10px !important;
+            font-size: 16px !important;
+        }
     }
 }
 
@@ -1735,12 +1766,12 @@ div[role="presentation"] {
     cursor: pointer;
     font-size: 15px;
     font-weight: 900;
+    padding: 5px 10px;
     text-shadow: none;
     text-align: center;
     align-items: center;
     background: white;
     border-radius: 100px;
-    padding: 7px 10px 5px;
     justify-content: center;
     font-family: "Montserrat";
     max-height: 20px !important;

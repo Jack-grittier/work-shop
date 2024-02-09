@@ -54,6 +54,7 @@
     --alertBG: rgba(113, 113, 113, 0.75);
     --dangerColor: rgba(255, 28, 11, 0.75);
     --softWhite: rgba(255, 255, 255, 0.87);
+    --softWhiteT: rgba(255, 255, 255, 0.75);
     --gameBlueSoft: rgba(0, 194, 255, 0.75);
     --nextra: rgba(0, 170, 255, 0.5) !important;
     --menuBackground: var(--blackGlass) !important;
@@ -150,6 +151,10 @@ html[class~="dark"] {
 
 .light {
 
+    .darkModeLogo {
+        display: none;
+    }
+
     .item {
         color: white !important;
     }
@@ -173,12 +178,16 @@ html[class~="dark"] {
     }
     
     footer {
+        margin: 3px 0px;
         border-top: solid 1px rgba(229, 231, 235, 1);
     }
 }
 
 .dark {
 
+    .lightModeLogo {
+        display: none;
+    }
     // .Lists {
     //     --nextra-primary-hue: ;
     // }
@@ -397,31 +406,63 @@ nav {
     }
 }
 
-html[class~=dark] .dark\:nx-bg-dark {
+html[class~=dark] .dark\:nx-bg-dark, html[class~=light] .light\:nx-bg-light {
     padding: 1em;
     margin: 0;
 }
 
-html[class~=dark] .dark\:nx-text-neutral-500, html[class~=dark] .dark\:nx-text-gray-400 {
-    &:not(.excerpt) {
-        @extend .hoverLink;
-        color: white !important;
-        // &:hover {
-        //     &::before {
-        //         transform: scale(0,1) !important;
-        //     }
-        // }
-        // &::before {
-        //     transform: scale(1,1) !important;
-        // }
+html[class~=dark] {
+    .dark\:nx-text-neutral-500, .dark\:nx-text-gray-400 {
+        &:not(.excerpt):not(.profileLink) {
+            @extend .hoverLink;
+            color: white !important;
+        }
+        &::before {
+            height: 1px;
+        }
+        transition: var(--transition) !important;
+        color: var(--softWhite) !important;
+        &:hover {
+            color: white !important;
+        }
     }
-    &::before {
-        height: 1px;
+}
+
+html[class~=light] {
+    .shopTitle {
+        color: black;
     }
-    transition: var(--transition) !important;
-    color: var(--softWhite) !important;
-    &:hover {
-        color: white !important;
+    .shopSubtitle {
+        color: black;
+    }
+    .product {
+        border-color: black;
+        background: rgba(255, 255, 255, 0.5);
+    }
+    .productButton {
+        background: white;
+        border-color: black;
+    }
+    nav a[href] {
+        &:not(.excerpt):not(.profileLink) {
+            @extend .hoverLink;
+            font-weight: 800;
+            color: black !important;
+        }
+        &::before {
+            height: 2px;
+        }
+        color: var(--softWhite) !important;
+        transition: var(--transition) !important;
+        &.profileLink {
+            color: white !important;
+            &:hover {
+                color: white !important;
+            }
+        }
+        &:hover {
+            color: var(--cwsBlue) !important;
+        }
     }
 }
 
@@ -908,28 +949,56 @@ section {
 
 }
 
-::-webkit-scrollbar {
-    position: relative;
-    width: 4px !important;
-    background: black !important;
-    border-radius: var(--borderRadius);
+.dark {
+    ::-webkit-scrollbar {
+        position: relative;
+        width: 4px !important;
+        background: black !important;
+        border-radius: var(--borderRadius);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: var(--gameBlue);
+        border-radius: var(--borderRadius);
+    }
+    
+    ::-webkit-scrollbar {
+        position: relative;
+        width: 4px !important;
+        border-radius: var(--borderRadius);
+        background: var(--blackGlass) !important;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: var(--softWhite);
+        border-radius: var(--borderRadius);
+    }
 }
 
-::-webkit-scrollbar-thumb {
-    background: var(--gameBlue);
-    border-radius: var(--borderRadius);
-}
-
-::-webkit-scrollbar {
-    position: relative;
-    width: 4px !important;
-    border-radius: var(--borderRadius);
-    background: var(--blackGlass) !important;
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--softWhite);
-    border-radius: var(--borderRadius);
+.light {
+    ::-webkit-scrollbar {
+        position: relative;
+        width: 4px !important;
+        background: black !important;
+        border-radius: var(--borderRadius);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: var(--gameBlue);
+        border-radius: var(--borderRadius);
+    }
+    
+    ::-webkit-scrollbar {
+        position: relative;
+        width: 4px !important;
+        border-radius: var(--borderRadius);
+        background: black !important;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: white;
+        border-radius: var(--borderRadius);
+    }
 }
 
 .nextra-search {
@@ -1101,7 +1170,7 @@ form {
     }
 }
 
-html[class~=dark] {
+html[class~=dark], html[class~=light] {
     .changeLabel:focus-visible {
         border: 0 !important;
         outline: none !important;
@@ -1258,15 +1327,9 @@ textarea {
     flex-direction: column;
     backdrop-filter: blur(5px);
     justify-content: flex-start;
-    // background: var(--alertBG);
     transition: var(--transition);
     box-shadow: 0 0 8px 0px black;
-    // background: var(--blackGlass);
     border-radius: var(--borderRadius);
-    // background: rgba(1, 47, 74, 0.75);
-    // background: rgba(0, 194, 255, 0.4);
-    // background: rgba(59, 54, 48, 0.75);
-    background: var(--cwsPinkBlueTransparentSubtle);
 
     h1 {
         font-size: 1.75em;
@@ -1395,6 +1458,24 @@ textarea {
     }
 }
 
+.dark {
+    .alert {
+        background: var(--cwsPinkBlueTransparentSubtle);
+        h3, p {
+            color: white;
+        }
+    }
+}
+
+.light {
+    .alert {
+        background: var(--cwsPinkBlueTransparentSubtleT);
+        h3, p {
+            color: white;
+        }
+    }
+}
+
 .hoverLink {
     display: flex;
     grid-gap: 0.3em;
@@ -1407,7 +1488,6 @@ textarea {
         z-index: 0;
         width: 100%;
         bottom: 1px;
-        height: 1px;
         display: block;
         position: absolute;
         transform: scale(0, 1);
@@ -1422,7 +1502,6 @@ textarea {
 
         &::before {
             transform: scale(1, 1);
-            transition: 500ms ease-in-out;
         }
     }
 }
@@ -1645,4 +1724,94 @@ footer {
 :is(html[class~=dark] .dark\:nx-bg-primary-300\/10) {
     background-color: hsl(var(--nextra-primary-hue)var(--nextra-primary-saturation)77%/.1);
     backdrop-filter: blur(15px);
+}
+
+.visiblePopover {
+    visibility: visible;
+    pointer-events: all;
+    opacity: 1 !important;
+    transform: translateY(10px) !important;
+}
+
+.popoverContainer {
+    &:hover {
+        .popover {
+            @extend .visiblePopover;
+        }
+    }
+}
+
+.popover {
+    left: 0;
+    top: 15px;
+    opacity: 0;
+    // top: 40px;
+    z-index: 100;
+    bottom: -100%;
+    padding: 25px 0;
+    visibility: hidden;
+    align-items: center;
+    position: absolute;
+    pointer-events: none;
+    justify-content: center;
+    width: 260px !important;
+    min-height: max-content;
+    height: auto !important;
+    display: flex !important;
+    transform: translateY(-50%);
+    backdrop-filter: blur(10px);
+    background: var(--cwsBlueTMax);
+    border-radius: var(--borderRadius);
+    transition: visibility 0s, opacity 0.3s ease, transform 0.3s ease;
+}
+
+.popover.visible {
+    @extend .visiblePopover;
+}
+
+.userAdminControls {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.adminFeature {
+    margin: 0 auto;
+    align-items: center;
+    width: 90% !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between;
+}
+
+/* ToggleSwitch.css */
+.toggle-switch {
+    width: 50px !important;
+    height: 20px !important;
+    background-color: #ccc; /* Background of the switch when off */
+    border-radius: 25px; /* Rounded corners for the switch */
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+.toggle-switch .slider {
+    position: absolute;
+    top: 2px; /* Small gap from the top */
+    left: 2px; /* Start from the left side */
+    width: 15px; /* Width of the slider */
+    height: 15px; /* Height of the slider */
+    background-color: #fff; /* Background of the slider */
+    border-radius: 50%; /* Make the slider round */
+    transition: left 0.3s ease; /* Smooth sliding effect */
+}
+
+.toggle-switch:has(.toggled) .slider {
+    left: 32px; /* Move to the right when toggled */
+}
+
+.toggle-switch:has(.toggled) {
+    background: var(--cwsLightGreen);
 }

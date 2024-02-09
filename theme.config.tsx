@@ -7,15 +7,15 @@ import NavIcons from './components/NavIcons';
 import { DocsThemeConfig } from 'nextra-theme-docs';
 // import NextraSearch from './components/NextraSearch';
 
-const siteTitle = `Creative Workshop`;
 const description = `Get Creative!`;
+const siteTitle = `Creative Workshop`;
 // const content = `Creative Workshop is a dashboard for tracking orders through Trello Boards, Lists, Cards API and having it be connected directly and programmatically to the Client which communicates back to the TypeForm API to create new orders.`;
 
 const config: DocsThemeConfig = {
   primaryHue: 195, // Sky Blue
   useNextSeoProps() {
     return {
-      titleTemplate: `${(`%s`) as any == `[id]` ? `hello` : `%s`} | ${siteTitle}`,
+      titleTemplate: `%s | ${siteTitle}`,
     }
   },
   feedback: {
@@ -53,7 +53,8 @@ const config: DocsThemeConfig = {
     <meta name="twitter:image" content={`/assets/images/ogImage.jpg`} />
     </>,
   logo: <>
-    <img width={100} src={`/assets/images/cwsLongWhiteLogo.svg`} alt={`Logo`} /> 
+    <img className={`darkModeLogo`} width={100} src={`/assets/images/cwsLongWhiteLogo.svg`} alt={`Creative Workshop Logo`} /> 
+    <img className={`lightModeLogo`} width={100} src={`/assets/images/cwsLongNavyLogo.svg`} alt={`Creative Workshop Logo`} /> 
     {/* <h1 style={{marginLeft: 15}}>Creative Workshop</h1> */}
   </>,
   // navbar: {
@@ -86,7 +87,7 @@ const config: DocsThemeConfig = {
   },
   docsRepositoryBase: 'https://github.com/strawhat19/CreativeWorkshop/',
   footer: {
-    component: <Footer style={{margin: `0 5px`}} />
+    component: <Footer />
   },
 }
 

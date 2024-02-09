@@ -5,6 +5,7 @@ import Pusher from 'pusher-js';
 import '../creativeWorkshop.scss';
 import User from '../models/User';
 import ReactDOM from 'react-dom/client';
+import { useRouter } from 'next/router';
 import { simplifyUser } from '../components/Form';
 import { onAuthStateChanged } from 'firebase/auth';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -71,10 +72,19 @@ export const createXML = (xmlString) => {
   return div.firstChild;
 }
 
+export const setThemeMode = (theme) => {
+  let html = document.documentElement;
+  if (html.classList.contains(`dark`)) html.classList.remove(`dark`);
+  if (html.classList.contains(`light`)) html.classList.remove(`light`);
+  html.classList.add(theme);
+  html.style = `color-scheme: ${theme}`;
+  html.setAttribute(`data-theme`, theme);
+  localStorage.setItem(`theme`, theme);
+}
+
 export const setThemeUI = () => {
   localStorage.setItem(`alertOpen`, false);
-  document.documentElement.setAttribute(`data-theme`, `dark`);
-  localStorage.setItem(`theme`, `dark`);
+  setThemeMode(`dark`);
 }
 
 export const getTimezone = (date) => {
@@ -305,6 +315,7 @@ export const showAlert = async (title, component, width, height) => {
 }
 
 export default function CreativeWorkshop({ Component, pageProps, router }) {
+  const nextRouter = useRouter();
   let brwser = ``;
   let loaded = useRef(false);
   let mobileMenuBreakPoint = 697;
@@ -349,11 +360,13 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
 
   let [useLazyLoad, setUseLazyLoad] = useState(true);
   let [useDatabase, setUseDatabase] = useState(useDB());
+  let [imageURLAdded, setImageURLAdded] = useState(false);
   let [useLocalStorage, setUseLocalStorage] = useState(true);
 
   let [shop, setShop] = useState({});
   let [cart, setCart] = useState({});
   let [products, setProducts] = useState([]);
+  let [adminFeatures, setAdminFeatures] = useState([]);
   let [productToEdit, setProductToEdit] = useState(null);
 
   const setBrowserUI = () => {
@@ -392,6 +405,60 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
       setProducts([]);
     }
   }
+
+  const pageIs = (route) => {
+    let pageIsActive = false;
+    route = route.toLowerCase();
+    if (window.location.href.includes(route) || router.route.includes(route) || rte.includes(route) || page.includes(route)) {
+      pageIsActive = true;
+    }
+    
+    return pageIsActive;
+  }
+
+  const setInitialAndOnRouteChangeFeatures = () => {
+    dev() && console.log(`App is changing to`, router.asPath);
+    let adminFeats = [
+      {
+        feature: `Quantity Circle Buttons`,
+        shown: pageIs(`products`),
+        enabled: false,
+      },
+      {
+        feature: `Dark Mode`,
+        enabled: true,
+        shown: true,
+      }
+    ];
+    localStorage.setItem(`features`, JSON.stringify(adminFeats));
+    setAdminFeatures(prevFeats => {
+      if (prevFeats) {
+        if (prevFeats.length == 0) {
+          let storedFeatures = localStorage.getItem(`features`) ? JSON.parse(localStorage.getItem(`features`)) : adminFeats;
+          return storedFeatures;
+        } else {
+          return adminFeats;
+        }
+      } else {
+        return adminFeats;
+      }
+    });
+  };
+
+  // Listen for route changes
+  useEffect(() => {
+    setInitialAndOnRouteChangeFeatures();
+
+    const handleRouteChange = (url) => {
+      setInitialAndOnRouteChangeFeatures();
+    };
+
+    router.events.on(`routeChangeStart`, handleRouteChange);
+
+    return () => {
+      router.events.off(`routeChangeStart`, handleRouteChange);
+    };
+  }, [router.events, router.asPath]);
 
   // Users
   useEffect(() => {
@@ -432,6 +499,18 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
       }
     }
   }, [])
+
+  // Catch Feature Updates
+  useEffect(() => {
+    let darkMode = adminFeatures && adminFeatures?.find(feat => feat.feature == `Dark Mode`);
+    if (darkMode) {
+      if (darkMode.enabled) {
+        setThemeMode(`dark`);
+      } else {
+        setThemeMode(`light`);
+      }
+    }
+  }, [adminFeatures])
 
   // Catch Shop Updates
   useEffect(() => {
@@ -551,7 +630,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     };
   }, [])
 
-  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, color, setColor, dark, setDark, colorPref, setColorPref, year, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, usersLoading, setUsersLoading, iPhone, set_iPhone, shop, setShop, products, setProducts, productToEdit, setProductToEdit, cart, setCart }}>
+  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, color, setColor, dark, setDark, colorPref, setColorPref, year, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, usersLoading, setUsersLoading, iPhone, set_iPhone, shop, setShop, products, setProducts, productToEdit, setProductToEdit, cart, setCart, imageURLAdded, setImageURLAdded, adminFeatures, setAdminFeatures }}>
     {(browser != `chrome` || onMac && browser != `chrome`) ? (
       <div className={`framerMotion ${bodyClasses}`}>
         <AnimatePresence mode={`wait`}>

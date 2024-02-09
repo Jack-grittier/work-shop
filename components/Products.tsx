@@ -8,6 +8,7 @@ export default function Products(props) {
     let { products } = props;
     let { user } = useContext<any>(StateContext);
     if (!products) products = useContext<any>(StateContext)?.products;
+    products = products.filter(prod => prod.status != `archived`);
 
     return (
         <>

@@ -1,3 +1,4 @@
+import Popover from "./Popover";
 import User from "../models/User";
 import { toast } from "react-toastify";
 import LoadingSpinner from './LoadingSpinner';
@@ -7,6 +8,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { addUserToDatabase, auth, dataSize, googleProvider, maxDataSize } from '../firebase';
 import { StateContext, dev, removeNullAndUndefinedProperties, showAlert, signUpOrSignIn } from '../pages/_app';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
+import Toggle from "./Toggle";
 
 export const simplifyUser = (expandedUser: User) => {
   let simplifiedUser = {
@@ -54,7 +56,8 @@ export default function Form(props?: any) {
   const loadedRef = useRef(false);
   const [, setLoaded] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const { mobile, useDatabase, user, users, setUser, authState, emailField, playersLoading, setAuthState, setEmailField, setFocus } = useContext<any>(StateContext);
+  const [isPopoverVisible, setPopoverVisible] = useState(false);
+  const { mobile, useDatabase, user, users, setUser, authState, emailField, playersLoading, setAuthState, setEmailField, setFocus, adminFeatures, setAdminFeatures } = useContext<any>(StateContext);
   
   const trackKeyDown = () => {
     if (isFocused) {
@@ -268,10 +271,45 @@ export default function Form(props?: any) {
         {!user && authState == `Next` && <div title={`${signUpOrSignIn} With Google`} className={`googleButton customUserSection`}>
           <GoogleButton onClick={(e) => googleSignInOrSignUp(e)} type={`dark`} />
         </div>}
-        {user && <div title={`Welcome, ${user?.name}`} className={`customUserSection`}>
-          {user?.image ? <img alt={user?.email} src={user?.image}  className={`userImage`} /> : <div className={`userCustomAvatar`}>{user?.name?.charAt(0).toUpperCase()}</div>}
-          Welcome, {user?.name}
-        </div>}
+        {user && (
+          <div 
+            style={{ position: `relative` }}
+            className={`customUserSection popoverContainer`}
+            // onMouseEnter={() => setPopoverVisible(true)}
+            // onMouseLeave={() => setPopoverVisible(false)}
+          >
+            <a title={`Go to Profile`} className={`profileLink`} href={`/profile`}>
+              {user?.image ? (
+                <img alt={user?.email} src={user?.image} className={`userImage`} />
+              ) : (
+                <div className={`userCustomAvatar`}>{user?.name?.charAt(0).toUpperCase()}</div>
+              )}
+              Welcome, {user?.name}
+            </a>
+
+            <Popover
+              id={`userAdminSection`}
+              classes={`userAdminSection`}
+              isVisible={isPopoverVisible}
+              content={(
+                <div className={`userAdminControls`}>
+                  <h3 style={{ width: `90%`, margin: `0 auto`, textAlign: `center`, fontSize: 22, fontWeight: 900 }} className={`white`}>Beta Features</h3>
+                  <div className={`adminControlsContainer`}>
+                    {adminFeatures && adminFeatures?.length > 0 && adminFeatures?.map((feat, featIndex) => {
+                      if (feat.shown) {
+                        return (
+                          <div key={featIndex} className={`adminFeature white`}>
+                            {feat.feature} <Toggle toggled={feat.enabled} classes={`feat`} toggleFunction={() => setAdminFeatures(prevAdminFeats => prevAdminFeats.map(featr => featr.feature == feat.feature ? ({ ...featr, enabled: !featr.enabled }) : featr))} />
+                          </div>
+                        )
+                      }
+                    })}
+                  </div>
+                </div>
+              )}
+            />
+          </div>
+        )}
         {user && window?.location?.href?.includes(`profile`) && <input id={user?.id} className={`save`} type="submit" name="authFormSave" style={{padding: 0}} value={`Save`} />}
       </form>
     )}

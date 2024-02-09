@@ -1,29 +1,29 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method === 'PUT') { // Change this to 'PUT' for updates
+    if (req.method === 'PUT') {
+        const productId = req.query.id;
         try {
             const { id, title, price, image, altImage, category, description, quantity } = req.body;
 
-            if (!id) {
+            if (!productId) {
                 return res.status(400).json({ error: 'Product ID is required for updates.' });
             }
 
             const storeName = process.env.NEXT_PUBLIC_SHOPIFY_STORE_NAME || process.env.SHOPIFY_STORE_NAME;
             const apiVersion = process.env.NEXT_PUBLIC_SHOPIFY_API_VERSION || process.env.SHOPIFY_API_VERSION;
             const accessToken = process.env.NEXT_PUBLIC_SHOPIFY_ACCESS_TOKEN || process.env.SHOPIFY_ACCESS_TOKEN;
-
-            const shopifyURL = `https://${storeName}.myshopify.com/admin/api/${apiVersion}/products/${id}.json`; // Use the product ID in the endpoint
+            const shopifyURL = `https://${storeName}.myshopify.com/admin/api/${apiVersion}/products/${productId}.json`;
 
             const shopifyResponse = await fetch(shopifyURL, {
-                method: 'PUT', // Use PUT method for updating
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Shopify-Access-Token': accessToken,
                 },
                 body: JSON.stringify({
                     product: {
-                        id: id, // Include the product ID in the payload if necessary
+                        id: productId,
                         title: title,
                         vendor: category,
                         product_type: category,

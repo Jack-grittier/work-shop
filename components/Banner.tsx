@@ -5,7 +5,7 @@ export default function Banner(props) {
     let { title } = props;
     let { router } = useContext<any>(StateContext);
     return (
-        <section className={`cwsMainBanner banner`}>
+      <section className={`cwsMainBanner banner`}>
         <div className={`hero ${router.route == `/` ? `homeHero` : `pageHero`}`}>
           <div className={`heroContent`}>
             <div className={`floatingCat`}>
