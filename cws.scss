@@ -40,35 +40,14 @@ html, body {
     --smasherscapeGreen2Transparent: rgba(30, 220, 120, 0.35);
     --smasherscapeGreen2Transparent2: rgba(30, 220, 120, 0.55);
     --customTagHeight: calc(var(--customHookInputContainerHeight) - 15);
+    --cwsBluePink: linear-gradient(90deg, var(--cwsBlue), var(--cwsPink));
     --customHookRootHeight: calc(var(--customHookInputContainerHeight) - 10);
-    --xurukoGradientGreenBlue: linear-gradient(90deg, var(--cwsBlue), var(--cwsPink));
-    // --xurukoGradientGreenBlue: linear-gradient(90deg, var(--smasherscapeGreen2), var(--smasherscapeBlue2));
-    --xurukoGradientBlueGreen: linear-gradient(90deg, var(--cwsPink), var(--cwsBlue));
-    --xurukoGradientGreenBlueTransparent: linear-gradient(90deg, var(--smasherscapeGreen2Transparent), var(--smasherscapeBlue2Transparent));
-    --xurukoGradientBlueGreenTransparent: linear-gradient(90deg, var(--smasherscapeBlue2Transparent), var(--smasherscapeGreen2Transparent));
-    --xurukoGradientBlueGreenTransparentSubtle: linear-gradient(90deg, var(--smasherscapeBlue2Transparent2), var(--smasherscapeGreen2Transparent2));
+    // --cwsBluePink: linear-gradient(90deg, var(--smasherscapeGreen2), var(--smasherscapeBlue2));
+    --cwsPinkBlue: linear-gradient(90deg, var(--cwsPink), var(--cwsBlue));
+    --cwsBluePinkTransparent: linear-gradient(90deg, var(--smasherscapeGreen2Transparent), var(--smasherscapeBlue2Transparent));
+    --cwsPinkBlueTransparent: linear-gradient(90deg, var(--smasherscapeBlue2Transparent), var(--smasherscapeGreen2Transparent));
+    --cwsPinkBlueTransparentSubtle: linear-gradient(90deg, var(--cwsPinkT), var(--cwsBlueT));
 }
-
-// @font-face {
-//     font-family: 'RuneScape Large';
-//     src: url('./public/fonts/RuneScapeFonts/RuneScape-Large.woff2') format('woff2'),
-//          url('./public/fonts/RuneScapeFonts/RuneScape-Large.woff') format('woff');
-//     font-style: normal;
-// }
-
-// @font-face {
-//     font-family: 'RuneScape Chat';
-//     src: url('./public/fonts/RuneScapeFonts/runescape-chat-07-webfont.woff2') format('woff2'),
-//          url('./public/fonts/RuneScapeFonts/runescape-chat-07-webfont.woff') format('woff');
-//     font-style: normal;
-// }
-
-// @font-face {
-//     font-family: 'RuneScape Chat Bold';
-//     src: url('./public/fonts/RuneScapeFonts/runescape-chat-bold-07-webfont.woff2') format('woff2'),
-//          url('./public/fonts/RuneScapeFonts/runescape-chat-bold-07-webfont.woff') format('woff');
-//     font-style: normal;
-// }
 
 li {
     a {
@@ -89,26 +68,11 @@ li {
                 width: 100%;
                 height: 1px;
                 position: absolute;
-                background: var(--xurukoGradientGreenBlue);
+                background: var(--cwsBluePink);
             }
         }
     }
 } 
-
-// .runescape_chat {
-//     font-size: 2em;
-//     font-family: "RuneScape Chat" !important;
-// }
-
-// .runescape_large {
-//     font-size: 2em;
-//     font-family: "RuneScape Large" !important;
-// }
-
-// .runescape_chat_bold {
-//     font-size: 2em;
-//     font-family: "RuneScape Chat Bold" !important;
-// }
 
 .alertMessage {
     font-size: 1.7em;
@@ -118,17 +82,6 @@ li {
         padding-bottom: 0.2em;
     }
 }
-
-// .userIsSignedIn {
-//     a[href="/about"] {
-//         display: none !important;
-//     }
-//     li {
-//         &:has(a[href="/about"]) {
-//             display: none !important;
-//         }
-//     }
-// }
 
 .expChanges {
     color: white;
@@ -230,7 +183,7 @@ li {
                     transition: var(--transition);
                     color: var(--smasherscapeBlue);
                     justify-content: space-between;
-                    font-family: "RuneScape Large";
+                    font-family: var(--fontFamily);
                     img {
                         transition: var(--transition);
                     }
@@ -265,7 +218,7 @@ li {
                         text-shadow: none;
                         letter-spacing: 3px;
                         transition: var(--transition);
-                        font-family: "RuneScape Large";
+                        font-family: var(--fontFamily);
                         &.Bronze {
                             color: var(--smasherscapeBronze);
                         }
@@ -427,7 +380,7 @@ li {
             width: 40%;
             display: flex;
             font-size: 6em;
-            font-family: "RuneScape Large";
+            font-family: var(--fontFamily);
             @media (max-width: 1800px) {
                 font-size: 4.7em;
             }
@@ -645,7 +598,7 @@ nav {
             margin: 0 auto;
             position: absolute;
             transform: translateX(-50%);
-            background: var(--xurukoGradientGreenBlue);
+            background: var(--cwsBluePink);
         }
     }
     h1 {
@@ -671,7 +624,7 @@ button[title="Change theme"] {
         content: "";
         height: 100%;
         position: absolute;
-        background: var(--xurukoGradientGreenBlue);
+        background: var(--cwsBluePink);
     }
 }
 
@@ -687,7 +640,7 @@ footer {
         height: 1px;
         position: absolute;
         transform-origin: top;
-        background: var(--xurukoGradientBlueGreen);
+        background: var(--cwsPinkBlue);
     }
 }
 
@@ -760,7 +713,7 @@ footer {
                 position: absolute;
                 border-radius: 8px;
                 transform: scale(1.01, 1.3);
-                background: var(--xurukoGradientGreenBlue) !important;
+                background: var(--cwsBluePink) !important;
             }
         }
         .customHookRoot {
@@ -995,7 +948,7 @@ form {
             transform: scale(1.02, 1.7);
             transition: var(--transition);
             height: calc(var(--authFormHeight) + 5px);
-            background: var(--xurukoGradientGreenBlue) !important;
+            background: var(--cwsBluePink) !important;
         }
         @media (max-width: 768px) {
             flex-direction: row !important;
@@ -1113,7 +1066,7 @@ form {
             position: absolute;
             border-radius: 8px;
             transform: scale(1.02, 1.3);
-            background: var(--xurukoGradientGreenBlue) !important;
+            background: var(--cwsBluePink) !important;
             &.materialBG {
                 transform: scale(0.99, 0.98);
             }
@@ -1205,7 +1158,7 @@ form {
     font-size: 18px;
     font-weight: 900;
     border-radius: 8px;
-    background: var(--xurukoGradientGreenBlue) !important;
+    background: var(--cwsBluePink) !important;
     &.playerFormSubmit {
         display: none;
         @media (max-width: 768px) {
@@ -1777,7 +1730,7 @@ div[role="presentation"] {
     max-height: 20px !important;
     display: flex;
     text-shadow: none;
-    font-family: 'RuneScape Large';
+    font-family: 'Montserrat';
     background: white;
     color: black;
     padding: 7px 10px 5px;
@@ -2277,7 +2230,7 @@ div[role="presentation"] {
     width: 95% !important;
     backdrop-filter: blur(5px);
     text-shadow: 2px 2px 0px black;
-    background: var(--xurukoGradientBlueGreenTransparent);
+    background: var(--cwsPinkBlueTransparent);
     // background: rgba(57, 57, 57, 0.4);
     .badges {
         margin: 5px 0;
@@ -2399,7 +2352,7 @@ div[role="presentation"] {
             text-transform: none;
             transition: var(--transition);
             // font-family: "RuneScape Chat";
-            background: var(--xurukoGradientBlueGreen);
+            background: var(--cwsPinkBlue);
             .buttonInnerText {
                 width: 100%;
                 height: 100%;
@@ -2423,7 +2376,7 @@ div[role="presentation"] {
             }
             &.Mui-selected {
                 color: var(--smasherscapeBlue2);
-                background: var(--xurukoGradientBlueGreen);
+                background: var(--cwsPinkBlue);
             }
         }
     }
@@ -2455,11 +2408,11 @@ div[role="presentation"] {
     border-radius: 7px !important;
     -webkit-backdrop-filter: blur(3px);
     animation: fadeIn 1000ms ease-in-out;
-    font-family: "montserrat" !important;
+    font-family: var(--fontFamily) !important;
     transition: var(--transition) !important;
     padding: 0.3em 0.7em 0.5em 0.7em !important;
     -webkit-animation: fadeIn 1000ms ease-in-out;
-    background: var(--xurukoGradientGreenBlue) !important;
+    background: var(--cwsBluePink) !important;
     &.hiddenButton {
         opacity: 0;
         pointer-events: none;
@@ -2475,7 +2428,7 @@ div[role="presentation"] {
         color: black;
     }
     &:hover {
-        background: var(--xurukoGradientBlueGreen) !important;
+        background: var(--cwsPinkBlue) !important;
         color: black !important;
         &::before {
             transform: scale(1, 1);
@@ -2495,7 +2448,7 @@ div[role="presentation"] {
         transform: scale(0, 1);
         transition: var(--transition);
         border-radius: 7px !important;
-        background: var(--xurukoGradientBlueGreen);
+        background: var(--cwsPinkBlue);
     }
     @media (max-width: 992px) {
         bottom: 10px;

@@ -265,8 +265,8 @@ export default function Form(props?: any) {
         {user && window?.location?.href?.includes(`profile`) && <input id="password" className={`editPassword userData`} placeholder="Edit Password" type="password" name="editPassword" autoComplete={`current-password`} />}
         <input title={user ? `Sign Out` : authState} className={`${(user && window?.location?.href?.includes(`profile`) || (authState == `Sign In` || authState == `Sign Up`)) ? `submit half` : `submit full`} ${user ? `userSignedInSubmit` : `userSignedOutSubmit`}`} type="submit" name="authFormSubmit" value={user ? `Sign Out` : authState} />
         {/* {(authState == `Sign In` || authState == `Sign Up`) && <input id={`back`} className={`back`} type="submit" name="authFormBack" value={`Back`} />} */}
-        {!user && authState == `Next` && <div title={`${signUpOrSignIn} With Google`} className={`customUserSection`}>
-          <GoogleButton onClick={(e) => googleSignInOrSignUp(e)} type="dark" />
+        {!user && authState == `Next` && <div title={`${signUpOrSignIn} With Google`} className={`googleButton customUserSection`}>
+          <GoogleButton onClick={(e) => googleSignInOrSignUp(e)} type={`dark`} />
         </div>}
         {user && <div title={`Welcome, ${user?.name}`} className={`customUserSection`}>
           {user?.image ? <img alt={user?.email} src={user?.image}  className={`userImage`} /> : <div className={`userCustomAvatar`}>{user?.name?.charAt(0).toUpperCase()}</div>}

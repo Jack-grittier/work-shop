@@ -83,11 +83,6 @@ export const getTimezone = (date) => {
   return match ? match[1] : ``;
 }
 
-export const getAllPlaysJSON = (players) => {
-  let allPlays = players.map(player => player.plays).reduce((acc, curr) => acc.concat(curr), []).sort((a, b) => parseDate(b.date) - parseDate(a.date));
-  return allPlays;
-}
-
 export const cutOffTextAndReplace = (string, end, replacement) => {
   if (!replacement) {
     replacement = `...` || `-`;
@@ -243,6 +238,18 @@ export const formatDate = (date, specificPortion) => {
   return completedDate;
 };
 
+export const dismissAlert = (overlay = document.querySelector(`.overlay`), alertDialog = document.querySelector(`.alert`)) => {
+  overlay.style.opacity = 0;
+  alertDialog.style.opacity = 0;
+  alertDialog.style.transform = `translateY(-50px)`;
+
+  // Remove the alert and overlay from the DOM after the animation is complete
+  setTimeout(() => {
+    document.body.removeChild(overlay);
+    localStorage.setItem(`alertOpen`, false);
+  }, 240);
+}
+
 export const showAlert = async (title, component, width, height) => {
   let isAlertOpen = JSON.parse(localStorage.getItem(`alertOpen`)) == true;
   if (isAlertOpen) return;
@@ -269,16 +276,7 @@ export const showAlert = async (title, component, width, height) => {
       {component}
     </div>
     <button onClick={(e) => {
-      overlay.style.opacity = 0;
-      // overlay.style.transform = `translateY(-50px)`;
-      alertDialog.style.opacity = 0;
-      alertDialog.style.transform = `translateY(-50px)`;
-
-      // Remove the alert and overlay from the DOM after the animation is complete
-      setTimeout(() => {
-        document.body.removeChild(overlay);
-        localStorage.setItem(`alertOpen`, false);
-      }, 240);
+      dismissAlert(overlay, alertDialog);
     }} className={`alertButton iconButton`}>
       <span>X</span>
     </button>
@@ -301,15 +299,7 @@ export const showAlert = async (title, component, width, height) => {
     if (!alertDialog.contains(e.target) && !e.target.classList.contains(`alertActionButton`)) {
       // Click occurred outside the alert content
       // Fade out the alert and overlay
-      alertDialog.style.opacity = 0;
-      alertDialog.style.transform = `translateY(-50px)`;
-      overlay.style.opacity = 0;
-
-      // Remove the alert and overlay from the DOM after the animation is complete
-      setTimeout(() => {
-        document.body.removeChild(overlay);
-        localStorage.setItem(`alertOpen`, false);
-      }, 240);
+      dismissAlert(overlay, alertDialog);
     }
   });
 }
@@ -325,7 +315,6 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   let [width, setWidth] = useState(0);
   let [color, setColor] = useState(``);
   let [users, setUsers] = useState([]);
-  let [plays, setPlays] = useState([]);
   let [user, setUser] = useState(null);
   let [dark, setDark] = useState(false);
   let [updates, setUpdates] = useState(0);
@@ -337,7 +326,6 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   let [mobile, setMobile] = useState(false);
   let [loading, setLoading] = useState(true);
   let [iPhone, set_iPhone] = useState(false);
-  let [highScore, setHighScore] = useState(0);
   let [platform, setPlatform] = useState(null);
   let [anim, setAnimComplete] = useState(false);
   let [categories, setCategories] = useState([]);
@@ -346,7 +334,6 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   let [authState, setAuthState] = useState(`Next`);
   let [bodyClasses, setBodyClasses] = useState(``);
   let [mobileMenu, setMobileMenu] = useState(false);
-  let [gameFormStep, setGameFormStep] = useState(1);
   let [emailField, setEmailField] = useState(false);
   let [systemStatus, setSystemStatus] = useState(``);
   let [buttonText, setButtonText] = useState(`Next`);
@@ -354,7 +341,6 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   let [usersLoading, setUsersLoading] = useState(true);
   let [content, setContent] = useState(`defaultContent`);
   let [year, setYear] = useState(new Date().getFullYear());
-  let [playersToSelect, setPlayersToSelect] = useState([]);
   let [databasePlayers, setDatabasePlayers] = useState([]);
   let [filteredPlayers, setFilteredPlayers] = useState(players);
   let [deleteCompletely, setDeleteCompletely] = useState(false);
@@ -438,7 +424,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
       };
     } else {
       let storedUsers = JSON.parse(localStorage.getItem(`users`));
-      if (storedUsers && storedPlays && useLocalStorage) {
+      if (storedUsers && useLocalStorage) {
         setUsers(storedUsers);
         setUsersLoading(false); 
       } else {
@@ -565,7 +551,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     };
   }, [])
 
-  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, highScore, setHighScore, color, setColor, dark, setDark, colorPref, setColorPref, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, gameFormStep, setGameFormStep, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, playersToSelect, setPlayersToSelect, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, usersLoading, setUsersLoading, iPhone, set_iPhone, plays, setPlays, shop, setShop, products, setProducts, productToEdit, setProductToEdit, cart, setCart }}>
+  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, color, setColor, dark, setDark, colorPref, setColorPref, year, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, usersLoading, setUsersLoading, iPhone, set_iPhone, shop, setShop, products, setProducts, productToEdit, setProductToEdit, cart, setCart }}>
     {(browser != `chrome` || onMac && browser != `chrome`) ? (
       <div className={`framerMotion ${bodyClasses}`}>
         <AnimatePresence mode={`wait`}>
