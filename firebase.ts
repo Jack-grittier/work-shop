@@ -84,6 +84,7 @@ export const storeName = process.env.NEXT_PUBLIC_SHOPIFY_STORE_NAME || process.e
 export const apiVersion = process.env.NEXT_PUBLIC_SHOPIFY_API_VERSION || process.env.SHOPIFY_API_VERSION;
 export const accessToken = process.env.NEXT_PUBLIC_SHOPIFY_ACCESS_TOKEN || process.env.SHOPIFY_ACCESS_TOKEN;
 export const productPlaceholderImage = `https://cdn.shopify.com/s/files/1/0857/2839/5586/files/CatTripleWhiteBG.png?v=1706157387`;
+export const productPlaceholderAltImage = `https://cdn.shopify.com/s/files/1/0857/2839/5586/files/CatTripleBlueBG.png?v=1707470831`;
 
 export const fetchShopDataFromAPI = async (customObject = true) => {
   let shopResponse = await fetch(`${liveLink}/api/shop`);

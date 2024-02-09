@@ -7,14 +7,16 @@ import { checkRole, liveLink, maxAnimationTime, productPlaceholderImage } from "
 
 export default function Product(props) {
     let { product, filteredProducts } = props;
-    let { user, router, products, setProducts, setProductToEdit } = useContext<any>(StateContext);
+    let { user, router, products, setProducts, productToEdit, setProductToEdit } = useContext<any>(StateContext);
 
     if (!filteredProducts) filteredProducts = products;
 
     let [delClicked, setDelClicked] = useState(false);
     let [cartLoaded, setCartLoaded] = useState(false);
     let [prodClicked, setProdClicked] = useState(false);
+    let [editClicked, setEditClicked] = useState(false);
     let [cartClicked, setCartClicked] = useState(false);
+    let [cancelClicked, setCancelClicked] = useState(false);
     let [backToShopClicked, setBackToShopClicked] = useState(false);
     let [optionGroups, setOptionGroups] = useState(product.options);
     let [featuredProduct, setFeaturedProduct] = useState(filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1);
@@ -23,7 +25,7 @@ export default function Product(props) {
         Price: product.price,
     }));
 
-    console.log(`Product`, {product, options, optionGroups});
+    // console.log(`Product`, {product, options, optionGroups});
 
     const isCartButtonDisabled = () => {
         return Object.keys(options).length == 0;
@@ -32,6 +34,12 @@ export default function Product(props) {
     const dismissAlertThenDeleteProduct = () => {
         dismissAlert();
         deleteProduct();
+    }
+
+    const cancelEditProduct = () => {
+        setProductToEdit(null);
+        let productFormElement: any = document.querySelector(`.productForm`);
+        productFormElement.reset();
     }
 
     const onProductOptionFormSubmit = (e) => {
@@ -45,6 +53,7 @@ export default function Product(props) {
         if (optName == `Color`) icon = `blue fas fa-palette`; 
         else if (optName == `Size`) icon = `blue fas fa-signal`; 
         else if (optName == `Quantity`) icon = `blue fas fa-hashtag`;
+        else if (optName == `Price`) icon = `green fas fa-dollar-sign`; 
 
         return icon;
     }
@@ -60,13 +69,15 @@ export default function Product(props) {
     const updateOptions = (optName, opt) => {
         setOptions(prevOptions => {
             let Quantity = prevOptions.Quantity;
-            let Price: any = parseFloat(product.price);
-            let Size = optName == `Size` ? opt : prevOptions.Size;
+            let Price: any = parseFloat(product?.price);
+            let Size = optName == `Size` ? opt : prevOptions?.Size;
 
-            let sizeMultiplier = parseFloat(Size.charAt(0));
-            let sizeMultiplierIsNumber = !isNaN(sizeMultiplier);
-            if (sizeMultiplierIsNumber) {
-                Price = Price + (sizeMultiplier * 1.5);
+            if (Size) {
+                let sizeMultiplier = parseFloat(Size.charAt(0));
+                let sizeMultiplierIsNumber = !isNaN(sizeMultiplier);
+                if (sizeMultiplierIsNumber) {
+                    Price = Price + (sizeMultiplier * 1.5);
+                }
             }
 
             if (optName == `QuantitySub`) {
@@ -93,21 +104,30 @@ export default function Product(props) {
     const deleteProduct = async () => {
         try {
             setDelClicked(true);
-            // setTimeout(() => setDelClicked(false), maxAnimationTime);
-            let deleteProductResponse = await fetch(`${liveLink}/api/products/delete/${product.id}`, {
-                method: 'DELETE',
+
+            let archiveProductResponse = await fetch(`${liveLink}/api/products/archive/${product.id}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
 
-            if (!deleteProductResponse.ok) {
+            // let deleteProductResponse = await fetch(`${liveLink}/api/products/delete/${product.id}`, {
+            //     method: 'DELETE',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            // });
+
+            let responseToUse = archiveProductResponse;
+
+            if (!responseToUse.ok) {
                 console.log(`Deleting Product Error...`, product);
                 toast.error(`Error Deleting Product`);
                 setTimeout(() => setDelClicked(false), maxAnimationTime);
-                return deleteProductResponse;
+                return responseToUse;
             } else {
-                const responseData = await deleteProductResponse.json();
+                const responseData = await responseToUse.json();
                 toast.success(`Product Successfully Deleted`);
                 setProducts(prevProducts => prevProducts.filter(prevProduct => prevProduct.id != product.id));
                 setProductToEdit(null);
@@ -123,23 +143,35 @@ export default function Product(props) {
 
     const handleShopifyAction = (e, type?: string) => {
         if (type == `Delete`) {
-            showAlert(`Confirm Delete?`, <>
+            showAlert(<div className={`alertTitleMessage`}>Confirm <span className={`red`}>Delete</span>?</div>, <>
                 <div className={`confirmTitle`}>
                     <h3 className={`confirmMessage`}>Are you sure you want to Delete Product {product?.name}?</h3>
                     <div className={`productActions productButtons`}>
-                        <button onClick={() => dismissAlertThenDeleteProduct()} className={`productButton`} type={`button`}>
-                            <i className={`productIcon fas ${delClicked ? `pink spinThis fas fa-spinner` : `red fa-trash-alt`}`}></i>
+                        <button onClick={() => dismissAlertThenDeleteProduct()} className={`productButton buttonFullWidth`} type={`button`}>
+                            <i className={`productIcon fas ${delClicked ? `pink spinThis fa-spinner` : `red fa-trash-alt`}`}></i>
                             <div className={`productButtonText alertActionButton`}>{delClicked ? `Deleting` : `Delete`}</div>
                         </button>
                     </div>
                 </div>
-            </>, undefined, `300px`);
+            </>, undefined, `330px`);
         } else if (type == `Product`) {
             setProdClicked(true);
             dev() && console.log(`Navigating to ${product.name}`, {e, type, user, router, route: router.route});
             toast.info(`Navigating to ${product.name}`);
             router.push(`/products/${product.id}`);
             setTimeout(() => setProdClicked(false), maxAnimationTime);
+        } else if (type == `Edit`) {
+            setEditClicked(true);
+            setProductToEdit(product);
+            dev() && console.log(`Editing ${product.name}`, product);
+            setEditClicked(false);
+            // setTimeout(() => setEditClicked(false), maxAnimationTime);
+        } else if (type == `Cancel`) {
+            setCancelClicked(true);
+            cancelEditProduct();
+            dev() && console.log(`Cancel Editing ${product.name}`, product);
+            setCancelClicked(false);
+            // setTimeout(() => setCancelClicked(false), maxAnimationTime);
         } else {
             setCartClicked(true);
             dev() && console.log(`Add to Cart`, {e, type, user});
@@ -158,7 +190,7 @@ export default function Product(props) {
     return (
         <div className={`product ${featuredProduct ? `featuredProduct` : `multiProduct`}`}>
             <div className={`productTitle`}>
-                <i className={`topIcon fab fa-shopify`}></i>
+                <i className={`shopifyIcon green topIcon fab fa-shopify`}></i>
                 <div className={`desc productTitleAndPrice`}>
                     <span className={`prodTitle oflow ${product?.title.length > 15 ? `longTitle` : `shortTitle`}`}>{product?.title}</span>
                     <span className={`price cardPrice`}> - 
@@ -194,25 +226,43 @@ export default function Product(props) {
                 {product.description != `` ? product.description : product?.title}
             </div>
             <form onSubmit={(e) => onProductOptionFormSubmit(e)} className={`productOptions productOptionsForm`}>
-                {featuredProduct && <>
-                    <fieldset name={`selectQuantityField`} className={`selectToggle selectQuantityField`}>
-                        <ButtonGroup className={`toggleButtons productButtons`} variant={`outlined`} aria-label={`Product Options`}>
-                            <h3 className={`selectText textWithIcon`}>
-                                <i className={`selectIcon ${renderSelectIcon(`Quantity`)}`}></i> 
-                                Quantity
-                            </h3>
-                            <button onClick={(e) => updateOptions(`QuantitySub`, options.Quantity)} type={`button`} className={`subQty redBg qtyButton optionButton productButton Quantity-${options.Quantity} firstOption`} value={options.Quantity}>
-                                <span className={`optionText textOverflow`}>-</span>
-                            </button>
-                            <button type={`button`} className={`qtyText optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity} disabled>
-                                <span className={`optionText textOverflow`}>{options.Quantity}</span>
-                            </button>
-                            <button onClick={(e) => updateOptions(`QuantityAdd`, options.Quantity)} type={`button`} className={`addQty greenBg qtyButton optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity}>
-                                <span className={`optionText textOverflow`}>+</span>
-                            </button>
-                        </ButtonGroup>
-                    </fieldset>
-                </>}
+                <div className={`productFieldRow`}>
+                    {featuredProduct && <>
+                        <fieldset name={`selectPriceField`} className={`selectToggle selectPriceField`}>
+                            <ButtonGroup className={`toggleButtons productButtons`} variant={`outlined`} aria-label={`Product Price`}>
+                                <h3 className={`selectText textWithIcon`}>
+                                    <i className={`selectIcon ${renderSelectIcon(`Price`)}`}></i> 
+                                    Price
+                                </h3>
+                                <button disabled className={`productButton optionButton firstOption`}>
+                                    <span className={`price innerPrice`}>
+                                        <span className={`dollar`}>$</span>{options?.Price}
+                                    </span>
+                                </button>
+                            </ButtonGroup>
+                        </fieldset>
+                    </>}
+                    {featuredProduct && <>
+                        <fieldset name={`selectQuantityField`} className={`selectToggle selectQuantityField`}>
+                            <ButtonGroup className={`toggleButtons productButtons`} variant={`outlined`} aria-label={`Product Quantity`}>
+                                <h3 className={`selectText textWithIcon`}>
+                                    <i className={`selectIcon ${renderSelectIcon(`Quantity`)}`}></i> 
+                                    Quantity
+                                </h3>
+                                <button onClick={(e) => updateOptions(`QuantitySub`, options.Quantity)} type={`button`} className={`subQty redBg qtyButton optionButton productButton Quantity-${options.Quantity} firstOption`} value={options.Quantity}>
+                                    <span className={`optionText textOverflow`}>-</span>
+                                </button>
+                                <button type={`button`} className={`qtyText optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity} disabled>
+                                    <span className={`optionText textOverflow`}>{options.Quantity}</span>
+                                    {/* <input name={`quantity`} type={`number`} value={options.Quantity} /> */}
+                                </button>
+                                <button onClick={(e) => updateOptions(`QuantityAdd`, options.Quantity)} type={`button`} className={`addQty greenBg qtyButton optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity}>
+                                    <span className={`optionText textOverflow`}>+</span>
+                                </button>
+                            </ButtonGroup>
+                        </fieldset>
+                    </>}
+                </div>
                 {featuredProduct && optionGroups && Array.isArray(optionGroups) && optionGroups.length > 1 && optionGroups.map((optGroup, optGroupIndex) => {
                     return (
                         <fieldset key={optGroupIndex} name={`select${optGroup?.name}Field`} className={`selectToggle select${optGroup?.name}Field`}>
@@ -232,31 +282,64 @@ export default function Product(props) {
                         </fieldset>
                     )
                 })}
-                <div className={`productCardFooter`}>
+                <div className={`productFieldRow`}>
                     <div className={`productActions productButtons`}>
-                        {featuredProduct && <button onClick={() => backToShop()} className={`productButton`} type={`button`}>
-                            <i className={`productIcon fas ${backToShopClicked ? `pink spinThis fas fa-spinner` : `pink fa-undo`}`}></i>
-                            <div className={`productButtonText alertActionButton`}>{backToShopClicked ? `Navigating` : `Back to Shop`}</div>
-                        </button>}
+
+                        {featuredProduct && (
+                            <button title={`Back to Shop`} onClick={() => backToShop()} className={`productButton backToShopButton`} type={`button`}>
+                                <i className={`productIcon fas ${backToShopClicked ? `pink spinThis fa-spinner` : `pink fa-undo`}`}></i>
+                                <div className={`productButtonText alertActionButton`}>
+                                    {backToShopClicked ? `Navigating` : `Back to Shop`}
+                                </div>
+                            </button>
+                        )}
+
                     </div>
                     <div className={`productActions productButtons`}>
-                        {user && checkRole(user.roles, `Admin`) && <button onClick={(e) => handleShopifyAction(e, `Delete`)} className={`productButton`} type={`button`}>
-                            <i className={`productIcon fas ${delClicked ? `pink spinThis fas fa-spinner` : `red fa-trash-alt`}`}></i>
-                            <div className={`productButtonText alertActionButton`}>{delClicked ? `Deleting` : `Delete`}</div>
-                        </button>}
-                        {!router.route.includes(`products/`) && <button onClick={(e) => handleShopifyAction(e, `Product`)} className={`productButton`} type={`button`}>
-                            <i className={`productIcon fas ${prodClicked ? `pink spinThis fas fa-spinner` : `green fa-tags`}`}></i>
-                            <div className={`productButtonText alertActionButton`}>{prodClicked ? `Navigating` : `Details`}</div>
-                        </button>}
-                        {router.route.includes(`products`) && <button onClick={(e) => handleShopifyAction(e, `Cart`)} className={`productButton addToCartButton ${isCartButtonDisabled() ? `disabled` : ``}`} type={`submit`} disabled={isCartButtonDisabled()}>
-                            {!cartClicked && <>
-                                <span className={`price innerPrice`}>
-                                    <span className={`dollar`}>$</span>{options?.Price}
-                                </span>
-                            </>}
-                            <i className={`productIcon green addToCartIcon fas ${cartClicked ? cartLoaded ? `fa-check` : `pink spinThis fas fa-spinner` : `fa-shopping-cart`}`}></i>
-                            <div className={`productButtonText alertActionButton`}>{cartClicked ? cartLoaded ? `Added` : `Adding` : `Add to Cart`}</div>
-                        </button>}
+
+                        {user && checkRole(user.roles, `Admin`) && (
+                            <button title={`Delete ${product?.title}`} onClick={(e) => handleShopifyAction(e, `Delete`)} className={`productButton deleteProductButton`} type={`button`}>
+                                <i className={`productIcon fas ${delClicked ? `pink spinThis fa-spinner` : `red fa-trash-alt`}`}></i>
+                                <div className={`productButtonText alertActionButton`}>{delClicked ? `Deleting` : `Delete`}</div>
+                            </button>
+                        )}
+
+                        {!router.route.includes(`products/`) && (
+                            <button title={`Details ${product?.title}`} onClick={(e) => handleShopifyAction(e, `Product`)} className={`productButton detailsProductButton`} type={`button`}>
+                                <i className={`productIcon fas ${prodClicked ? `pink spinThis fa-spinner` : `green fa-tags`}`}></i>
+                                <div className={`productButtonText alertActionButton`}>{prodClicked ? `Navigating` : `Details`}</div>
+                            </button>
+                        )}
+
+                        {user && checkRole(user.roles, `Admin`) && (
+                            <button 
+                                className={`productButton editProductButton ${productToEdit != null && productToEdit.id == product.id ? `cancelProductButton` : ``}`} type={`button`}
+                                title={`
+                                    ${productToEdit != null && productToEdit.id == product.id ? `Cancel` : `Edit`} ${product?.title}
+                                `} 
+                                onClick={
+                                    (e) => handleShopifyAction(e, productToEdit != null && productToEdit.id == product.id ? `Cancel` : `Edit`)
+                                }
+                            >
+                                <i className={`productIcon fas ${editClicked || cancelClicked ? `pink spinThis fa-spinner` : productToEdit != null && productToEdit.id == product.id ? `blue fa-ban` : `blue fa-pen`}`}></i>
+                                <div className={`productButtonText alertActionButton`}>{editClicked ? `Editing` : productToEdit != null && productToEdit.id == product.id ? cancelClicked ? `Canceling` : `Cancel` : `Edit`}</div>
+                            </button>
+                        )}
+
+                        {router.route.includes(`products`) && (
+                            <button title={`Add ${options.Quantity} ${product?.title}'s to Cart`} onClick={(e) => handleShopifyAction(e, `Cart`)} className={`productButton addToCartButton ${isCartButtonDisabled() ? `disabled` : ``}`} type={`submit`} disabled={isCartButtonDisabled()}>
+                                {!cartClicked && <>
+                                    <span className={`price innerPrice`}>
+                                        <span className={`dollar`}>$</span>{options?.Price}
+                                    </span>
+                                </>}
+                                <i className={`productIcon green addToCartIcon fas ${cartClicked ? cartLoaded ? `fa-check` : `pink spinThis fa-spinner` : `fa-shopping-cart`}`}></i>
+                                <div className={`productButtonText alertActionButton`}>
+                                    {cartClicked ? cartLoaded ? `Added` : `Adding` : `Add to Cart`}
+                                </div>
+                            </button>
+                        )}
+
                     </div>
                 </div>
             </form>

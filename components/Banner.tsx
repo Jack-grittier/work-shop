@@ -1,8 +1,12 @@
+import { useContext } from "react";
+import { StateContext } from "../pages/_app";
+
 export default function Banner(props) {
     let { title } = props;
+    let { router } = useContext<any>(StateContext);
     return (
         <section className={`cwsMainBanner banner`}>
-        <div className={`hero`}>
+        <div className={`hero ${router.route == `/` ? `homeHero` : `pageHero`}`}>
           <div className={`heroContent`}>
             <div className={`floatingCat`}>
               <img src={`/assets/images/cwsCatDarkStar.png`} alt={`Floating Cat`} />

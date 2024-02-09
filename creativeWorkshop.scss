@@ -25,7 +25,11 @@
     --navyBlueT: #3e65955d;
     --backLogSolid: #6e6edb;
     --inProgressBG: #d2e6ff;
+    --shopifyGreen: #95bf47;
+    --cwsLightGreen: #00ff75;
     --inProgressSolid: #2080ff;
+    --shopifyGreenShade: #64943e;
+    --cwsDarkGreen: darkslategray;
     --navyT: rgba(15,18,62, 0.749);
     --cwsBlue: rgba(65, 174, 227, 1);
     --cwsPink: rgba(199, 26, 143, 1);
@@ -91,8 +95,24 @@ nav a.nx-text-sm {
     color: var(--cwsGreen);
 }
 
+.lightgreen {
+    color: var(--cwsLightGreen);
+}
+
+.darkgreen {
+    color: var(--cwsDarkGreen);
+}
+
 .greenbg, .greenBg, .greenBG {
     background: var(--cwsGreen);
+}
+
+.shopifyGreen {
+    color: var(--shopifyGreen);
+}
+
+.shopifyGreenShade {
+    color: var(--shopifyGreenShade);
 }
 
 .googleButton {
@@ -153,6 +173,10 @@ nav a.nx-text-sm {
     .hero {
         height: 645px;
         padding: 1em 0;
+        @media (max-width: 1600px) {
+            height: 500px;
+            padding: 3em 0 1em;
+        }
         align-items: center;
         color: var(--cwsNavy);
         justify-content: center;
@@ -311,11 +335,14 @@ hr {
     flex-direction: column;
 }
 
-.productCardFooter {
+.productFieldRow {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    .selectToggle {
+        max-width: fit-content;
+    }
     .productButtons {
         &:first-child {
             max-width: fit-content;
@@ -366,16 +393,33 @@ hr {
 }
 
 .productButton {
-    @extend .textWithIcon;
+    &.buttonFullWidth {
+        width: 100%;
+        justify-content: center;
+    }
     border-radius: 5px;
+    @extend .textWithIcon;
     padding: 4px 10px 2px;
     border: 2px solid white;
     transition: var(--transition);
     &:not(:disabled) {
         &:hover {
             color: white;
-            background: var(--cwsBlue);
-            border: 2px solid var(--cwsBlue);
+            background: var(--cwsBlueT);
+            border: 2px solid var(--cwsBlueT);
+            .productButtonText  {
+                text-shadow: 0 0 1px white;
+            }
+            &.detailsProductButton {
+                i {
+                    @extend .lightgreen;
+                }
+            }
+            &.editProductButton {
+                i {
+                    @extend .pink;
+                }
+            }
             &.addToCartButton {
                 .dollar {
                     @extend .pink;
@@ -419,7 +463,25 @@ hr {
     }
 }
 
+.qtyTextSlim {
+    padding: 0;
+    height: 36px;
+    margin: 0 10px;
+    min-width: 36px;
+    font-size: 16px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 100% !important;
+    .optionText {
+        bottom: -1px;
+        position: relative;
+    }
+}
+
 .qtyButton {
+    &.qtyButtonSlim {
+        height: 20px;
+    }
     &.subQty {
         color: black;
         background: white;
@@ -519,6 +581,9 @@ hr {
     @media (min-width: 1800px) {
         &:not(.noProducts):not(.oneProduct) {
             grid-template-columns: repeat(3, 1fr);
+            .productPic {
+                max-height: 380px;
+            }
         }
     }
 }
@@ -567,8 +632,11 @@ pre {
 }
 
 .productImageContainer {
+    display: flex;
     cursor: pointer;
     position: relative;
+    align-items: center;
+    justify-content: center;
     &:has(.productAltImage) {
         .productAltImage {
             position: absolute;
@@ -588,6 +656,7 @@ pre {
 }
 
 .productPic {
+    max-height: 425px;
     border-radius: 20px;
     margin-bottom: 20px;
     transition: var(--transition);
@@ -621,8 +690,18 @@ pre {
 }
 
 .productForm {
-    width: 90%;
-    padding: 0 15px 15px;
+    width: 95%;
+    padding: 0 0 15px;
+    @media (max-width: 1100px) {
+        padding-bottom: 75px;
+        display: flex !important;
+        grid-gap: 5px !important;
+        flex-direction: column !important;
+        input, button {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+    }
     input, textarea {
         width: 100%;
         min-height: 32px;
@@ -650,16 +729,32 @@ pre {
         }
     }
     .productFormSubmitButton {
+        color: white;
         min-height: 30px;
         max-height: 30px;
         padding: 0px 10px;
         border-radius: 6px;
-        background: white;
-        color: darkslategray;
+        background: var(--cwsBlue);
         transition: var(--transition);
+        &.productFormCancelButton {
+            background: white;
+            color: darkslategray;
+            i {
+                @extend .red;
+            }
+            &:active {
+                background: gray;
+            }
+        }
         &:hover {
-            background: var(--cwsBlue);
-            color: white;
+            @extend .pinkBg;
+            i {
+                @extend .lightgreen;
+            }
+            &.productFormCancelButton {
+                color: black;
+                @extend .peachBg;
+            }
         }
     }
 }

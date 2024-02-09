@@ -2,10 +2,10 @@ import { toast } from "react-toastify";
 import Product from "../models/Product";
 import { useContext, useState } from "react"
 import { StateContext } from "../pages/_app";
-import { liveLink, productPlaceholderImage } from "../firebase";
+import { liveLink, maxAnimationTime, productPlaceholderAltImage, productPlaceholderImage } from "../firebase";
 
 export const addProductsToShopify = async (productToAdd) => {
-    let { title, price, image, category, quantity, description } = productToAdd;
+    let { title, price, image, altImage, category, quantity, description } = productToAdd;
     try {
         let addProductsResponse = await fetch(`${liveLink}/api/products/add`, {
             method: 'POST',
@@ -15,10 +15,11 @@ export const addProductsToShopify = async (productToAdd) => {
             body: JSON.stringify({
                 title,
                 price,
+                image,
+                altImage,
                 quantity,
                 category,
                 description,
-                imageSrc: image,
             })
         });
 
@@ -34,14 +35,30 @@ export const addProductsToShopify = async (productToAdd) => {
 export default function ProductForm(props) {
 
     let [processing, setProcessing] = useState(false);
+    let [imageURLAdded, setImageURLAdded] = useState(false);
     let { setProducts, productToEdit, setProductToEdit } = useContext<any>(StateContext);
+
+    const cancelEditProduct = () => {
+        setProductToEdit(null);
+        let productFormElement: any = document.querySelector(`.productForm`);
+        productFormElement.reset();
+    }
+
+    const isURLAdded = (e) => {
+        let { value } = e.target;
+        if (value != ``) {
+            setImageURLAdded(true);
+        } else {
+            setImageURLAdded(false);
+        }
+    }
 
     const onProductFormSubmit = async (e) => {
         e.preventDefault();
+        setProcessing(true);
         try {
-            setProcessing(true);
             let form = e.target;
-            let { title: titleField, category: categoryField, price: priceField, quantity: quantityField, image: imageField, description: descriptionField } = form;
+            let { title: titleField, category: categoryField, price: priceField, quantity: quantityField, image: imageField, description: descriptionField, altImage: altImageField } = form;
 
             if (productToEdit == null) {
                 let title = titleField.value;
@@ -49,12 +66,14 @@ export default function ProductForm(props) {
                 let price = parseFloat(priceField.value);
                 let quantity = quantityField.value != `` ? parseInt(quantityField.value) : 1;
                 let image = imageField.value != `` ? imageField.value : productPlaceholderImage;
+                let altImage = altImageField && altImageField?.value != `` ? altImageField.value : productPlaceholderAltImage;
                 let description = descriptionField.value != `` ? descriptionField.value : `${titleField.value} Description`;
 
                 let productToAdd = { 
                     title, 
                     price, 
                     image, 
+                    altImage,
                     category, 
                     quantity, 
                     description,
@@ -73,12 +92,12 @@ export default function ProductForm(props) {
                 }
             } else {
                 setProcessing(false);
-                console.log(`Edit Product`, productToEdit);
+                console.log(`Edit & Update Product`, productToEdit);
             }
         } catch (error) {
-            setProcessing(false);
             toast.error(`Error Submitting Product Form`);
             console.log(`Error Submitting Product Form`, error);
+            setTimeout(() => setProcessing(false), maxAnimationTime);
         }
     }
 
@@ -86,7 +105,7 @@ export default function ProductForm(props) {
         <form 
             onSubmit={(e) => onProductFormSubmit(e)}
             id={`${productToEdit == null ? `addProductForm` : `editProductForm`}`}
-            className={`alignCenter flex flexColumn gap5 justifyCenter productForm addProductForm`}
+            className={`alignCenter flex flexColumn gap5 justifyCenter productForm addProductForm ${productToEdit == null ? `` : `editProductForm`}`}
         >
             <input 
                 required 
@@ -135,11 +154,31 @@ export default function ProductForm(props) {
                 type={`text`} 
                 name={`image`} 
                 className={`productImage`} 
+                onInput={(e) => isURLAdded(e)}
                 placeholder={`Public Image URL...`} 
-                defaultValue={productToEdit == null ? `` : productToEdit.image} 
+                defaultValue={productToEdit == null ? `` : productToEdit?.image?.src} 
             />
-            <button disabled={processing} className={`productFormSubmitButton blackButton`} type={`submit`}>{productToEdit == null ? processing ? `Adding` : `Add` : `Save`}</button>
-            {productToEdit != null && <button type={`button`} onClick={() => setProductToEdit(null)} className={`productFormCancelButton blackButton`}>Cancel</button>}
+            {imageURLAdded || productToEdit != null && <input 
+                type={`text`} 
+                name={`altImage`} 
+                className={`productImage`} 
+                placeholder={`Public Alt Image URL...`} 
+                defaultValue={productToEdit == null ? `` : productToEdit?.altImage?.src} 
+            />}
+            <button disabled={processing} className={`productFormSubmitButton blackButton`} type={`submit`}>
+                <div className={`textWithIcon`}>
+                    <i className={`fas ${productToEdit == null ? processing ? `pink spinThis fa-spinner` : `pink fa-plus` : `lightgreen fa-save`}`}></i>
+                    {productToEdit == null ? processing ? `Adding` : `Add` : `Save`}
+                </div>
+            </button>
+            {productToEdit != null && (
+                <button type={`button`} onClick={() => cancelEditProduct()} className={`productFormSubmitButton productFormCancelButton blackButton`}>
+                    <div className={`textWithIcon`}>
+                        <i className={`pink fas ${processing ? `spinThis fa-spinner` : `fa-ban`}`}></i>
+                        {productToEdit == null ? processing ? `Canceling` : `Cancel` : `Cancel`}
+                    </div>
+                </button>
+            )}
         </form>
     )
 }
