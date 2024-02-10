@@ -230,7 +230,7 @@ export default function Product(props) {
             <form onSubmit={(e) => onProductOptionFormSubmit(e)} className={`productOptions productOptionsForm`}>
                 <div className={`productFieldRow`}>
                     {featuredProduct && <>
-                        <fieldset name={`selectPriceField`} className={`selectToggle selectPriceField`}>
+                        <fieldset name={`selectPriceField`} className={`selectToggle selectPriceField hideOnMobile`}>
                             <ButtonGroup className={`toggleButtons productButtons`} variant={`outlined`} aria-label={`Product Price`}>
                                 <h3 className={`selectText textWithIcon`}>
                                     <i className={`selectIcon ${renderSelectIcon(`Price`)}`}></i> 
@@ -251,14 +251,14 @@ export default function Product(props) {
                                     <i className={`selectIcon ${renderSelectIcon(`Quantity`)}`}></i> 
                                     Quantity
                                 </h3>
-                                <button onClick={(e) => updateOptions(`QuantitySub`, options.Quantity)} type={`button`} className={`subQty redBg qtyButton ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyButtonSlim` : ``} optionButton productButton Quantity-${options.Quantity} firstOption`} value={options.Quantity}>
+                                <button onClick={(e) => updateOptions(`QuantitySub`, options.Quantity)} type={`button`} className={`qtyBtn subQty redBg qtyButton ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyButtonSlim` : ``} optionButton productButton Quantity-${options.Quantity} firstOption`} value={options.Quantity}>
                                     <span className={`optionText textOverflow`}>-</span>
                                 </button>
-                                <button type={`button`} className={`qtyText ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyTextSlim` : ``} optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity} disabled>
+                                <button type={`button`} className={`qtyBtn qtyText ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyTextSlim` : ``} optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity} disabled>
                                     <span className={`optionText textOverflow`}>{options.Quantity}</span>
                                     {/* <input name={`quantity`} type={`number`} value={options.Quantity} /> */}
                                 </button>
-                                <button onClick={(e) => updateOptions(`QuantityAdd`, options.Quantity)} type={`button`} className={`addQty greenBg qtyButton ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyButtonSlim` : ``} optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity}>
+                                <button onClick={(e) => updateOptions(`QuantityAdd`, options.Quantity)} type={`button`} className={`qtyBtn addQty greenBg qtyButton ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyButtonSlim` : ``} optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity}>
                                     <span className={`optionText textOverflow`}>+</span>
                                 </button>
                             </ButtonGroup>
@@ -269,17 +269,19 @@ export default function Product(props) {
                     return (
                         <fieldset key={optGroupIndex} name={`select${optGroup?.name}Field`} className={`selectToggle select${optGroup?.name}Field`}>
                             <ButtonGroup className={`toggleButtons productButtons`} variant={`outlined`} aria-label={`Product Options`}>
-                                <h3 className={`selectText textWithIcon`}>
+                                <h3 className={`selectText textWithIcon hideOnMobile`}>
                                     <i className={`selectIcon ${renderSelectIcon(optGroup?.name)}`}></i> 
                                     {optGroup?.name}
                                 </h3>
-                                {optGroup.values && Array.isArray(optGroup.values) && optGroup.values.length > 0 && optGroup.values.map((option, optionIndex) => {
-                                    return (
-                                        <button onClick={(e) => updateOptions(optGroup?.name, option)} key={optionIndex} type={`button`} className={`optionButton productButton ${Object.values(options).includes(option) ? `active` : ``} ${optGroup?.name}-${option} ${optionIndex == 0 ? `firstOption` : ``}`} value={option}>
-                                            <span className={`optionText textOverflow`}>{option}</span>
-                                        </button>
-                                    )
-                                })}
+                                <div className={`buttons`}>
+                                    {optGroup.values && Array.isArray(optGroup.values) && optGroup.values.length > 0 && optGroup.values.map((option, optionIndex) => {
+                                        return (
+                                            <button onClick={(e) => updateOptions(optGroup?.name, option)} key={optionIndex} type={`button`} className={`optionButton productButton ${Object.values(options).includes(option) ? `active` : ``} ${optGroup?.name}-${option} ${optionIndex == 0 ? `firstOption` : ``}`} value={option}>
+                                                <span className={`optionText textOverflow`}>{option}</span>
+                                            </button>
+                                        )
+                                    })}
+                                </div>
                             </ButtonGroup>
                         </fieldset>
                     )
@@ -291,7 +293,7 @@ export default function Product(props) {
                             <button title={`Back to Shop`} onClick={() => backToShop()} className={`productButton backToShopButton`} type={`button`}>
                                 <i className={`productIcon fas ${backToShopClicked ? `pink spinThis fa-spinner` : `pink fa-undo`}`}></i>
                                 <div className={`productButtonText alertActionButton`}>
-                                    {backToShopClicked ? `Navigating` : `Back to Shop`}
+                                    {backToShopClicked ? `Navigating` : <div><span className={`hideOnMobile`}>Back to </span> Shop</div>}
                                 </div>
                             </button>
                         )}
@@ -331,13 +333,13 @@ export default function Product(props) {
                         {router.route.includes(`products`) && (
                             <button title={`Add ${options.Quantity} ${product?.title}'s to Cart`} onClick={(e) => handleShopifyAction(e, `Cart`)} className={`productButton addToCartButton ${isCartButtonDisabled() ? `disabled` : ``}`} type={`submit`} disabled={isCartButtonDisabled()}>
                                 {!cartClicked && <>
-                                    <span className={`price innerPrice`}>
+                                    <span className={`price innerPrice hideOnMobile`}>
                                         <span className={`dollar`}>$</span>{options?.Price}
                                     </span>
                                 </>}
                                 <i className={`productIcon green addToCartIcon fas ${cartClicked ? cartLoaded ? `fa-check` : `pink spinThis fa-spinner` : `fa-shopping-cart`}`}></i>
                                 <div className={`productButtonText alertActionButton`}>
-                                    {cartClicked ? cartLoaded ? `Added` : `Adding` : `Add to Cart`}
+                                    {cartClicked ? cartLoaded ? `Added` : `Adding` : <div><span className={`hideOnMobile`}>Add to </span> Cart</div>}
                                 </div>
                             </button>
                         )}

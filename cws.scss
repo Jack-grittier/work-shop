@@ -1945,17 +1945,24 @@ div[role="presentation"] {
                             gap: 5px !important;
                             margin: 30px auto 5px;
                             a {
-                                display: none;
+                                &:not(.profileLink) {
+                                    display: none;
+                                }
                             }
                             .navFormSection {
                                 padding: 0px !important;
                                 .navForm {
                                     margin: 0 !important;
                                     gap: 0px !important;
+                                    &.authForm {
+                                        &.userSignedIn {
+                                            gap: 15px !important;
+                                            justify-content: center;
+                                        }
+                                    }
                                 }
                             }
                         }
-                        // display: none;
                     }
                 }
             }
@@ -2246,16 +2253,6 @@ div[role="presentation"] {
         }
     }
 }
-
-// @media (max-width: 350px) {
-//     .navForm {
-//         input {
-//             &[type="email"], &[type="password"] {
-//                 width: 87% !important;
-//             }
-//         }
-//     }
-// }
 
 @media (max-width: 315px) {
     .navIcons {

@@ -383,13 +383,29 @@ hr {
     justify-content: flex-end;
 }
 
-.toggleButtons {
-    grid-gap: 0;
+@media (max-width: 1100px) {
+    .hideOnMobile {
+        display: none !important;
+    }
+}
+
+.flexList {
     width: 100%;
+    grid-gap: 0;
     display: flex;
-    font-size: 18px;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: flex-end;
+}
+
+.toggleButtons {
+    font-size: 18px;
+    @extend .flexList;
+    flex-direction: row;
+    .buttons {
+        @extend .flexList;
+        width: auto;
+    }
     button {
         border: 0;
         border-radius: 0;
@@ -403,6 +419,25 @@ hr {
             border-top-right-radius: 5px;
             border-bottom-right-radius: 5px;
             border-right-width: 3px !important;
+        }
+    }
+}
+
+@media (max-width: 1015px) {
+    .productFieldRow {
+        justify-content: center;
+    }
+    .productMainImage {
+        position: relative;
+        top: 10px;
+    }
+    .flexList {
+        grid-gap: 5px;
+        justify-content: center;
+        button {
+            &:not(.qtyBtn) {
+                border-radius: 5px !important;
+            }
         }
     }
 }
@@ -435,14 +470,18 @@ hr {
 }
 
 .productButton {
-    &.buttonFullWidth {
-        width: 100%;
-        justify-content: center;
-    }
+    max-height: 30px;
     border-radius: 5px;
     @extend .textWithIcon;
     padding: 4px 10px 2px;
     transition: var(--transition);
+    &.qtyBtn {
+        max-height: 28px;
+    }
+    &.buttonFullWidth {
+        width: 100%;
+        justify-content: center;
+    }
     &:not(:disabled) {
         &:hover {
             color: white;
@@ -530,6 +569,7 @@ hr {
     border-radius: 100% !important;
     .optionText {
         bottom: -1px;
+        font-size: 15px;
         position: relative;
     }
 }
