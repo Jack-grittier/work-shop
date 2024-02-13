@@ -12,6 +12,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { createContext, useRef, useState, useEffect } from 'react';
 import { auth, dataSize, db, fetchProductsFromAPI, fetchShopDataFromAPI, maxDataSize, usersDatabase } from '../firebase';
+import { features } from 'process';
 
 export const useDB = () => true;
 export const StateContext = createContext({});
@@ -332,6 +333,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   let [updates, setUpdates] = useState(0);
   let [onMac, setOnMac] = useState(false);
   let [focus, setFocus] = useState(false);
+  let [theme, setTheme] = useState(`dark`);
   let [browser, setBrowser] = useState(``);
   let [players, setPlayers] = useState([]);
   let [devEnv, setDevEnv] = useState(false);
@@ -417,9 +419,8 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     return pageIsActive;
   }
 
-  const setInitialAndOnRouteChangeFeatures = () => {
-    dev() && console.log(`App is changing to`, router.asPath);
-    let adminFeats = [
+  const setFeatures = () => {
+    let defaultFeatures = [
       {
         feature: `Quantity Circle Buttons`,
         shown: pageIs(`products`),
@@ -431,12 +432,14 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
         shown: true,
       }
     ];
+
+    let adminFeats = localStorage.getItem(`features`) ? JSON.parse(localStorage.getItem(`features`)) && JSON.parse(localStorage.getItem(`features`)).length > 0 ? JSON.parse(localStorage.getItem(`features`)) : defaultFeatures : defaultFeatures;
+
     setAdminFeatures(prevFeats => {
       if (prevFeats) {
         if (prevFeats.length == 0) {
-          let storedFeatures = localStorage.getItem(`features`) ? JSON.parse(localStorage.getItem(`features`)) : adminFeats;
-          localStorage.setItem(`features`, JSON.stringify(storedFeatures));
-          return storedFeatures;
+          localStorage.setItem(`features`, JSON.stringify(adminFeats));
+          return adminFeats;
         } else {
           localStorage.setItem(`features`, JSON.stringify(adminFeats));
           return adminFeats;
@@ -446,6 +449,11 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
         return adminFeats;
       }
     });
+  }
+
+  const setInitialAndOnRouteChangeFeatures = () => {
+    dev() && console.log(`App is changing to`, router.asPath);
+    setFeatures();
   };
 
   // Listen for route changes
@@ -508,11 +516,14 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     let darkMode = adminFeatures && adminFeatures?.find(feat => feat.feature == `Dark Mode`);
     if (darkMode) {
       if (darkMode.enabled) {
+        setTheme(`dark`);
         setThemeMode(`dark`);
       } else {
+        setTheme(`light`);
         setThemeMode(`light`);
       }
     }
+    dev() && console.log(`Features`, adminFeatures);
     localStorage.setItem(`features`, JSON.stringify(adminFeatures));
   }, [adminFeatures])
 
@@ -634,7 +645,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     };
   }, [])
 
-  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, color, setColor, dark, setDark, colorPref, setColorPref, year, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, usersLoading, setUsersLoading, iPhone, set_iPhone, shop, setShop, products, setProducts, productToEdit, setProductToEdit, cart, setCart, imageURLAdded, setImageURLAdded, adminFeatures, setAdminFeatures }}>
+  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, color, setColor, dark, setDark, colorPref, setColorPref, year, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, usersLoading, setUsersLoading, iPhone, set_iPhone, shop, setShop, products, setProducts, productToEdit, setProductToEdit, cart, setCart, imageURLAdded, setImageURLAdded, adminFeatures, setAdminFeatures, theme, setTheme }}>
     {(browser != `chrome` || onMac && browser != `chrome`) ? (
       <div className={`framerMotion ${bodyClasses}`}>
         <AnimatePresence mode={`wait`}>

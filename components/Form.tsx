@@ -284,7 +284,7 @@ export default function Form(props?: any) {
               ) : (
                 <div className={`userCustomAvatar`}>{user?.name?.charAt(0).toUpperCase()}</div>
               )}
-              Welcome, {user?.name}
+              <div className={`welcomeMessage`}>Welcome, {user?.name}</div>
             </a>
 
             <Popover

@@ -148,11 +148,19 @@ nav a.nx-text-sm {
 .addToCartIcon {
     @extend .blue;
     &.navCart {
-        font-size: 16px;
+        font-size: 18px;
         transition: var(--transition);
         &:hover {
             @extend .peach;
         }
+    }
+}
+
+.darkModeIcon, .lightModeIcon {
+    @extend .pink;
+    transition: var(--transition);
+    &:hover {
+        @extend .peach;
     }
 }
 
@@ -978,6 +986,7 @@ pre {
 }
 
 @media (max-width: 768px) {
+
     .pageContentContainer {
         p {
             font-size: 16px;
@@ -1087,6 +1096,9 @@ pre {
 }
 
 @media (max-width: 305px) {
+    .userSignedIn .customUserSection .profileLink {
+        font-size: 14px !important;
+    }
     .productTitle {
         padding: 0 0 10px 5px;
     }

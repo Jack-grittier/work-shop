@@ -185,43 +185,61 @@ form {
 
 .nextra-sidebar-container {
     font-weight: 500;
-   li {
-    &:not(.active) {
-        a, button {
-            display: flex;
-            grid-gap: 0.3em;
-            position: relative;
-            align-items: center;
-            transition: var(--transition);
-            color: rgba(255, 255, 255, 1) !important;
-
-            &::before {
-                right: 0;
-                z-index: 0;
-                width: 100%;
-                bottom: 1px;
-                height: 1px;
-                display: block;
-                position: absolute;
-                transform: scale(0, 1);
-                content: "" !important;
-                transform-origin: 0% 100%;
+    li {
+        &:not(.active) {
+            a, button {
+                display: flex;
+                grid-gap: 0.3em;
+                position: relative;
+                align-items: center;
+                // border-radius: 0;
                 transition: var(--transition);
-                background: linear-gradient(90deg, var(--smasherscapeGreen), var(--smasherscapeBlue));
-            }
-
-            &:hover {
-                transition: var(--transition);
-                color: rgba(255,255,255,1) !important;
+                // text-decoration: underline;
+                color: rgba(255, 255, 255, 1) !important;
 
                 &::before {
-                    transform: scale(1, 1);
-                    transition: 500ms ease-in-out;
+                    right: 0;
+                    z-index: 0;
+                    width: 100%;
+                    bottom: 1px;
+                    height: 1px;
+                    display: block;
+                    position: absolute;
+                    transform: scale(0, 1);
+                    content: "" !important;
+                    transform-origin: 0% 100%;
+                    transition: var(--transition);
+                    background: var(--cwsBluePink);
+                }
+
+                &:hover {
+                    transition: var(--transition);
+                    color: rgba(255,255,255,1) !important;
+                    border-bottom: 0px solid var(--cwsBlue) !important;
+
+                    &::before {
+                        transform: scale(1, 2);
+                        transition: 500ms ease-in-out;
+                    }
+                }
+            }
+        }
+   }
+}
+
+.light {
+    .welcomeMessage {
+        color: white;
+    }
+    .nextra-sidebar-container {
+       li {
+            &:not(.active) {
+                a, button {
+                    color: var(--cwsNavy) !important;
                 }
             }
         }
     }
-   }
 }
 
 @keyframes slideUp {

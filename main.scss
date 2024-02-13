@@ -377,6 +377,12 @@ html[class~="dark"] .dark\:nx-border-neutral-800 {
     border-color: hsl(var(--nextra-primary-hue)100% 94%/.1) !important;
 }
 
+html[class~="light"] .nx-fixed {
+    backdrop-filter: blur(5px);
+    transition: var(--transition);
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
 html[class~="dark"] .dark\:nx-bg-black\/60 {
     backdrop-filter: blur(5px);
     transition: var(--transition);
@@ -648,6 +654,32 @@ input {
 }
 
 @media (max-width: 1120px) {
+    .customIconLink {
+        &::before {
+            display: none !important;
+        }
+    }
+    nav {
+        &.nx-gap-2 {
+            gap: 15px;
+        }
+        .nx-p-2 {
+            padding: 0;
+        }
+        .navIcons {
+            gap: 10px;
+            padding-left: 3px;
+            i {
+                font-size: 16px !important;
+                &.lightModeIcon {
+                    font-size: 18px !important;
+                }
+                &.naturallySmallIcon {
+                    font-size: 19px !important;
+                }
+            }
+        }
+    }
     .clipColumns {
         .subTaskItem {
             .subtaskActions {
