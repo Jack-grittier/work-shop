@@ -194,7 +194,7 @@ export default function Product(props) {
             <div className={`productTitle`}>
                 <i className={`shopifyIcon green topIcon fab fa-shopify`}></i>
                 <div className={`desc productTitleAndPrice`}>
-                    <span className={`prodTitle oflow ${product?.title.length > 15 ? `longTitle` : `shortTitle`}`}>{product?.title}</span>
+                    <span title={product?.title} className={`prodTitle oflow ${product?.title.length > 15 ? `longTitle` : `shortTitle`}`}>{product?.title}</span>
                     <span className={`price cardPrice`}> - 
                         <span className={`dollar`}>$</span>{options?.Price}
                     </span>
