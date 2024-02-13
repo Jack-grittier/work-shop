@@ -293,7 +293,7 @@ export default function Form(props?: any) {
               isVisible={isPopoverVisible}
               content={(
                 <div className={`userAdminControls`}>
-                  <h3 style={{ width: `90%`, margin: `0 auto`, textAlign: `center`, fontSize: 22, fontWeight: 900 }} className={`white`}>Beta Features</h3>
+                  <h3 style={{ width: `90%`, margin: `0 auto`, textAlign: `center`, fontSize: 22, fontWeight: 900 }} className={`white`}>User Preferences</h3>
                   <div className={`adminControlsContainer`}>
                     {adminFeatures && adminFeatures?.length > 0 && adminFeatures?.map((feat, featIndex) => {
                       if (feat.shown) {

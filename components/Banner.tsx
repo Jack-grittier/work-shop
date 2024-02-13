@@ -18,7 +18,7 @@ export default function Banner(props) {
             <p className={`heroDescText`}>Graphic Design - Event Design - Custom Printing</p>
           </div>
           <div className={`heroTitle`}>
-            <h1 className={`heroTitleSubText`}>{title}</h1>
+            <h1 className={`heroTitleSubText ${title.length > 15 ? `longTitleSubText` : `shortTitleSubText`}`}>{title}</h1>
           </div>
         </div>
       </div>

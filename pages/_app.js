@@ -5,7 +5,7 @@ import Pusher from 'pusher-js';
 import '../creativeWorkshop.scss';
 import User from '../models/User';
 import ReactDOM from 'react-dom/client';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import { simplifyUser } from '../components/Form';
 import { onAuthStateChanged } from 'firebase/auth';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -83,8 +83,9 @@ export const setThemeMode = (theme) => {
 }
 
 export const setThemeUI = () => {
+  let themeMode = localStorage.getItem(`theme`) ? localStorage.getItem(`theme`) : `dark`;
   localStorage.setItem(`alertOpen`, false);
-  setThemeMode(`dark`);
+  setThemeMode(themeMode);
 }
 
 export const getTimezone = (date) => {
@@ -315,7 +316,7 @@ export const showAlert = async (title, component, width, height) => {
 }
 
 export default function CreativeWorkshop({ Component, pageProps, router }) {
-  const nextRouter = useRouter();
+  // const nextRouter = useRouter();
   let brwser = ``;
   let loaded = useRef(false);
   let mobileMenuBreakPoint = 697;
@@ -430,16 +431,18 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
         shown: true,
       }
     ];
-    localStorage.setItem(`features`, JSON.stringify(adminFeats));
     setAdminFeatures(prevFeats => {
       if (prevFeats) {
         if (prevFeats.length == 0) {
           let storedFeatures = localStorage.getItem(`features`) ? JSON.parse(localStorage.getItem(`features`)) : adminFeats;
+          localStorage.setItem(`features`, JSON.stringify(storedFeatures));
           return storedFeatures;
         } else {
+          localStorage.setItem(`features`, JSON.stringify(adminFeats));
           return adminFeats;
         }
       } else {
+        localStorage.setItem(`features`, JSON.stringify(adminFeats));
         return adminFeats;
       }
     });
@@ -510,6 +513,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
         setThemeMode(`light`);
       }
     }
+    localStorage.setItem(`features`, JSON.stringify(adminFeatures));
   }, [adminFeatures])
 
   // Catch Shop Updates

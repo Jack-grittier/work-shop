@@ -31,7 +31,7 @@ export async function getStaticProps({ params }) {
 export default function ProductPage({ product }) {
     let filteredProducts = [new Product(product)];
     return <>
-        <Banner title={product.name} />
+        <Banner title={product.title} />
         <section className={`productsSection customSection`}>
             <Main className={`cwsContent`} showTopButton={true}>
                 <Products products={filteredProducts} />
