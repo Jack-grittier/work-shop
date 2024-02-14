@@ -1,0 +1,15 @@
+.contactComponent {
+    @extend .flex;
+}
+
+span {
+    &:has(.adjustOuterSpan) {
+        @extend .flex;
+        display: flex !important;
+    }
+}
+
+.contactCardMainSide {
+    @extend .flex;
+    @extend .isColumn;
+}

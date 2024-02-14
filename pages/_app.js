@@ -12,7 +12,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { createContext, useRef, useState, useEffect } from 'react';
 import { auth, dataSize, db, fetchProductsFromAPI, fetchShopDataFromAPI, maxDataSize, usersDatabase } from '../firebase';
-import { features } from 'process';
 
 export const useDB = () => true;
 export const StateContext = createContext({});

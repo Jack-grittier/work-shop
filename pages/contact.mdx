@@ -1,5 +1,6 @@
 import Main from '../components/Main'
 import Banner from '../components/Banner'
+import Contact from '../components/Contact/Contact'
 
 <Banner title={`Contact Us`} bg={`cwsEvent.jpg`} bgPos={`50% 8%`} />
 
@@ -9,9 +10,10 @@ import Banner from '../components/Banner'
 
 <section className={`productsSection customSection`}>
   <Main className={`cwsContent`} showTopButton={true}>
-    <div className={`pageContentContainer card cardWider`}>
-      <h2 className={`subtitle shopSubtitle`}>Contact Form</h2>
-      <p style={{ textAlign: `center`, paddingBottom: 5 }}>Contact Form will go here.</p>
+    <div className={`contactPageCard card cardWider p0Important pageContentContainer overflowXHidden`}>
+      <div className={`contactCardContent flex`}>
+        <Contact />
+      </div>
     </div>
   </Main>
 </section>
