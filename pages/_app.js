@@ -455,6 +455,38 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     setFeatures();
   };
 
+  // Catch Shop Updates
+  useEffect(() => {
+    if (Object.keys(shop).length > 0) {
+      if (dataSize(shop) <= maxDataSize) localStorage.setItem(`shop`, JSON.stringify(shop));
+      dev() && console.log(`Shop`, shop);
+    }
+  }, [shop])
+
+  // Catch Product Updates
+  useEffect(() => {
+    if (products.length > 0) {
+      if (dataSize(products) <= maxDataSize) localStorage.setItem(`products`, JSON.stringify(products));
+      dev() && console.log(`Products`, products);
+    }
+  }, [products])
+
+  // Catch Feature Updates
+  useEffect(() => {
+    let darkMode = adminFeatures && adminFeatures?.find(feat => feat.feature == `Dark Mode`);
+    if (darkMode) {
+      if (darkMode.enabled) {
+        setTheme(`dark`);
+        setThemeMode(`dark`);
+      } else {
+        setTheme(`light`);
+        setThemeMode(`light`);
+      }
+    }
+    dev() && console.log(`Features`, adminFeatures);
+    localStorage.setItem(`features`, JSON.stringify(adminFeatures));
+  }, [adminFeatures])
+
   // Listen for route changes
   useEffect(() => {
     setInitialAndOnRouteChangeFeatures();
@@ -510,38 +542,6 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     }
   }, [])
 
-  // Catch Feature Updates
-  useEffect(() => {
-    let darkMode = adminFeatures && adminFeatures?.find(feat => feat.feature == `Dark Mode`);
-    if (darkMode) {
-      if (darkMode.enabled) {
-        setTheme(`dark`);
-        setThemeMode(`dark`);
-      } else {
-        setTheme(`light`);
-        setThemeMode(`light`);
-      }
-    }
-    dev() && console.log(`Features`, adminFeatures);
-    localStorage.setItem(`features`, JSON.stringify(adminFeatures));
-  }, [adminFeatures])
-
-  // Catch Shop Updates
-  useEffect(() => {
-    if (Object.keys(shop).length > 0) {
-      if (dataSize(shop) <= maxDataSize) localStorage.setItem(`shop`, JSON.stringify(shop));
-      dev() && console.log(`Shop`, shop);
-    }
-  }, [shop])
-
-  // Catch Product Updates
-  useEffect(() => {
-    if (products.length > 0) {
-      if (dataSize(products) <= maxDataSize) localStorage.setItem(`products`, JSON.stringify(products));
-      dev() && console.log(`Products`, products);
-    }
-  }, [products])
-
   // App and User Updater
   useEffect(() => {
     // App
@@ -586,10 +586,10 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
       
       const unsubscribeFromAuthStateListener = onAuthStateChanged(auth, userCredential => {
         if (userCredential) {
-          let currentUser = users && Array.isArray(users) && users.length > 0 ? users.find(u => u.uid == userCredential.uid) : userCredential;
-          // currentUser.properties = countPropertiesInObject(currentUser);
-          currentUser = new User(currentUser);
-          // console.log(`Logged In User`, currentUser);
+          let firebaseUser = users && users.length > 0 ? users.find(u => u.uid == userCredential.uid) : userCredential;
+          // firebaseUser.properties = countPropertiesInObject(firebaseUser);
+          let currentUser = new User(firebaseUser);
+          console.log(`Logged in as`, { users, currentUser, firebaseUser });
           localStorage.setItem(`user`, JSON.stringify(currentUser));
           setUser(currentUser);
           setAuthState(`Sign Out`);

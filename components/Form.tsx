@@ -68,30 +68,48 @@ export default function Form(props?: any) {
 
   const googleSignInOrSignUp = async (e) => {
    try {
+
     let googleUser = await signInWithPopup(auth, googleProvider);
+
     if (googleUser) {
       setFocus(false);
       setAuthState(`Sign Out`);
-      let userWithGoogle = new User({ ...(googleUser as any), email: googleUser?.user?.email, type: `Google`, uniqueIndex: users.length + 1 });
-      setUser(userWithGoogle);
+
+      let userWithGoogle = new User({ 
+        ...(googleUser as any), 
+        type: `Google`, 
+        uniqueIndex: users.length + 1,
+        email: googleUser?.user?.email, 
+      });
+
       userWithGoogle = removeNullAndUndefinedProperties(userWithGoogle);
       // newUser.properties = countPropertiesInObject(userWithGoogle);
+
       let userToStoreInDatabase = simplifyUser(userWithGoogle);
       if (dataSize(userToStoreInDatabase) <= maxDataSize) localStorage.setItem(`user`, JSON.stringify(userToStoreInDatabase));
-      let playerExistsInDatabase = users && users.length > 0 && users.find(usr => usr.uid == userToStoreInDatabase.uid || usr.email.toLowerCase() == userToStoreInDatabase.email.toLowerCase());
-      if (playerExistsInDatabase == true) {
-        console.log(`Successfully Signed In with Google`, dev() ? userWithGoogle : userToStoreInDatabase);
+
+      let playerExistsInDatabase = users && users.length > 0 ? users.find(usr => usr.uid == userToStoreInDatabase.uid || usr.email.toLowerCase() == userToStoreInDatabase.email.toLowerCase()) : false;
+
+      setUser(playerExistsInDatabase || userWithGoogle);
+
+      let registrationData = { playerExistsInDatabase, userWithGoogle, userToStoreInDatabase };
+      dev() && console.log(`Registration Logs`, registrationData);
+
+      if (playerExistsInDatabase != false) {
+        console.log(`Successfully Signed In with Google`, dev() ? registrationData : userToStoreInDatabase);
         toast.success(`Successfully Signed In with Google`);
       } else {
         addUserToDatabase(JSON.parse(JSON.stringify(userToStoreInDatabase)));
-        console.log(`Successfully Signed Up with Google`, dev() ? userWithGoogle : userToStoreInDatabase);
+        console.log(`Successfully Signed Up with Google`, dev() ? registrationData : userToStoreInDatabase);
         toast.success(`Successfully Signed Up with Google`);
       }
     }
+
    } catch (error) {
     console.log(`Error Signing In with Google`, error);
     toast.error(`Error Signing In with Google`);
    }
+
   }
 
   const authForm = (e?: any) => {
