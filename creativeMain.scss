@@ -2180,6 +2180,10 @@ form {
         @extend .flex;
         @extend .isColumn;
     }
+    .contactText {
+        text-align: center;
+        padding-bottom: 5px;
+    }
 }
 
 .toggle-switch {

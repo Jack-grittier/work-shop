@@ -17,11 +17,7 @@ export default function Products(props) {
             )}
             {user && checkRole(user.roles, `Admin`) && products && products?.length > 0 && products?.length != 1 && <ProductForm />}
             {products && (
-                <ul id={`productCards`} className={`cards ${products?.length > 0 ? `hasProducts ${products?.length > 1 ? `multiProducts` : `oneProduct`}` : `noProducts`} codeToCopy`}>  
-
-                    <li className={`card`}>
-                        <h3 className={`cardTitle`}>Card</h3>
-                    </li>
+                <ul id={`productCards`} className={`cards ${products?.length > 0 ? `hasProducts ${products?.length > 1 ? `multiProducts` : `oneProduct`}` : `noProducts`} hasButtons`}>
 
                     {products?.length > 0 ? products.map((product, productIndex) => {
                         return (

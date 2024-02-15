@@ -2,10 +2,10 @@ import Image from "./Image";
 
 export default function Contact(props) {
     return (
-        <div {...props} className={`contact contactComponent`}>
+        <div className={`contact contactComponent`} {...props}>
             <div className={`contactCardMainSide`}>
                 <h2 className={`subtitle shopSubtitle`}>Contact Form</h2>
-                <p className={`contactormText`} style={{ textAlign: `center`, paddingBottom: 5 }}>
+                <p className={`contactText`}>
                     Contact Form will go here.
                 </p>
             </div>

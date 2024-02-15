@@ -1516,7 +1516,7 @@ div[role="presentation"] {
     gap: 10px;
     display: grid;
     text-align: left;
-    &.codeToCopy {
+    &.hasButtons {
         width: 100%;
         margin: 5px auto 0;
         .copySubmit {
@@ -2090,7 +2090,7 @@ div[role="presentation"] {
                 }
             }
         }
-        &.codeToCopy {
+        &.hasButtons {
             margin: -10px auto -15px;
             &.Delete {
                 margin: -10px auto 0;
