@@ -394,6 +394,10 @@ hr {
     justify-content: flex-end;
 }
 
+.hideForRole {
+    display: none;
+}
+
 @media (max-width: 1100px) {
     .hideOnMobile {
         display: none !important;
@@ -822,9 +826,13 @@ pre {
     animation: floatingCat 3s ease-in-out infinite;
 }
 
-.productForm {
+.sectionContent {
     width: 95%;
-    padding: 0 0 15px;
+    margin: 0 auto;
+    // padding: 0 0 15px;
+}
+
+.productForm {
     @media (max-width: 1100px) {
         padding-bottom: 75px;
         display: flex !important;

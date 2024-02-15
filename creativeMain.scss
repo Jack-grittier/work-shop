@@ -113,6 +113,7 @@ h6 {
 .w85 { width: 85%; }
 .w90 { width: 90%; }
 .p5 { padding: 5px; }
+.m-5 { margin: -5px; }
 .w100 { width: 100%; }
 .m25 { margin: 25px; }
 .m35 { margin: 35px; }
@@ -130,6 +131,8 @@ h6 {
 .p15y { padding: 15px 0; }
 .p5b { padding: 0 0 5px; }
 .p5t { padding: 5px 0 0; }
+.mt-4 { margin-top: -4px; }
+.mt-5 { margin-top: -5px; }
 .m25t { margin-top: 25px; }
 .m35t { margin-top: 35px; }
 .m0auto { margin: 0 auto; }
@@ -165,6 +168,8 @@ h6 {
 .ttc { text-transform: capitalize; }
 .text-center { text-align: center; }
 .p15nb { padding: 15px 15px 0 15px; }
+.mt-4 { margin-top: -4px !important; }
+.mt-5 { margin-top: -5px !important; }
 .accent { color: var(--accentColor); }
 .m0Important { margin: 0 !important; }
 .p0Important { padding: 0 !important; }
@@ -604,8 +609,12 @@ html[class~=light] {
 }
 
 input {
-    max-height: 100% !important;
     max-width: 100%;
+    max-height: 100% !important;
+    font-family: var(--fontFamily);
+    &::placeholder {
+        font-family: var(--fontFamily);
+    }
 }
 
 @media (max-width: 437px) {
@@ -1129,49 +1138,71 @@ section {
     }
 }
 
-.nextra-search {
-    &::before {
-        content: "";
-        top: 6px;
-        left: 0;
-        width: 100%;
-        position: absolute;
-        border-radius: 8px;
-        transition: var(--transition);
-        transform: scale(1.015, 1.8);
-        height: calc(var(--authFormHeight) + 10px);
-        background: var(--cwsBluePink) !important;
-        @media (min-width: 768px) {
-            top: 0px;
-            transform: scale(1.05, 1.4);
-        }
-    }
+.fieldBG {
+    padding: 5px;
+    border-radius: 8px;
+    background: var(--cwsBluePink);
+}
+
+.inputWithBGContainer {
+    
     input {
-        // font-size: 14px;
         outline: none !important;
         border: 3px solid black;
-        color: black !important;
-        // border-radius: 8px !important;
-        background: rgba(255, 255, 255, 0.65) !important;
+        color: var(--cwsNavy) !important;
+        background: rgba(255, 255, 255, 0.8) !important;
+        &::placeholder {
+            color: var(--cwsNavy) !important;
+        }
     }
-    kbd {
-        color: white;
-        border-width: 2px;
-        border-color: black;
-    }
+
     @media (min-width: 768px) {
-        // padding-top: 10px;
-        margin-right: 10px;
         input {
             max-height: 30px !important;
         }
     }
-    @media (max-width: 768px) {
-        width: 88%;
-        margin: 25px auto -5px;
-        &::before {
-            transform: scale(1.04, 1.8);  
+
+    &:not(.noBG) {
+        .inputWithBGInner {
+            z-index: 1;
         }
+    
+        &::before {
+            top: -6px;
+            left: -6px;
+            content: "";
+            width: 101%;
+            position: absolute;
+            border-radius: 8px;
+            transition: var(--transition);
+            background: var(--cwsBluePink) !important;
+            height: calc(var(--authFormHeight) + 10px);
+        }
+    
+        &::after {
+            top: 6px;
+            left: -6px;
+            content: "";
+            width: 101%;
+            position: absolute;
+            border-radius: 8px;
+            transition: var(--transition);
+            background: var(--cwsBluePink) !important;
+            height: calc(var(--authFormHeight) + 10px);
+        }
+
+        @media (min-width: 768px) {
+            margin-right: 10px;
+        }
+    }
+}
+
+.nextra-search {
+    kbd {
+        color: white;
+        border-width: 2px;
+        border-color: black !important;
+        background: var(--cwsBlueT) !important;
     }
 }
 
@@ -1228,12 +1259,11 @@ p em {
 
 form {
     input {
-        font-size: 12px;
+        font-size: 14px;
         max-height: 35px;
         font-weight: 400;
         padding: 10px 25px;
         outline: none !important;
-        font-family: "Montserrat";
         color: white !important;
         transition: var(--transition);
         // border-radius: var(--borderRadius);

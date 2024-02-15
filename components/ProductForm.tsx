@@ -169,7 +169,7 @@ export default function ProductForm(props) {
         <form 
             onSubmit={(e) => onProductFormSubmit(e)}
             id={`${productToEdit == null ? `addProductForm` : `editProductForm`}`}
-            className={`alignCenter flex flexColumn gap5 justifyCenter productForm addProductForm ${productToEdit == null ? `` : `editProductForm`}`}
+            className={`alignCenter flex flexColumn gap5 justifyCenter productForm sectionContent addProductForm ${productToEdit == null ? `` : `editProductForm`}`}
         >
             <input 
                 required 

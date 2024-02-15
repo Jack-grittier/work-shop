@@ -18,10 +18,7 @@ export default function Product(props) {
     let [cartClicked, setCartClicked] = useState(false);
     let [cancelClicked, setCancelClicked] = useState(false);
     let [backToShopClicked, setBackToShopClicked] = useState(false);
-    let [optionGroups, setOptionGroups] = useState(product.options);
-    let [productLinkable, setProductLinkable] = useState(!router.route.includes(`products/`));
-    let [featuredProduct, setFeaturedProduct] = useState(filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1);
-    let [productCartable, setProductCartable] = useState(router.route.includes(`products/`) || optionGroups && Array.isArray(optionGroups) && optionGroups.length < 2);
+
     let [options, setOptions] = useState(product.options.reduce((acc, {name, values}) => Object.assign(acc, {[name]: values[0]}), {
         Quantity: 1,
         Price: product.price,
@@ -59,47 +56,59 @@ export default function Product(props) {
         return icon;
     }
 
+    const clearSearch = () => {
+        console.log(`Clear Search`);
+        let searchInput: any = document.querySelector(`#globalSearchInput`);
+        searchInput.value = ``;
+    }
+
     const backToShop = () => {
         setBackToShopClicked(true);
         dev() && console.log(`Navigating to Shop`);
         toast.info(`Navigating to Shop`);
-        router.push(`/shop`);
+        if (router.route.includes(`/shop`) || router.route.includes(`/products`) && !router.route.includes(`/products/`)) {
+            router.push(`/shop`);
+        } else {
+            clearSearch();
+        }
         setTimeout(() => setBackToShopClicked(false), maxAnimationTime);
     }
 
     const updateOptions = (optName, opt) => {
-        setOptions(prevOptions => {
-            let Quantity = prevOptions.Quantity;
-            let Price: any = parseFloat(product?.price);
-            let Size = optName == `Size` ? opt : prevOptions?.Size;
-
-            if (Size) {
-                let sizeMultiplier = parseFloat(Size.charAt(0));
-                let sizeMultiplierIsNumber = !isNaN(sizeMultiplier);
-                if (sizeMultiplierIsNumber) {
-                    Price = Price + (sizeMultiplier * 1.5);
+        if (filteredProducts && filteredProducts?.length > 0) {
+            setOptions(prevOptions => {
+                let Quantity = prevOptions.Quantity;
+                let Price: any = parseFloat(product?.price);
+                let Size = optName == `Size` ? opt : prevOptions?.Size;
+    
+                if (Size) {
+                    let sizeMultiplier = parseFloat(Size.charAt(0));
+                    let sizeMultiplierIsNumber = !isNaN(sizeMultiplier);
+                    if (sizeMultiplierIsNumber) {
+                        Price = Price + (sizeMultiplier * 1.5);
+                    }
                 }
-            }
-
-            if (optName == `QuantitySub`) {
-                Quantity = Quantity <= 1 ? 1 : Quantity - 1;
-            } else if (optName == `QuantityAdd`) {
-                Quantity = Quantity + 1;
-            }
-
-            Price = (Quantity * Price).toFixed(2).toString();
-
-            let untrackedOptions = [`QuantitySub`, `QuantityAdd`];
-
-            return {
-                ...prevOptions,
-                ...(!untrackedOptions.includes(optName) && {
-                    [optName]: opt,
-                }),
-                Quantity,
-                Price,
-            }
-        })
+    
+                if (optName == `QuantitySub`) {
+                    Quantity = Quantity <= 1 ? 1 : Quantity - 1;
+                } else if (optName == `QuantityAdd`) {
+                    Quantity = Quantity + 1;
+                }
+    
+                Price = (Quantity * Price).toFixed(2).toString();
+    
+                let untrackedOptions = [`QuantitySub`, `QuantityAdd`];
+    
+                return {
+                    ...prevOptions,
+                    ...(!untrackedOptions.includes(optName) && {
+                        [optName]: opt,
+                    }),
+                    Quantity,
+                    Price,
+                }
+            })
+        }
     }
 
     const deleteProduct = async () => {
@@ -190,9 +199,9 @@ export default function Product(props) {
     }
 
     return (
-        <div className={`product ${featuredProduct ? `featuredProduct` : `multiProduct`}`}>
+        <div className={`product ${filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 ? `featuredProduct` : `multiProduct`}`}>
 
-            <a className={`productTitleLink productTitle`} title={`Product Link - ${product?.title}`} href={productLinkable ? `/products/${product.id}` : undefined} onClick={(e) => productLinkable ? handleShopifyProductOption(e, `Navigate`) : e.preventDefault()}>
+            <a className={`productTitleLink productTitle`} title={`Product Link - ${product?.title}`} href={!router.route.includes(`products/`) ? `/products/${product.id}` : undefined} onClick={(e) => !router.route.includes(`products/`) ? handleShopifyProductOption(e, `Navigate`) : e.preventDefault()}>
                 <i className={`shopifyIcon green topIcon fab fa-shopify`}></i>
                 <h3 className={`productNameAndPrice productTitleAndPrice cardTitle`}>
                     <span title={product?.title} className={`prodTitle oflow ${product?.title.length > 15 ? `longTitle` : `shortTitle`}`}>
@@ -206,7 +215,7 @@ export default function Product(props) {
 
             <div className={`productContent`}>
 
-                <a className={`productImageLinkContainer productImagesContainer`} href={productLinkable ? `/products/${product.id}` : undefined} onClick={(e) => productLinkable ? handleShopifyProductOption(e, `Navigate`) : e.preventDefault()}>
+                <a className={`productImageLinkContainer productImagesContainer`} href={!router.route.includes(`products/`) ? `/products/${product.id}` : undefined} onClick={(e) => !router.route.includes(`products/`) ? handleShopifyProductOption(e, `Navigate`) : e.preventDefault()}>
                     {product.image ? (
                         <div className={`productImageContainer`}>
                             <Image src={product.image.src} className={`productPic productMainImage customImage`} alt={`Product Image`} />
@@ -220,7 +229,7 @@ export default function Product(props) {
                 <div className={`productDesc`}>
                     <div className={`productDescField productDescTitle textWithIcon`}>
                         <i className={`blue fas fa-stream`}></i>
-                        {featuredProduct ? `Description` : `Desc`}
+                        {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 ? `Description` : `Desc`}
                     </div>
                     <div className={`productDescField productDescType productDescCat textWithIcon`}>
                         <i className={`blue fas fa-tags`}></i>
@@ -228,18 +237,21 @@ export default function Product(props) {
                     </div>
                     <div className={`productDescField productDescQty textWithIcon`}>
                         <i className={`blue fas fa-hashtag`}></i>
-                        {featuredProduct ? <>
+                        {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 ? <>
                             {product.quantity} In Stock
                         </> : <>
                             Qty - {product.quantity}
                         </>}
                     </div>
                 </div>
+
                 {product.description != `` ? product.description : product?.title}
             </div>
+
             <form onSubmit={(e) => onProductOptionFormSubmit(e)} className={`productOptions productOptionsForm`}>
+
                 <div className={`productFieldRow`}>
-                    {featuredProduct && <>
+                    {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 && <>
                         <fieldset name={`selectPriceField`} className={`selectToggle selectPriceField hideOnMobile`}>
                             <ButtonGroup className={`toggleButtons productButtons`} variant={`outlined`} aria-label={`Product Price`}>
                                 <h3 className={`selectText textWithIcon`}>
@@ -254,7 +266,8 @@ export default function Product(props) {
                             </ButtonGroup>
                         </fieldset>
                     </>}
-                    {featuredProduct && <>
+
+                    {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 && <>
                         <fieldset name={`selectQuantityField`} className={`selectToggle selectQuantityField`}>
                             <ButtonGroup className={`toggleButtons productButtons`} variant={`outlined`} aria-label={`Product Quantity`}>
                                 <h3 className={`selectText textWithIcon`}>
@@ -275,7 +288,8 @@ export default function Product(props) {
                         </fieldset>
                     </>}
                 </div>
-                {featuredProduct && optionGroups && Array.isArray(optionGroups) && optionGroups.length > 1 && optionGroups.map((optGroup, optGroupIndex) => {
+
+                {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 && product.options && Array.isArray(product.options) && product.options.length > 1 && product.options.map((optGroup, optGroupIndex) => {
                     return (
                         <fieldset key={optGroupIndex} name={`select${optGroup?.name}Field`} className={`selectToggle select${optGroup?.name}Field`}>
                             <ButtonGroup className={`toggleButtons productButtons`} variant={`outlined`} aria-label={`Product Options`}>
@@ -296,14 +310,19 @@ export default function Product(props) {
                         </fieldset>
                     )
                 })}
+                
                 <div className={`productFieldRow`}>
                     <div className={`productActions productButtons`}>
 
-                        {featuredProduct && (
+                        {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 && (
                             <button title={`Back to Shop`} onClick={() => backToShop()} className={`productButton backToShopButton`} type={`button`}>
                                 <i className={`productIcon fas ${backToShopClicked ? `pink spinThis fa-spinner` : `pink fa-undo`}`}></i>
                                 <div className={`productButtonText alertActionButton`}>
-                                    {backToShopClicked ? `Navigating` : <div><span className={`hideOnMobile`}>Back to </span> Shop</div>}
+                                    {backToShopClicked ? `Navigating` : (
+                                        <div className={`backToShop`}>
+                                            <span className={`hideOnMobile`}>Back to </span> Shop
+                                        </div>
+                                    )}
                                 </div>
                             </button>
                         )}
@@ -333,14 +352,14 @@ export default function Product(props) {
                             </button>
                         )}
 
-                        {productLinkable && (
+                        {!router.route.includes(`products/`) && (
                             <button title={`Details ${product?.title}`} onClick={(e) => handleShopifyProductOption(e, `Navigate`)} className={`productButton detailsProductButton`} type={`button`}>
                                 <i className={`productIcon fas ${prodClicked ? `pink spinThis fa-spinner` : `green fa-tags`}`}></i>
                                 <div className={`productButtonText alertActionButton`}>{prodClicked ? `Navigating` : `Details`}</div>
                             </button>
                         )}
 
-                        {productCartable && (
+                        {router.route.includes(`products/`) || product.options && product.options.length < 2 || product.options && product.options.length >= 2 && filteredProducts && filteredProducts?.length == 1 && (
                             <button title={`Add ${options.Quantity} ${product?.title}'s to Cart`} onClick={(e) => handleShopifyProductOption(e, `Cart`)} className={`productButton addToCartButton ${isCartButtonDisabled() ? `disabled` : ``}`} type={`submit`} disabled={isCartButtonDisabled()}>
                                 {!cartClicked && <>
                                     <span className={`price innerPrice hideOnMobile`}>
@@ -349,7 +368,11 @@ export default function Product(props) {
                                 </>}
                                 <i className={`productIcon green addToCartIcon fas ${cartClicked ? cartLoaded ? `fa-check` : `pink spinThis fa-spinner` : `fa-shopping-cart`}`}></i>
                                 <div className={`productButtonText alertActionButton`}>
-                                    {cartClicked ? cartLoaded ? `Added` : `Adding` : <div><span className={`hideOnMobile`}>Add to </span> Cart</div>}
+                                    {cartClicked ? cartLoaded ? `Added` : `Adding` : (
+                                        <div className={`addToCart`}>
+                                            <span className={`hideOnMobile ${user && checkRole(user.roles, `Admin`) ? `hideForRole` : ``}`}>Add to </span> Cart
+                                        </div>
+                                    )}
                                 </div>
                             </button>
                         )}

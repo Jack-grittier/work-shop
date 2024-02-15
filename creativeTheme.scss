@@ -1518,7 +1518,7 @@ div[role="presentation"] {
     text-align: left;
     &.hasButtons {
         width: 100%;
-        margin: 5px auto 0;
+        margin: 0 auto;
         .copySubmit {
             right: 80px;
         }
@@ -2486,11 +2486,11 @@ div[role="presentation"] {
     border-radius: 7px !important;
     -webkit-backdrop-filter: blur(3px);
     animation: fadeIn 1000ms ease-in-out;
-    font-family: var(--fontFamily) !important;
     transition: var(--transition) !important;
+    font-family: var(--fontFamily) !important;
+    background: var(--cwsBluePink) !important;
     padding: 0.3em 0.7em 0.5em 0.7em !important;
     -webkit-animation: fadeIn 1000ms ease-in-out;
-    background: var(--cwsBluePink) !important;
     &.hiddenButton {
         opacity: 0;
         pointer-events: none;
