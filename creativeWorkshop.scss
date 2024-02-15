@@ -332,13 +332,6 @@ hr {
     margin-bottom: 15px;
 }
 
-.commandDesc {
-    position: relative;
-    font-size: 15px;
-    left: 10px;
-    width: 96%;
-}
-
 .card {
     border-radius: 10px;
     padding: 15px 25px 25px;
@@ -350,7 +343,6 @@ hr {
 }
 
 .product {
-    @extend .card;
     width: 100%;
     height: 100%;
     display: flex;
@@ -659,7 +651,7 @@ hr {
     justify-content: center;
 }
 
-.productBlocks {
+.cards {
     margin: 0 auto;
     grid-auto-rows: 1fr;
     width: 100% !important;
@@ -695,7 +687,7 @@ hr {
             max-width: 100%;
         }
         @media (min-width: 768px) {
-            .desc {
+            .cardTitle {
                 font-size: 25px;
             }
             .price {
@@ -725,9 +717,9 @@ hr {
     }
 }
 
-.productCode {
+.card {
     margin: 0 auto;
-    .desc {
+    .cardTitle {
         top: -5px;
         font-size: 18px;
         position: relative;
@@ -757,10 +749,6 @@ hr {
 }
 
 .productDetails {
-    height: 100%;
-}
-
-.productCodeBlock {
     height: 100%;
 }
 
@@ -922,6 +910,9 @@ pre {
 .spinThis {
     animation: spin 1s linear infinite;
 }
+
+// Media Queries
+// Mobile Responsiveness
   
 @media (max-width: 1150px) {
     .floatingCat {
@@ -938,7 +929,7 @@ pre {
 }
 
 @media (max-width: 1050px) {
-    .productBlocks {
+    .cards {
         grid-template-columns: repeat(1, 1fr);
     }
 }
@@ -964,7 +955,7 @@ pre {
             padding: 50px 20px;
         }
     }
-    .productBlocks {
+    .cards {
         &.noProducts, &.oneProduct {
             width: 100% !important;
         }
@@ -1017,29 +1008,28 @@ pre {
     .heroTitleSubText {
         font-size: 30px !important;
     }
-    .productCode {
+    .card {
         max-width: 90%;
     }
     .productDesc {
         display: none;
     }
-    .commandDesc {
-        width: 100%;
-        display: flex;
-        max-width: 280px;
-        align-items: center;
-        flex-direction: column;
-        justify-content: center;
+}
+
+@media (max-width: 480px) {
+    .Toastify__toast-container {
+        margin: 10px !important;
+        width: 83dvw !important;
+        .Toastify__toast {
+            margin-bottom: 10px;
+        }
     }
-    // .productPic {
-    //     max-width: 280px;
-    // }
 }
 
 @media (max-width: 400px) {
-    .productCode {
+    .card {
         max-width: 80%;
-        .desc {
+        .cardTitle {
             font-size: 16px;
             white-space: normal !important;
             .longTitle {
@@ -1072,6 +1062,9 @@ pre {
     .product {
         padding: 15px 20px 20px;
     }
+    .productCard {
+        padding: 0;
+    }
     .productIcon {
         font-size: 12px;
     }
@@ -1080,6 +1073,17 @@ pre {
     }
     .productButtonText {
         font-size: 15px;
+    }
+}
+
+@media (max-width: 380px) {
+    .price {
+        &.cardPrice {
+            top: -1px;
+        }
+    }
+    .heroTitleSubText {
+        font-size: 25px !important;
     }
 }
 
@@ -1110,9 +1114,9 @@ pre {
     .productTitle {
         padding: 0 0 10px 5px;
     }
-    .productCode {
+    .card {
         max-width: 85%;
-        .desc {
+        .cardTitle {
             font-size: 16px;
         }
     }

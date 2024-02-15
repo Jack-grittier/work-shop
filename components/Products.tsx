@@ -12,14 +12,21 @@ export default function Products(props) {
 
     return (
         <>
-            {products && products?.length > 0 && products?.length != 1 && <h2 className={`shopSubtitle`}>{products?.length} Product(s)</h2>}
+            {products && products?.length > 0 && products?.length != 1 && (
+                <h2 className={`shopSubtitle`}>{products?.length} Product(s)</h2>
+            )}
             {user && checkRole(user.roles, `Admin`) && products && products?.length > 0 && products?.length != 1 && <ProductForm />}
             {products && (
-                <ul id={`productsCodeBlocks`} className={`productBlocks commandsList commandToCopy ${products?.length > 0 ? `hasProducts ${products?.length > 1 ? `multiProducts` : `oneProduct`}` : `noProducts`}`}>  
+                <ul id={`productCards`} className={`cards ${products?.length > 0 ? `hasProducts ${products?.length > 1 ? `multiProducts` : `oneProduct`}` : `noProducts`} codeToCopy`}>  
+
+                    <li className={`card`}>
+                        <h3 className={`cardTitle`}>Card</h3>
+                    </li>
+
                     {products?.length > 0 ? products.map((product, productIndex) => {
                         return (
-                            <li className={`productContainer productCode listedCommand`} key={productIndex}>
-                                <div className={`productDetails commandDetails flex gap15`}>
+                            <li className={`card productCard`} key={productIndex}>
+                                <div className={`productDetails flex gap15`}>
                                     <Product product={product} filteredProducts={products} />
                                 </div>
                             </li>

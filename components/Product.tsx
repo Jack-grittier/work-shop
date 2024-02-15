@@ -142,7 +142,7 @@ export default function Product(props) {
         }
     }
 
-    const handleShopifyAction = (e, type?: string) => {
+    const handleShopifyProductOption = (e, type?: string) => {
         if (type == `Delete`) {
             showAlert(<div className={`alertTitleMessage`}>Confirm <span className={`red`}>Delete</span>?</div>, <>
                 <div className={`confirmTitle`}>
@@ -155,7 +155,7 @@ export default function Product(props) {
                     </div>
                 </div>
             </>, undefined, `400px`);
-        } else if (type == `Product`) {
+        } else if (type == `Navigate`) {
             setProdClicked(true);
             dev() && console.log(`Navigating to ${product.name}`, {e, type, user, router, route: router.route});
             toast.info(`Navigating to ${product.name}`);
@@ -191,17 +191,22 @@ export default function Product(props) {
 
     return (
         <div className={`product ${featuredProduct ? `featuredProduct` : `multiProduct`}`}>
-            <a className={`productTitle`} title={`Product Link - ${product?.title}`} href={productLinkable ? `/products/${product.id}` : undefined} onClick={(e) => productLinkable ? handleShopifyAction(e, `Product`) : e.preventDefault()}>
+
+            <a className={`productTitleLink productTitle`} title={`Product Link - ${product?.title}`} href={productLinkable ? `/products/${product.id}` : undefined} onClick={(e) => productLinkable ? handleShopifyProductOption(e, `Navigate`) : e.preventDefault()}>
                 <i className={`shopifyIcon green topIcon fab fa-shopify`}></i>
-                <div className={`desc productTitleAndPrice`}>
-                    <span title={product?.title} className={`prodTitle oflow ${product?.title.length > 15 ? `longTitle` : `shortTitle`}`}>{product?.title}</span>
+                <h3 className={`productNameAndPrice productTitleAndPrice cardTitle`}>
+                    <span title={product?.title} className={`prodTitle oflow ${product?.title.length > 15 ? `longTitle` : `shortTitle`}`}>
+                        {product?.title}
+                    </span>
                     <span title={`Product Price - $${options?.Price}`} className={`price cardPrice`}> - 
                         <span className={`dollar`}>$</span>{options?.Price}
                     </span>
-                </div>
+                </h3>
             </a>
+
             <div className={`productContent`}>
-                <a className={`productImagesContainer`} href={productLinkable ? `/products/${product.id}` : undefined} onClick={(e) => productLinkable ? handleShopifyAction(e, `Product`) : e.preventDefault()}>
+
+                <a className={`productImageLinkContainer productImagesContainer`} href={productLinkable ? `/products/${product.id}` : undefined} onClick={(e) => productLinkable ? handleShopifyProductOption(e, `Navigate`) : e.preventDefault()}>
                     {product.image ? (
                         <div className={`productImageContainer`}>
                             <Image src={product.image.src} className={`productPic productMainImage customImage`} alt={`Product Image`} />
@@ -211,6 +216,7 @@ export default function Product(props) {
                         <Image src={productPlaceholderImage} className={`productPic customImage`} alt={`Product Image`} />
                     )}
                 </a>
+
                 <div className={`productDesc`}>
                     <div className={`productDescField productDescTitle textWithIcon`}>
                         <i className={`blue fas fa-stream`}></i>
@@ -306,7 +312,7 @@ export default function Product(props) {
                     <div className={`productActions productButtons`}>
 
                         {user && checkRole(user.roles, `Admin`) && (
-                            <button title={`Delete ${product?.title}`} onClick={(e) => handleShopifyAction(e, `Delete`)} className={`productButton deleteProductButton`} type={`button`}>
+                            <button title={`Delete ${product?.title}`} onClick={(e) => handleShopifyProductOption(e, `Delete`)} className={`productButton deleteProductButton`} type={`button`}>
                                 <i className={`productIcon fas ${delClicked ? `pink spinThis fa-spinner` : `red fa-trash-alt`}`}></i>
                                 <div className={`productButtonText alertActionButton`}>{delClicked ? `Deleting` : `Delete`}</div>
                             </button>
@@ -319,7 +325,7 @@ export default function Product(props) {
                                     ${productToEdit != null && productToEdit.id == product.id ? `Cancel` : `Edit`} ${product?.title}
                                 `} 
                                 onClick={
-                                    (e) => handleShopifyAction(e, productToEdit != null && productToEdit.id == product.id ? `Cancel` : `Edit`)
+                                    (e) => handleShopifyProductOption(e, productToEdit != null && productToEdit.id == product.id ? `Cancel` : `Edit`)
                                 }
                             >
                                 <i className={`productIcon fas ${editClicked || cancelClicked ? `pink spinThis fa-spinner` : productToEdit != null && productToEdit.id == product.id ? `blue fa-ban` : `blue fa-pen`}`}></i>
@@ -328,14 +334,14 @@ export default function Product(props) {
                         )}
 
                         {productLinkable && (
-                            <button title={`Details ${product?.title}`} onClick={(e) => handleShopifyAction(e, `Product`)} className={`productButton detailsProductButton`} type={`button`}>
+                            <button title={`Details ${product?.title}`} onClick={(e) => handleShopifyProductOption(e, `Navigate`)} className={`productButton detailsProductButton`} type={`button`}>
                                 <i className={`productIcon fas ${prodClicked ? `pink spinThis fa-spinner` : `green fa-tags`}`}></i>
                                 <div className={`productButtonText alertActionButton`}>{prodClicked ? `Navigating` : `Details`}</div>
                             </button>
                         )}
 
                         {productCartable && (
-                            <button title={`Add ${options.Quantity} ${product?.title}'s to Cart`} onClick={(e) => handleShopifyAction(e, `Cart`)} className={`productButton addToCartButton ${isCartButtonDisabled() ? `disabled` : ``}`} type={`submit`} disabled={isCartButtonDisabled()}>
+                            <button title={`Add ${options.Quantity} ${product?.title}'s to Cart`} onClick={(e) => handleShopifyProductOption(e, `Cart`)} className={`productButton addToCartButton ${isCartButtonDisabled() ? `disabled` : ``}`} type={`submit`} disabled={isCartButtonDisabled()}>
                                 {!cartClicked && <>
                                     <span className={`price innerPrice hideOnMobile`}>
                                         <span className={`dollar`}>$</span>{options?.Price}

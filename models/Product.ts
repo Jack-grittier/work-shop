@@ -73,9 +73,9 @@ export default class Product {
     name?: string,
   }) {
     Object.assign(this, productObj);
-    if (this.type === undefined) this.type = this.product_type;
-    if (this.price === undefined) this.price = this.variants[0].price;
-    if (this.category === undefined) this.category = this.product_type;
-    if (this.quantity === undefined) this.quantity = this.variants.reduce((total, variant) => total + variant.inventory_quantity, 0);
+    if (this.type === undefined) this.type = this?.product_type;
+    if (this.price === undefined) this.price = this?.variants && this?.variants?.length > 0 ? this?.variants[0]?.price : `0.00`;
+    if (this.category === undefined) this.category = this?.product_type;
+    if (this.quantity === undefined) this.quantity = this?.variants && this?.variants?.length > 0 ? this?.variants?.reduce((total, variant) => total + variant.inventory_quantity, 0) : 0;
   }
 }  

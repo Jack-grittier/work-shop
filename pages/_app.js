@@ -1,8 +1,8 @@
-import '../main.scss';
-import '../cws.scss';
-import '../concentration.scss';
-import Pusher from 'pusher-js';
+import '../creativeMain.scss';
+import '../creativeTheme.scss';
 import '../creativeWorkshop.scss';
+
+import Pusher from 'pusher-js';
 import User from '../models/User';
 import ReactDOM from 'react-dom/client';
 // import { useRouter } from 'next/router';
