@@ -19,13 +19,13 @@ export default function Product(props) {
     let [cancelClicked, setCancelClicked] = useState(false);
     let [backToShopClicked, setBackToShopClicked] = useState(false);
     let [optionGroups, setOptionGroups] = useState(product.options);
+    let [productLinkable, setProductLinkable] = useState(!router.route.includes(`products/`));
     let [featuredProduct, setFeaturedProduct] = useState(filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1);
+    let [productCartable, setProductCartable] = useState(router.route.includes(`products/`) || optionGroups && Array.isArray(optionGroups) && optionGroups.length < 2);
     let [options, setOptions] = useState(product.options.reduce((acc, {name, values}) => Object.assign(acc, {[name]: values[0]}), {
         Quantity: 1,
         Price: product.price,
     }));
-
-    // console.log(`Product`, {product, options, optionGroups});
 
     const isCartButtonDisabled = () => {
         return Object.keys(options).length == 0;
@@ -191,22 +191,26 @@ export default function Product(props) {
 
     return (
         <div className={`product ${featuredProduct ? `featuredProduct` : `multiProduct`}`}>
-            <div className={`productTitle`}>
+            <a className={`productTitle`} title={`Product Link - ${product?.title}`} href={productLinkable ? `/products/${product.id}` : undefined} onClick={(e) => productLinkable ? handleShopifyAction(e, `Product`) : e.preventDefault()}>
                 <i className={`shopifyIcon green topIcon fab fa-shopify`}></i>
                 <div className={`desc productTitleAndPrice`}>
                     <span title={product?.title} className={`prodTitle oflow ${product?.title.length > 15 ? `longTitle` : `shortTitle`}`}>{product?.title}</span>
-                    <span className={`price cardPrice`}> - 
+                    <span title={`Product Price - $${options?.Price}`} className={`price cardPrice`}> - 
                         <span className={`dollar`}>$</span>{options?.Price}
                     </span>
                 </div>
-            </div>
+            </a>
             <div className={`productContent`}>
-                {product.image ? <div className={`productImageContainer`}>
-                    <Image src={product.image.src} className={`productPic productMainImage customImage`} alt={`Product Image`} />
-                    {product.altImage && <Image src={product.altImage.src} className={`productPic productAltImage customImage`} alt={`Product Alternate Image`} />}
-                </div> : (
-                    <Image src={productPlaceholderImage} className={`productPic customImage`} alt={`Product Image`} />
-                )}
+                <a className={`productImagesContainer`} href={productLinkable ? `/products/${product.id}` : undefined} onClick={(e) => productLinkable ? handleShopifyAction(e, `Product`) : e.preventDefault()}>
+                    {product.image ? (
+                        <div className={`productImageContainer`}>
+                            <Image src={product.image.src} className={`productPic productMainImage customImage`} alt={`Product Image`} />
+                            {product.altImage && <Image src={product.altImage.src} className={`productPic productAltImage customImage`} alt={`Product Alternate Image`} />}
+                        </div>
+                    ) : (
+                        <Image src={productPlaceholderImage} className={`productPic customImage`} alt={`Product Image`} />
+                    )}
+                </a>
                 <div className={`productDesc`}>
                     <div className={`productDescField productDescTitle textWithIcon`}>
                         <i className={`blue fas fa-stream`}></i>
@@ -323,14 +327,14 @@ export default function Product(props) {
                             </button>
                         )}
 
-                        {!router.route.includes(`products/`) && (
+                        {productLinkable && (
                             <button title={`Details ${product?.title}`} onClick={(e) => handleShopifyAction(e, `Product`)} className={`productButton detailsProductButton`} type={`button`}>
                                 <i className={`productIcon fas ${prodClicked ? `pink spinThis fa-spinner` : `green fa-tags`}`}></i>
                                 <div className={`productButtonText alertActionButton`}>{prodClicked ? `Navigating` : `Details`}</div>
                             </button>
                         )}
 
-                        {router.route.includes(`products`) && (
+                        {productCartable && (
                             <button title={`Add ${options.Quantity} ${product?.title}'s to Cart`} onClick={(e) => handleShopifyAction(e, `Cart`)} className={`productButton addToCartButton ${isCartButtonDisabled() ? `disabled` : ``}`} type={`submit`} disabled={isCartButtonDisabled()}>
                                 {!cartClicked && <>
                                     <span className={`price innerPrice hideOnMobile`}>

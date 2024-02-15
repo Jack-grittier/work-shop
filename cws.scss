@@ -52,7 +52,9 @@ html, body {
 
 li {
     a {
-        font-size: 18px !important;
+        &:not(.productTitle) {
+            font-size: 18px !important;
+        }
     }
     &.active {
         a {
