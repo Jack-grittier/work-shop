@@ -71,8 +71,10 @@ export default class Product {
     updated?: string,
     altImage?: Image,
     name?: string,
+    label?: string,
   }) {
     Object.assign(this, productObj);
+    if (this.label === undefined) this.label = this?.title;
     if (this.type === undefined) this.type = this?.product_type;
     if (this.price === undefined) this.price = this?.variants && this?.variants?.length > 0 ? this?.variants[0]?.price : `0.00`;
     if (this.category === undefined) this.category = this?.product_type;

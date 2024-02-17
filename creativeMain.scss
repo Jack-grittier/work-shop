@@ -1140,8 +1140,23 @@ section {
 
 .fieldBG {
     padding: 5px;
+    position: relative;
     border-radius: 8px;
     background: var(--cwsBluePink);
+    transition: 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+    kbd {
+        top: 4px;
+        color: white;
+        position: absolute;
+        right: 40px !important;
+        transition: 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+    }
+    &:has(.Mui-focused) {
+        padding: 10px 5px 2px;
+        kbd {
+            top: 9px;
+        }
+    }
 }
 
 .inputWithBGContainer {
@@ -1197,13 +1212,11 @@ section {
     }
 }
 
-.nextra-search {
-    kbd {
-        color: white;
-        border-width: 2px;
-        border-color: black !important;
-        background: var(--cwsBlueT) !important;
-    }
+kbd {
+    color: white;
+    border-width: 2px;
+    border-color: black !important;
+    background: var(--cwsBlueT) !important;
 }
 
 .navFormSection {
@@ -1963,18 +1976,21 @@ article {
 }
 
 .MuiOutlinedInput-notchedOutline {
+    top: 0;
     border-color: transparent !important;
+}
+
+.MuiOutlinedInput-root {
+    padding: 0 0 0 0 !important;
 }
 
 .MuiInput-root {
     &::after {
-        // border-radius: var(--borderRadius) !important;
         border-bottom: 1px solid var(--gameBlueSoft) !important;
     }
     &:hover {
         &:not(.Mui-disabled, .Mui-error) {
             &::before {
-                // border-radius: var(--borderRadius) !important;
                 border-bottom: 1px solid white !important;
             }
         }
@@ -1985,14 +2001,10 @@ article {
     background: var(--gameBlueSoft);
 }
 
-// .customConnector {
-//     border-left: none;
-// }
-
 .MuiStepLabel-label {
     color: white !important;
     font-size: 0.65em !important;
-    font-family: 'Montserrat' !important;
+    font-family: var(--fontFamily) !important;
 }
 
 .MuiStepLabel-root {
@@ -2054,7 +2066,6 @@ form {
         font-size: 2em;
         align-items: center;
         flex-direction: column;
-        justify-content: center;
         font-family: 'Montserrat';
         label {
             opacity: 1;
