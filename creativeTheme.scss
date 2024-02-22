@@ -1263,9 +1263,10 @@ form {
 
 .MuiAutocomplete-endAdornment {
     width: 100%;
-    right: 0 !important;
+    display: flex;
     flex-direction: row;
-    justify-content: center;
+    right: 5px !important;
+    justify-content: flex-end;
     button:nth-child(2) {
         max-width: max-content !important;
         min-width: fit-content !important;
@@ -1562,41 +1563,6 @@ div[role="presentation"] {
 
 .goldText {
     color: var(--smasherscapeYellow) !important;
-}
-
-.recordForm {
-    gap: 5px;
-    margin: 0;
-    width: 98%;
-    grid-template-columns: 1fr 1fr;
-    .inputWrapper {
-        transition: var(--transition);
-        &:has([disabled]) {
-            opacity: 0.5;
-            color: black !important;
-            .Mui-disabled {
-                color: black !important;
-            }
-        }
-        max-height: 52px !important;
-        min-height: 52px !important;
-        .MuiAutocomplete-endAdornment {
-            width: 85%;
-            right: 50px;
-            display: flex;
-        }
-        .MuiIconButton-root {
-            min-width: 100%;
-            align-items: center;
-            justify-content: flex-end;
-        }
-        input {
-            &.MuiAutocomplete-input {
-                max-height: 14px !important;
-                min-height: 14px !important;
-            }
-        }
-    }
 }
 
 .justifyContentCenter {
