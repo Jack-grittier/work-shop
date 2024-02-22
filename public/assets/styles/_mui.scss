@@ -1,0 +1,93 @@
+.MuiBox-root {
+    width: 100%;
+    max-width: 100% !important;
+}
+
+.Mui-disabled {
+    color: rgba(255, 255, 255, 0.25) !important;
+}
+
+.MuiStepConnector-line {
+    padding-left: 1em;
+    font-size: 0.45em;
+}
+
+.MuiOutlinedInput-notchedOutline {
+    top: 0;
+    border-color: transparent !important;
+}
+
+.MuiOutlinedInput-root {
+    padding: 0 0 0 0 !important;
+}
+
+.MuiInput-root {
+    &::after {
+        border-bottom: 1px solid var(--gameBlueSoft) !important;
+    }
+    &:hover {
+        &:not(.Mui-disabled, .Mui-error) {
+            &::before {
+                border-bottom: 1px solid white !important;
+            }
+        }
+    }
+}
+
+.MuiStepLabel-label {
+    color: white !important;
+    font-size: 0.65em !important;
+    font-family: var(--fontFamily) !important;
+}
+
+.MuiStepLabel-root {
+    flex-direction: row;
+    span {
+        width: max-content;
+    }
+}
+
+.MuiPaper-root {
+    background: transparent !important;
+}
+
+.MuiTypography-root {
+    color: white;
+    margin-bottom: 10px;
+    font-family: 'Montserrat' !important;
+}
+
+.MuiButton-containedPrimary {
+    color: white !important;
+    background: var(--gameBlueSoft) !important;
+}
+
+.MuiStepper-root {
+    .Mui-completed, .Mui-active {
+        :not(.MuiStepLabel-label):not(.MuiStepConnector-line) {
+            color: var(--gameBlueSoft) !important;
+        }
+        svg {
+            border-radius: 100% !important;
+            background: radial-gradient(white 0%, transparent 100%) !important;
+        }
+    }
+    .MuiButton-textPrimary {
+        font-weight: 600;
+        color: var(--gameBlueSoft) !important;
+    }
+    .MuiTextField-root {
+        label {
+            display: flex;
+            flex-direction: row;
+            color: white !important;
+            padding-left: 1em !important;
+            &:not(.Mui-focused) {
+                color: rgba(255,255,255,0.65) !important;
+            }
+            span {
+                width: max-content;
+            }
+        }
+    }
+}

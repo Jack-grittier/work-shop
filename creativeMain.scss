@@ -4,9 +4,10 @@
 /* Caveat */
 @import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap");
 
-*,
-*::before,
-*::after {
+@import './public/assets/styles/mui';
+@import './public/assets/styles/autocomplete';
+
+*, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -61,6 +62,7 @@
     --softSkyBlue: rgba(132, 169, 177, 1) !important;
     --delayedTransition: cubic-bezier(0.77, 0.2, 0.05, 1);
     --transition: 0.24s cubic-bezier(0.77, 0.2, 0.05, 1) !important;
+    --shortTransition: 150ms cubic-bezier(0.0, 0, 0.2, 1) 0ms !important;
 }
 
 h1 {
@@ -815,8 +817,6 @@ input {
     }
 }
 
-// @media (min-width: 1600px) {
-// @media (min-width: 1420px) {
 @media (min-width: 1367px) {
     .status {
         overflow: hidden;
@@ -836,8 +836,6 @@ input {
    }
 }
 
-// @media (max-width: 1600px) {
-// @media (max-width: 1420px) {
 @media (max-width: 1367px) {
     .completeButton {
         display: none !important;
@@ -849,7 +847,6 @@ input {
         grid-gap: 10px !important;
         justify-content: flex-start;
         .status {
-            // @extend .textOverflow;
             text-align: left;
             overflow: hidden;
             display: inline-block;
@@ -970,7 +967,6 @@ footer {
 }
 
 body {
-
     overflow-x: hidden;
     transition: var(--transition);
 
@@ -1142,24 +1138,35 @@ section {
     position: relative;
     border-radius: 8px;
     background: var(--cwsBluePink);
-    transition: 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+    transition: var(--shortTransition);
+    label {
+        transition: var(--shortTransition);
+    }
     kbd {
-        top: 4px;
+        top: 1.1px;
         color: white;
         position: absolute;
         right: 40px !important;
-        transition: 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+        transition: var(--shortTransition);
+    }
+    &:has(.MuiAutocomplete-hasClearIcon) {
+        kbd {
+            right: 75px !important;
+        }
     }
     &:has(.Mui-focused) {
-        padding: 10px 5px 2px;
+        padding: 15px 5px 4.1px;
+        label {
+            opacity: 1 !important;
+        }
         kbd {
-            top: 9px;
+            top: 10.5px;
+            color: white !important;
         }
     }
 }
 
 .inputWithBGContainer {
-    
     input {
         outline: none !important;
         border: 3px solid black;
@@ -1278,14 +1285,10 @@ form {
         outline: none !important;
         color: white !important;
         transition: var(--transition);
-        // border-radius: var(--borderRadius);
         background: var(--blackGlass) !important;
-        // box-shadow: 0 0 10px var(--gameBlueSoft),0 0 20px var(--gameBlueSoft);
 
         label {
             padding: 50px !important;
-            // top: -5px;
-            // position: relative;
         }
         
     
@@ -1319,7 +1322,6 @@ form {
                 font-weight: 500;
                 height: 28px;
                 width: 96.5%;
-                // border: solid 2px var(--blackGlass);
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -1457,8 +1459,6 @@ textarea {
     align-items: center;
     justify-content: center;
     backdrop-filter: blur(5px);
-    // background: rgba(0, 40, 46, 0.5);
-    // background: rgba(59, 54, 48, 0.75);
     background: rgba(24, 24, 24, 0.65);
 }
 
@@ -1533,7 +1533,6 @@ textarea {
         border-radius: 3px 3px;
         transition: var(--transition);
         text-shadow: 2px 2px 0px black;
-        // border-bottom: 4px solid var(--smasherscapeGreen);
         &::after {
             left: 0;
             content: "";
@@ -1562,7 +1561,6 @@ textarea {
         max-height: 86%;
         align-items: center;
         justify-content: center;
-        // padding: 0 15px 0 0;
     }
 
     form {
@@ -1710,7 +1708,6 @@ textarea {
             box-shadow: none !important;
             i {
                 filter: invert(1);
-                // color: var(--gameBlue);
             }
         }
     }
@@ -1750,8 +1747,6 @@ textarea {
         .itemLength {
             filter: invert(1) !important;
         }
-        // background: white !important;
-        // color: black !important;
     }
 }
 
@@ -1915,7 +1910,6 @@ footer {
     left: 0;
     top: 15px;
     opacity: 0;
-    // top: 40px;
     z-index: 100;
     bottom: -100%;
     padding: 25px 0;
@@ -1960,102 +1954,8 @@ article {
     min-height: calc(94vh - var(--nextra-navbar-height)) !important;
 }
 
-.MuiBox-root {
-    width: 100%;
-    max-width: 100% !important;
-}
-
-.Mui-disabled {
-    color: rgba(255, 255, 255, 0.25) !important;
-}
-
-.MuiStepConnector-line {
-    padding-left: 1em;
-    font-size: 0.45em;
-}
-
-.MuiOutlinedInput-notchedOutline {
-    top: 0;
-    border-color: transparent !important;
-}
-
-.MuiOutlinedInput-root {
-    padding: 0 0 0 0 !important;
-}
-
-.MuiInput-root {
-    &::after {
-        border-bottom: 1px solid var(--gameBlueSoft) !important;
-    }
-    &:hover {
-        &:not(.Mui-disabled, .Mui-error) {
-            &::before {
-                border-bottom: 1px solid white !important;
-            }
-        }
-    }
-}
-
 ::selection {
     background: var(--gameBlueSoft);
-}
-
-.MuiStepLabel-label {
-    color: white !important;
-    font-size: 0.65em !important;
-    font-family: var(--fontFamily) !important;
-}
-
-.MuiStepLabel-root {
-    flex-direction: row;
-    span {
-        width: max-content;
-    }
-}
-
-.MuiPaper-root {
-    background: transparent !important;
-}
-
-.MuiTypography-root {
-    color: white;
-    margin-bottom: 10px;
-    font-family: 'Montserrat' !important;
-}
-
-.MuiButton-containedPrimary {
-    color: white !important;
-    background: var(--gameBlueSoft) !important;
-}
-
-.MuiStepper-root {
-    .Mui-completed, .Mui-active {
-        :not(.MuiStepLabel-label):not(.MuiStepConnector-line) {
-            color: var(--gameBlueSoft) !important;
-        }
-        svg {
-            border-radius: 100% !important;
-            background: radial-gradient(white 0%, transparent 100%) !important;
-        }
-    }
-    .MuiButton-textPrimary {
-        font-weight: 600;
-        color: var(--gameBlueSoft) !important;
-    }
-    .MuiTextField-root {
-        label {
-            display: flex;
-            flex-direction: row;
-            color: white !important;
-            padding-left: 1em !important;
-            &:not(.Mui-focused) {
-                color: rgba(255,255,255,0.65) !important;
-            }
-            span {
-                width: max-content;
-            }
-        }
-    }
 }
 
 form {
@@ -2148,9 +2048,7 @@ form {
                 grid-gap: 0.3em;
                 position: relative;
                 align-items: center;
-                // border-radius: 0;
                 transition: var(--transition);
-                // text-decoration: underline;
                 color: rgba(255, 255, 255, 1) !important;
 
                 &::before {
