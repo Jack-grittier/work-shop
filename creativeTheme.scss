@@ -1201,9 +1201,9 @@ form {
 
 .MuiTouchRipple-root, .MuiButtonBase-root {
     align-items: flex-end !important;
+    margin: 0 5px 0 auto !important;
     border-radius: 8px !important;
     justify-content: center;
-    margin: 0 5px 0 auto;
     max-width: 100%;
     display: flex;
 }
@@ -1265,7 +1265,8 @@ form {
     width: 100%;
     display: flex;
     flex-direction: row;
-    right: 5px !important;
+    right: 0 !important;
+    max-width: fit-content;
     justify-content: flex-end;
     button:nth-child(2) {
         max-width: max-content !important;
