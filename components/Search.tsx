@@ -1,26 +1,21 @@
 import { useContext } from "react";
-// import NextraSearch from "./NextraSearch";
+import AutoComplete from "./AutoComplete";
 import { StateContext } from "../pages/_app";
-import { Autocomplete, TextField } from "@mui/material";
+// import NextraSearch from "./NextraSearch";
 
 export default function Search(props) {
+    let { onInput } = props;
     let { products } = useContext<any>(StateContext);
-    let { className, searchTitle, onInput } = props;
     let activeProducts = products.filter(prod => prod.status != `archived`);
     let productOptions = activeProducts?.map((prod, prodIndex) => ({ ...prod, label: prod?.title }));
 
     return (
-        <Autocomplete
-            disablePortal
+        <AutoComplete 
+            type={`Product`}
+            label={`Search`}
+            onInput={onInput} 
+            property={`title`}
             options={productOptions}
-            onChange={(e, val: any) => onInput(e, val)}
-            noOptionsText={`No Products for this Search`}
-            onInputChange={(e, val: any) => onInput(e, val)}
-            getOptionLabel={(option) => option.title}
-            isOptionEqualToValue={(option, value) => option.title === value.title}
-            renderInput={(params) => (
-                <TextField {...params} label={`Search`} />
-            )}
         />
         // <NextraSearch 
         //     onInput={(e) => onInput(e)}
