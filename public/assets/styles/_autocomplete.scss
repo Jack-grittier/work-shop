@@ -33,14 +33,15 @@
         max-height: 30px !important;
         .MuiFormLabel-root {
             top: -14px;
-            opacity: 0.55;
+            opacity: 0.7;
             font-size: 14px;
-            font-weight: 600; 
-            color: var(--cwsNavy);
+            font-weight: 700 !important; 
+            font-family: var(--fontFamily);
+            color: darkslategray !important;
             &.Mui-focused {
                 top: -10px;
                 opacity: 0.7;
-                color: white;
+                color: white !important;
             }
         }
     }

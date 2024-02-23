@@ -49,10 +49,6 @@ export default function Products(props) {
                 <h2 className={`shopSubtitle`}>{getFilteredProducts(products)?.length} Product(s)</h2>
             )}
 
-            {user && checkRole(user.roles, `Admin`) && products && products?.length > 0 && products?.length != 1 && (
-                <ProductForm />
-            )}
-
             {products && products?.length > 0 && products?.length != 1 && (
                 <div className={`sectionContent mt-4`}>
                     <div className={`fieldBG`}>
@@ -62,6 +58,10 @@ export default function Products(props) {
                         </kbd>
                     </div>
                 </div>
+            )}
+
+            {user && checkRole(user.roles, `Admin`) && products && products?.length > 0 && products?.length != 1 && (
+                <ProductForm />
             )}
 
             {getFilteredProducts(products) && (

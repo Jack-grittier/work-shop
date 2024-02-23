@@ -12,9 +12,9 @@ export default function Search(props) {
     return (
         <AutoComplete 
             type={`Product`}
-            label={`Search`}
             onInput={onInput} 
             property={`title`}
+            label={`Search...`}
             options={productOptions}
         />
         // <NextraSearch 

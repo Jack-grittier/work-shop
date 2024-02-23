@@ -833,8 +833,9 @@ pre {
 }
 
 .productForm {
+    grid-gap: 6px;
     @media (max-width: 1100px) {
-        padding-bottom: 75px;
+        padding-bottom: 5px;
         display: flex !important;
         grid-gap: 5px !important;
         flex-direction: column !important;
@@ -842,16 +843,30 @@ pre {
             width: 100% !important;
             max-width: 100% !important;
         }
+        button {
+            color: var(--cwsBlue) !important;
+            background: rgba(255, 255, 255, 0.8) !important;
+            &:hover {
+                color: var(--cwsLightGreen) !important;
+                background: rgba(255, 255, 255, 1) !important;
+            }
+        }
+    }
+    button {
+        min-height: 23px;
+        max-height: 23px !important;
     }
     input, textarea {
+        border: 0;
         width: 100%;
-        min-height: 32px;
+        min-height: 23px;
         font-weight: 600;
         border-radius: 6px;
         padding: 5px 0 5px 10px;
-        background: white !important;
-        border: 2px solid var(--cwsNavy);
+        max-height: 23px !important;
+        // border: 2px solid var(--cwsNavy);
         color: var(--cwsNavy) !important;
+        background: rgba(255, 255, 255, 0.75) !important;
         &.productTitle {
             max-width: 200px;
         }
@@ -865,18 +880,20 @@ pre {
             max-width: 95px;
         }
         &::placeholder {
+            opacity: 0.85;
+            font-weight: 600;
             color: darkslategray;
-            // color: var(--cwsNavy);
         }
     }
     .productFormSubmitButton {
         color: white;
-        min-height: 30px;
-        max-height: 30px;
         padding: 0px 10px;
         border-radius: 6px;
         background: var(--cwsBlue);
         transition: var(--transition);
+        i {
+            transition: var(--transition);
+        }
         &.productFormCancelButton {
             background: white;
             color: darkslategray;
