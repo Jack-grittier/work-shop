@@ -22,11 +22,15 @@ export default function Products(props) {
     }, [products])
 
     const searchProducts = (e, val?) => {
-        if (!val) val = e.target.value;
-        if (typeof val == `string`) {
-            setProductsSearchTerm(val?.toLowerCase());
-        } else {
-            setProductsSearchTerm(val?.label?.toLowerCase());
+        if (e) {
+            if (e?.target) {
+                if (!val) val = e?.target?.value;
+                if (typeof val == `string`) {
+                    setProductsSearchTerm(val?.toLowerCase());
+                } else {
+                    setProductsSearchTerm(val?.label?.toLowerCase());
+                }
+            }
         }
     }
 
