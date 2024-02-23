@@ -49,14 +49,16 @@ export default function Products(props) {
                 <ProductForm />
             )}
 
-            <div className={`sectionContent mt-4`}>
-                <div className={`fieldBG`}>
-                    <Search onInput={searchProducts} className={`productSearch`} />
-                    <kbd className={`fieldBGKBD nx-absolute nx-my-1.5 nx-select-none ltr:nx-right-1.5 rtl:nx-left-1.5 nx-h-5 nx-rounded nx-bg-white nx-px-1.5 nx-font-mono nx-text-[10px] nx-font-medium nx-text-gray-500 nx-border dark:nx-border-gray-100/20 dark:nx-bg-dark/50 contrast-more:nx-border-current contrast-more:nx-text-current contrast-more:dark:nx-border-current nx-items-center nx-gap-1 nx-pointer-events-none nx-hidden sm:nx-flex nx-opacity-100`}>
-                        Products
-                    </kbd>
+            {products && products?.length > 0 && products?.length != 1 && (
+                <div className={`sectionContent mt-4`}>
+                    <div className={`fieldBG`}>
+                        <Search onInput={searchProducts} className={`productSearch`} />
+                        <kbd className={`fieldBGKBD nx-absolute nx-my-1.5 nx-select-none ltr:nx-right-1.5 rtl:nx-left-1.5 nx-h-5 nx-rounded nx-bg-white nx-px-1.5 nx-font-mono nx-text-[10px] nx-font-medium nx-text-gray-500 nx-border dark:nx-border-gray-100/20 dark:nx-bg-dark/50 contrast-more:nx-border-current contrast-more:nx-text-current contrast-more:dark:nx-border-current nx-items-center nx-gap-1 nx-pointer-events-none nx-hidden sm:nx-flex nx-opacity-100`}>
+                            Products
+                        </kbd>
+                    </div>
                 </div>
-            </div>
+            )}
 
             {getFilteredProducts(products) && (
 

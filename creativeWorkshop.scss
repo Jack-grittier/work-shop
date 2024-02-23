@@ -1163,6 +1163,9 @@ pre {
     max-width: 75%;
     margin: 0;
     top: 7px;
+    &.notop {
+        top: 0;
+    }
     &.tflow100 {
       max-width: 100%;
     }

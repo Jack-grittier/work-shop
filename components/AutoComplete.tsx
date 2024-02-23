@@ -5,6 +5,7 @@ export default function AutoComplete(props) {
     let { type, label, options, property, onInput } = props;
     return (
         <Autocomplete
+            autoHighlight
             disablePortal
             options={options}
             onChange={(e, val: any) => onInput(e, val)}

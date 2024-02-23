@@ -84,9 +84,9 @@ div[role="presentation"] {
     * {
         width: 100%;
     }
-    .playerDetailsColumn {
-        .playerStats {
-            .playerStatDetails {
+    .optionDetailsColumn {
+        .optionStats {
+            .optionStatDetails {
                 font-size: 0.85em;
             }
         }
@@ -109,8 +109,16 @@ div[role="presentation"] {
     font-family: var(--fontFamily);
     background: transparent !important;
     grid-template-columns: 45px 35px 1fr;
-    &.characterOption {
-        grid-template-columns: 20px 35px 10px 1fr 1fr;
+    img {
+        border-radius: 5px;
+    }
+    .leftSmallCol {
+        font-size: 15px;
+        text-align: left;
+    }
+    .optionTitle {
+        font-size: 14px;
+        padding-left: 15px;
     }
     &.singularLabel {
         grid-template-columns: 1fr;
@@ -119,14 +127,20 @@ div[role="presentation"] {
         font-size: 0.95em;
         font-style: italic;
     }
-    .levelImageColumn {
+    .optionPrimaryImageColumn {
         text-align: left;
+        .optionPrimaryImage {
+            margin: 0;
+            padding: 0;
+            width: auto;
+            max-height: 35px;
+        }
     }
-    .playerDetailsColumn {
+    .optionDetailsColumn {
         display: grid;
         align-items: center;
-        grid-template-columns: var(--playerDetailsColumnGaps);
-        .playerStats {
+        grid-template-columns: var(--optionDetailsColumnGaps);
+        .optionStats {
             width: 100%;
             height: 100%;
             display: flex;
@@ -134,7 +148,7 @@ div[role="presentation"] {
             flex-direction: column;
             align-items: flex-start;
             justify-content: space-between;
-            .playerStatDetails {
+            .optionStatDetails {
                 display: flex;
                 grid-gap: 5px;
                 font-weight: 900;
@@ -158,31 +172,27 @@ div[role="presentation"] {
                 }
             }
         }
-        &.playerHookTagDetails {
-            grid-template-columns: 1fr 50px 85px;
-        }
-        .playerEXP {
+        .optionInnerRightColumn {
             text-align: right;
+            padding-right: 20px;
         }
-        .plays {
+        .optionVariants {
             width: 100%;
-            .playsContainer {
-                gap: 0;
+            .optionVariantsContainer {
+                gap: 5px;
                 display: grid;
                 align-items: center;
                 padding-top: 0px !important;
-                justify-content: flex-end !important;
+                justify-content: flex-start !important;
                 grid-template-columns: auto auto auto;
                 img {
                     margin: 0;
                     padding: 0;
-                    width: 25px;
+                    width: auto;
+                    max-height: 25px;
                 }
             }
         }
-    }
-    .levelNumColumn {
-        text-align: left;
     }
     .MuiBadge-badge {
         width: auto;
@@ -191,18 +201,36 @@ div[role="presentation"] {
         font-size: 10px !important;
         transform: scale(0.8) translate(35%, -35%);
     }
-    @media (max-width: 855px) and (min-width: 768px) {
-        .playerDetailsColumn {
+    @media (max-width: 855px) {
+        .optionDetailsColumn {
             grid-template-columns: 1fr 99px;
-            .playerEXP {
+            .optionInnerRightColumn {
                 display: none;
             }
         }
     }
+    @media (max-width: 640px) {
+        .leftSmallCol {
+            font-size: 13px;
+        }
+        .optionPrimaryImageColumn {
+            margin-left: -5px !important;
+        }
+        .optionDetailsColumn {
+            grid-template-columns: 1fr !important; 
+        }
+        .optionTitle {
+            font-size: 12px;
+            padding-left: 10px;
+        }
+        .optionVariants {
+            display: none;
+        }
+    }
     @media (max-width: 450px) {
-        .playerDetailsColumn {
+        .optionDetailsColumn {
             grid-template-columns: 1fr 99px;
-            .playerEXP {
+            .optionInnerRightColumn {
                 display: none;
             }
         }

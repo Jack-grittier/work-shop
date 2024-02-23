@@ -5,16 +5,16 @@ export default function AutoCompleteOption(props) {
     let { option, property, className } = props;
     return (
         <div className={`autocompleteOption ${className ? className : ``}`}>
-            <div className="levelNumColumn">
+            <div className={`leftSmallCol`}>
                 <span className={`dollar`}>$</span>{removeTrailingZeroDecimal(option?.price)}
             </div>
-            <div className="levelImageColumn">
-                <img width={30} src={option?.image?.src} alt={`Image`} />
+            <div className={`optionPrimaryImageColumn`}>
+                <img className={`optionPrimaryImage`} src={option?.image?.src} alt={`Image`} />
             </div>
-            <div className="playerDetailsColumn">
-                <div className="playerStats justifyContentCenter">
-                    <span className={`optionTitle`}>{option[property]}</span>
-                    {/* <div className="playerStatDetails subtleTextInLabel">
+            <div className={`optionDetailsColumn`}>
+                <div className={`optionStats justifyContentCenter`}>
+                    <span className={`optionTitle oflow notop tflow100`}>{option[property]}</span>
+                    {/* <div className={`optionStatDetails subtleTextInLabel`}>
                         <div className={`statDetailLabelSmall`}>
                             <span className={`subtleTextInLabel`}>K:</span> 
                             25
@@ -25,10 +25,10 @@ export default function AutoCompleteOption(props) {
                         </div>
                     </div> */}
                 </div>
-                <div className="playerEXP subtleTextInLabel">
-                    <div className="playerStats">
+                <div className={`optionInnerRightColumn subtleTextInLabel`}>
+                    <div className={`optionStats`}>
                         <span className={`optionType`}>{option?.type}</span>
-                        <div className="playerStatDetails subtleTextInLabel">
+                        <div className={`optionStatDetails subtleTextInLabel`}>
                             <div className={`statDetailLabelSmall`}>
                                 <span className={`subtleTextInLabel`}>Qty:</span> 
                                 {option?.quantity}
@@ -40,11 +40,22 @@ export default function AutoCompleteOption(props) {
                         </div>
                     </div>
                 </div>
-                <div className="plays">
-                    <div className={`playsContainer`}>
-                        <Badge title={`Only ${option?.quantity} Item(s) Left`} badgeContent={option?.quantity} color="primary">
-                            <img className={`charImg`} width={25} src={option?.altImage?.src} alt={`Alt Image`} />
-                        </Badge>
+                <div className={`optionVariants`}>
+                    <div className={`optionVariantsContainer`}>
+                        {option?.images?.length > 1 ? (
+                            option?.images?.slice(1,4)?.map((img, imgIndex) => {
+                                let variantsLength = img?.variant_ids?.length > 1 ? img?.variant_ids?.length : 1;
+                                return (
+                                    <Badge key={imgIndex} title={`Only ${variantsLength} Item(s) Left`} badgeContent={variantsLength} color={`primary`}>
+                                        <img className={`optionAltImage`} src={img?.src} alt={`Alt Image`} />
+                                    </Badge>
+                                )
+                            })
+                        ) : (
+                            <Badge title={`Only ${option?.quantity} Item(s) Left`} badgeContent={option?.quantity} color={`primary`}>
+                                <img className={`optionAltImage`} src={option?.altImage?.src} alt={`Alt Image`} />
+                            </Badge>
+                        )}
                     </div>
                 </div>
             </div>
