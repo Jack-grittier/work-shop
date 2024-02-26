@@ -43,7 +43,7 @@ export default function Products(props) {
     }
 
     return (
-        <div className={`productsComponent productsContainer flex columns gap15`}>
+        <div className={`productsComponent productsContainer flex flexColumns gap15`}>
         
             {getFilteredProducts(products) && getFilteredProducts(products)?.length > 0 && getFilteredProducts(products)?.length != 1 && (
                 <h2 className={`shopSubtitle`}>{getFilteredProducts(products)?.length} Product(s)</h2>

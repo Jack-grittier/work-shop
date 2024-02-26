@@ -1,0 +1,29 @@
+.contactForm {
+    margin: 0 auto;
+    width: 85% !important;
+    padding-bottom: 8px !important;
+}
+
+.characterCounts {
+    font-size: 12px;
+    font-weight: 600;
+}
+  
+.characterCount {
+    transition: 150ms ease-in-out;
+}
+  
+.characterCount.max {
+    min-width: 75px;
+}
+
+.contactFormSubmitButton {
+    width: 100%;
+    display: flex;
+    font-size: 14px;
+    justify-content: center;
+    .textWithIcon {
+        top: 2px;
+        position: relative;
+    }
+}

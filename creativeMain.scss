@@ -5,6 +5,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap");
 
 @import './public/assets/styles/mui';
+@import './public/assets/styles/contact';
 @import './public/assets/styles/autocomplete';
 
 *, *::before, *::after {
@@ -27,6 +28,12 @@
     --swift: #f4993a;
     --discord: #7289DA;
     --skeleton: #4c4c4c;
+    --errorRed: #970a0a;
+    --cwsError: #ffe2e2;
+    --error: var(--cwsError);
+    --cwsSuccess: #77ff77;
+    --successGreen: #26ae26;
+    --success: var(--cwsSuccess);
     --bg: #1f1f1f;
     --posterH: 250px;
     --posterW: 165px;
@@ -195,9 +202,9 @@ h6 {
     &.gap25 { grid-gap: 25px; }
     &.gap30 { grid-gap: 30px; }
     &.gap35 { grid-gap: 35px; }
-    &.columns { flex-direction: column; }
     &.alignCenter { align-items: center; }
     &.alignCenter { align-items: center; }
+    &.flexColumns { flex-direction: column; }
     &.justifyEnd { justify-content: flex-end; }
     &.justifyCenter { justify-content: center; }
     &.spaceBetween { justify-content: space-between; }
@@ -2154,4 +2161,17 @@ form {
 
 .toggle-switch:has(.toggled) {
     background: var(--cwsLightGreen);
+}
+
+.valid {
+    color: var(--success);
+}
+
+.inavlid {
+    color: var(--error);
+}
+
+.errorMessage {
+    font-size: 13px;
+    color: var(--error);
 }
