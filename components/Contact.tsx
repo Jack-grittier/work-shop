@@ -121,6 +121,7 @@ export default function Contact(props) {
                         id={`contactForm_email`} 
                         className={`contactFormField`} 
                         placeholder={`Enter Email Address...`} 
+                        defaultValue={user == null ? `` : user.email}
                         onFocus={() => setEmailFieldFocusedAtleastOnce(true)} 
                     />
 
