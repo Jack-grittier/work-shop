@@ -105,7 +105,6 @@ export default function Contact(props) {
     return (
         <div className={`contact contactComponent`} {...props}>
             <div className={`contactCardMainSide`}>
-                <h2 className={`subtitle shopSubtitle`}>Get in Touch</h2>
 
                 <form 
                     id={`contactForm`}
@@ -113,6 +112,8 @@ export default function Contact(props) {
                     onSubmit={(e) => onContactFormSubmit(e)}
                     className={`contactForm cwsForm fieldBG flex flexColumns alignCenter justifyCenter`}
                 >
+
+                    <h2 className={`subtitle shopSubtitle`}>Get in Touch</h2>
                     
                     <input 
                         required 

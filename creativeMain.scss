@@ -2117,24 +2117,6 @@ form {
     }
 }
 
-.contact {
-    @extend .flex;
-    span {
-        &:has(.adjustOuterSpan) {
-            @extend .flex;
-            display: flex !important;
-        }
-    }
-    .contactCardMainSide {
-        @extend .flex;
-        @extend .isColumn;
-    }
-    .contactText {
-        text-align: center;
-        padding-bottom: 5px;
-    }
-}
-
 .toggle-switch {
     width: 50px !important;
     height: 20px !important;

@@ -1,8 +1,8 @@
 import Shop from "./models/Shop";
+import Product from "./models/Product";
 import { initializeApp } from "firebase/app";
 import { GoogleAuthProvider, getAuth } from "firebase/auth";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
-import Product from "./models/Product";
 
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: 'select_account' });
@@ -50,9 +50,7 @@ export const environments = {
 };
   
 export const environment = environments.prod;
-export const usersDatabase = environment.usersDatabase;
-export const emailsDatabase = environment.emailsDatabase;
-export const productsDatabase = environment.productsDatabase;
+export const { usersDatabase, emailsDatabase, productsDatabase } = environment;
 
 export const maxAnimationTime = 2500;
 export const maxDataSize = 1_048_576; // 1MB
@@ -107,37 +105,35 @@ export const fetchProductsFromAPI = async (customObject = true) => {
   }
 }
 
-// export const createShopifyCustomer = async (email) => {
-//   const url = `https://${storeName}.myshopify.com/admin/api/${apiVersion}/customers.json`;
-//   const payload = {
-//     customer: {
-//       email: email,
-//       verified_email: false,
-//       send_email_invite: true,
-//     }
-//   };
+export const createShopifyCustomer = async (email) => {
+  try {
+    let createShopifyCustomerResponse = await fetch(`${liveLink}/api/customers/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+      })
+    });
 
-//   try {
-//     const response = await fetch(url, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'X-Shopify-Access-Token': process.env.SHOPIFY_ACCESS_TOKEN,
-//       },
-//       body: JSON.stringify(payload),
-//     });
-
-//     const data = await response.json();
-//     console.log('Customer created:', data);
-//     // Handle the response data as needed
-//   } catch (error) {
-//     console.error('Error creating customer:', error);
-//   }
-// }
+    if (createShopifyCustomerResponse.status === 200) {
+      let createdCustomerData = await createShopifyCustomerResponse.json();
+      if (createdCustomerData) return createdCustomerData;
+    } else {
+      const errorResponse = await createShopifyCustomerResponse.json();
+      console.log(`Error creating customer: ${errorResponse.message || createShopifyCustomerResponse.statusText}`);
+      return null;
+    }
+  } catch (error) {
+    console.log(`Server Error on Create Customer`, error);
+  }
+}
 
 export const addUserToDatabase = async (userObj) => {
   try {
     await setDoc(doc(db, usersDatabase, userObj?.ID), userObj);
+    await createShopifyCustomer(userObj?.email);
     // await setDoc(doc(db, emailsDatabase, userObj?.ID), { email: userObj?.email });
     return { success: true };
   } catch (error) {

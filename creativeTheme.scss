@@ -40,9 +40,9 @@ html, body {
     --smasherscapeGreen2Transparent2: rgba(30, 220, 120, 0.55);
     --customTagHeight: calc(var(--customHookInputContainerHeight) - 15);
     --cwsBluePink: linear-gradient(90deg, var(--cwsBlue), var(--cwsPink));
-    --customHookRootHeight: calc(var(--customHookInputContainerHeight) - 10);
-    // --cwsBluePink: linear-gradient(90deg, var(--smasherscapeGreen2), var(--smasherscapeBlue2));
     --cwsPinkBlue: linear-gradient(90deg, var(--cwsPink), var(--cwsBlue));
+    --customHookRootHeight: calc(var(--customHookInputContainerHeight) - 10);
+    --cwsBluePinkT: linear-gradient(90deg, rgba(65, 174, 227, 0.5), rgba(199, 26, 143, 0.5));
     --cwsBluePinkTransparent: linear-gradient(90deg, var(--smasherscapeGreen2Transparent), var(--smasherscapeBlue2Transparent));
     --cwsPinkBlueTransparent: linear-gradient(90deg, var(--smasherscapeBlue2Transparent), var(--smasherscapeGreen2Transparent));
     --cwsPinkBlueTransparentSubtle: linear-gradient(90deg, var(--cwsPinkT), var(--cwsBlueT));
