@@ -19,19 +19,19 @@ const pusher = new Pusher(pusherOptions);
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === `POST`) {
     try {
-      const productsDeletedSignal = req.body;
-      console.log(`Products Deleted Webhook`, productsDeletedSignal);
+      const customersCreatedSignal = req.body;
+      console.log(`Customers Created Webhook`, customersCreatedSignal);
 
-      await pusher.trigger(`products`, `deleted`, {
-        productsDeletedSignal,
-        message: `products deleted`,
+      await pusher.trigger(`customers`, `created`, {
+        customersCreatedSignal: customersCreatedSignal,
+        message: `customers created`,
       }).then(() => {
         console.log(`Pusher trigger successful`);
       }).catch(pusherError => {
-        console.log(`Error Triggering Product Delete Pusher`, pusherError);
+        console.log(`Error Triggering Customer Created Pusher`, pusherError);
       });
 
-      res.status(200).json({ message: `Products Deleted Webhook`, change: productsDeletedSignal });
+      res.status(200).json({ message: `Customers Created Webhook`, change: customersCreatedSignal });
     } catch (error) {
       res.status(500).json({ error: `Failed to get Webhook.` });
     }

@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }).then(() => {
         console.log(`Pusher trigger successful`);
       }).catch(pusherError => {
-        console.log(`Error Triggering Update Pusher`, pusherError);
+        console.log(`Error Triggering Product Update Pusher`, pusherError);
       });
 
       res.status(200).json({ message: `Products Updated Webhook`, change: productsUpdatedSignal });

@@ -11,7 +11,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { AnimatePresence, motion } from 'framer-motion';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { createContext, useRef, useState, useEffect } from 'react';
-import { auth, dataSize, db, fetchProductsFromAPI, fetchShopDataFromAPI, maxDataSize, usersDatabase } from '../firebase';
+import { auth, dataSize, db, fetchCustomersFromAPI, fetchProductsFromAPI, fetchShopDataFromAPI, maxDataSize, usersDatabase } from '../firebase';
 
 export const useDB = () => true;
 export const StateContext = createContext({});
@@ -51,6 +51,21 @@ export const getProductsFromAPI = async () => {
     }
   } catch (error) {
     console.log(`Server Error on Get Products`, error);
+  }
+}
+
+export const getCustomersFromAPI = async () => {
+  try {
+    let getDatabase = true;
+    if (getDatabase == true) {
+      let latestCustomers = fetchCustomersFromAPI();
+      return latestCustomers;
+    } else {
+      let customers = JSON.parse(localStorage.getItem(`customers`));
+      if (customers) return customers;
+    }
+  } catch (error) {
+    console.log(`Server Error on Get Customers`, error);
   }
 }
 
@@ -368,6 +383,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   let [shop, setShop] = useState({});
   let [cart, setCart] = useState({});
   let [products, setProducts] = useState([]);
+  let [customers, setCustomers] = useState([]);
   let [adminFeatures, setAdminFeatures] = useState([]);
   let [productToEdit, setProductToEdit] = useState(null);
 
@@ -405,6 +421,15 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
       setProducts(productsFromAPI);
     } else {
       setProducts([]);
+    }
+  }
+
+  const refreshCustomersFromAPI = async () => {
+    let customersFromAPI = await getCustomersFromAPI();
+    if (customersFromAPI) {
+      setCustomers(customersFromAPI);
+    } else {
+      setCustomers([]);
     }
   }
 
@@ -470,6 +495,14 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
       dev() && console.log(`Products`, products);
     }
   }, [products])
+
+  // Catch Customer Updates
+  useEffect(() => {
+    if (customers.length > 0) {
+      if (dataSize(customers) <= maxDataSize) localStorage.setItem(`customers`, JSON.stringify(customers));
+      dev() && console.log(`Customers`, customers);
+    }
+  }, [customers])
 
   // Catch Feature Updates
   useEffect(() => {
@@ -575,6 +608,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
 
     refreshShopDataFromAPI();
     refreshProductsFromAPI();
+    refreshCustomersFromAPI();
 
     // User
     if (useDatabase == true) {
@@ -613,6 +647,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     
     const shopChannel = pusher.subscribe(`shop`);
     const productsChannel = pusher.subscribe(`products`);
+    const customersChannel = pusher.subscribe(`customers`);
 
     shopChannel.bind(`updated`, (data) => {
       dev() && console.log(`Shop Updated`, removeNullAndUndefinedProperties(data));
@@ -634,17 +669,36 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
       refreshProductsFromAPI();
     });
 
+    customersChannel.bind(`created`, (data) => {
+      console.log(`Customers Created`, removeNullAndUndefinedProperties(data));
+      refreshCustomersFromAPI();
+    });
+
+    customersChannel.bind(`updated`, (data) => {
+      console.log(`Customers Updated`, removeNullAndUndefinedProperties(data));
+      refreshCustomersFromAPI();
+    });
+
+    customersChannel.bind(`deleted`, (data) => {
+      console.log(`Customers Deleted`, removeNullAndUndefinedProperties(data));
+      refreshCustomersFromAPI();
+    });
+
     return () => {
+      customersChannel.unbind(`created`);
+      customersChannel.unbind(`updated`);
+      customersChannel.unbind(`deleted`);
       productsChannel.unbind(`created`);
       productsChannel.unbind(`updated`);
       productsChannel.unbind(`deleted`);
+      pusher.unsubscribe(`customers`);
       pusher.unsubscribe(`products`);
       shopChannel.unbind(`updated`);
       pusher.unsubscribe(`shop`);
     };
   }, [])
 
-  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, color, setColor, dark, setDark, colorPref, setColorPref, year, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, usersLoading, setUsersLoading, iPhone, set_iPhone, shop, setShop, products, setProducts, productToEdit, setProductToEdit, cart, setCart, imageURLAdded, setImageURLAdded, adminFeatures, setAdminFeatures, theme, setTheme }}>
+  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, color, setColor, dark, setDark, colorPref, setColorPref, year, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, usersLoading, setUsersLoading, iPhone, set_iPhone, shop, setShop, products, setProducts, productToEdit, setProductToEdit, cart, setCart, imageURLAdded, setImageURLAdded, adminFeatures, setAdminFeatures, theme, setTheme, customers, setCustomers }}>
     {(browser != `chrome` || onMac && browser != `chrome`) ? (
       <div className={`framerMotion ${bodyClasses}`}>
         <AnimatePresence mode={`wait`}>

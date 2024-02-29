@@ -105,6 +105,18 @@ export const fetchProductsFromAPI = async (customObject = true) => {
   }
 }
 
+export const fetchCustomersFromAPI = async () => {
+  let customersResponse = await fetch(`${liveLink}/api/customers`);
+  if (customersResponse.status === 200) {
+    let customersData = await customersResponse.json();
+    if (customersData) {
+      if (Array.isArray(customersData)) {
+        return customersData;
+      }
+    }
+  }
+}
+
 export const createShopifyCustomer = async (email) => {
   try {
     let createShopifyCustomerResponse = await fetch(`${liveLink}/api/customers/create`, {
