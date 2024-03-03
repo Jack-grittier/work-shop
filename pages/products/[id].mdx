@@ -1,11 +1,11 @@
-import Main from '../../components/Main'
-import Banner from '../../components/Banner'
-import Products from '../../components/Products'
-import { fetchProductsFromAPI } from '../../firebase'
+import Main from '../../components/Main';
 import Product from '../../models/Product';
+import Banner from '../../components/Banner';
+import Products from '../../components/Products';
+import { fetchProductsFromAPI } from '../../firebase';
 
 export async function getStaticPaths() {
-    let products = await fetchProductsFromAPI();
+    let products = await fetchProductsFromAPI(true, false);
     const paths = products.map(product => ({
         params: { id: product.id.toString() },
     }));
@@ -13,7 +13,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-    let products = await fetchProductsFromAPI(false);
+    let products = await fetchProductsFromAPI(false, false);
 
     const product = products.find(p => p.id.toString() === params.id);
 

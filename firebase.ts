@@ -3,6 +3,7 @@ import Product from "./models/Product";
 import { initializeApp } from "firebase/app";
 import { GoogleAuthProvider, getAuth } from "firebase/auth";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
+import { defaultProducts, defaultShop } from "./globalFunctions";
 
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: 'select_account' });
@@ -81,24 +82,32 @@ export const liveLink = process.env.NODE_ENV == `development` ? `http://localhos
 export const productPlaceholderImage = `https://cdn.shopify.com/s/files/1/0857/2839/5586/files/CatTripleWhiteBG.png?v=1706157387`;
 export const productPlaceholderAltImage = `https://cdn.shopify.com/s/files/1/0857/2839/5586/files/CatTripleBlueBG.png?v=1707470831`;
 
-export const fetchShopDataFromAPI = async (customObject = true) => {
-  let shopResponse = await fetch(`${liveLink}/api/shop`);
-  if (shopResponse.status === 200) {
-    let shopData = await shopResponse.json();
-    if (shopData) return customObject == true ? new Shop(shopData) : shopData;
+export const fetchShopDataFromAPI = async (customObject = true, useDatabase = true) => {
+  if (useDatabase == true) {
+    let shopResponse = await fetch(`${liveLink}/api/shop`);
+    if (shopResponse.status === 200) {
+      let shopData = await shopResponse.json();
+      if (shopData) return customObject == true ? new Shop(shopData) : shopData;
+    }
+  } else {
+    return defaultShop;
   }
 }
 
-export const fetchProductsFromAPI = async (customObject = true) => {
-  let productsResponse = await fetch(`${liveLink}/api/products`);
-  if (productsResponse.status === 200) {
-    let productsData = await productsResponse.json();
-    if (productsData) {
-      if (Array.isArray(productsData)) {
-        let modifiedProducts = productsData.map(prod => customObject == true ? new Product(prod) : prod);
-        return modifiedProducts;
+export const fetchProductsFromAPI = async (customObject = true, useDatabase = true) => {
+  if (useDatabase == true) {
+    let productsResponse = await fetch(`${liveLink}/api/products`);
+    if (productsResponse.status === 200) {
+      let productsData = await productsResponse.json();
+      if (productsData) {
+        if (Array.isArray(productsData)) {
+          let modifiedProducts = productsData.map(prod => customObject == true ? new Product(prod) : prod);
+          return modifiedProducts;
+        }
       }
     }
+  } else {
+    return defaultProducts;
   }
 }
 
