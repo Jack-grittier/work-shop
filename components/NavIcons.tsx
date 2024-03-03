@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { StateContext } from "../pages/_app"
+import { StateContext } from "../pages/_app";
 
 export default function NavIcons() {
     let { theme, setAdminFeatures } = useContext<any>(StateContext);

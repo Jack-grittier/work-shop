@@ -9,12 +9,12 @@ provider.setCustomParameters({ prompt: 'select_account' });
 export const googleProvider = provider;
 
 const firebaseConfig = {
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APPID,
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_APIKEY,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECTID,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTHDOMAIN,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGEBUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APPID || process.env.FIREBASE_APPID,
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_APIKEY || process.env.FIREBASE_APIKEY,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECTID || process.env.FIREBASE_PROJECTID,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTHDOMAIN || process.env.FIREBASE_AUTHDOMAIN,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGEBUCKET || process.env.FIREBASE_STORAGEBUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID || process.env.FIREBASE_MESSAGINGSENDERID,
 };
 
 const app = initializeApp(firebaseConfig);
@@ -78,9 +78,6 @@ export const prodURL = process.env.NEXT_PUBLIC_PRODURL || process.env.PRODURL ||
 export const serverPort = process.env.NEXT_PUBLIC_SERVERPORT || process.env.SERVERPORT || 3000;
 export const liveLink = process.env.NODE_ENV == `development` ? `http://localhost:${serverPort}` : prodURL;
 
-export const storeName = process.env.NEXT_PUBLIC_SHOPIFY_STORE_NAME || process.env.SHOPIFY_STORE_NAME;
-export const apiVersion = process.env.NEXT_PUBLIC_SHOPIFY_API_VERSION || process.env.SHOPIFY_API_VERSION;
-export const accessToken = process.env.NEXT_PUBLIC_SHOPIFY_ACCESS_TOKEN || process.env.SHOPIFY_ACCESS_TOKEN;
 export const productPlaceholderImage = `https://cdn.shopify.com/s/files/1/0857/2839/5586/files/CatTripleWhiteBG.png?v=1706157387`;
 export const productPlaceholderAltImage = `https://cdn.shopify.com/s/files/1/0857/2839/5586/files/CatTripleBlueBG.png?v=1707470831`;
 

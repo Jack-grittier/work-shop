@@ -1,7 +1,7 @@
-import { ToastContainer } from "react-toastify";
+import TopButton from "./TopButton";
 import 'react-toastify/dist/ReactToastify.css';
 import { maxAnimationTime } from "../firebase";
-import TopButton from "./TopButton";
+import { ToastContainer } from "react-toastify";
 
 export default function Main(props) {
     let { children, className, showTopButton, style } = props;

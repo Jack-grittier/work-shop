@@ -51,7 +51,7 @@ const config: DocsThemeConfig = {
     <meta name="twitter:title" content={siteTitle} />
     <meta name="twitter:description" content={description}  />
     <meta name="twitter:image" content={`/assets/images/ogImage.jpg`} />
-    </>,
+  </>,
   logo: <>
     <img className={`darkModeLogo`} width={100} src={`/assets/images/cwsLongWhiteLogo.svg`} alt={`Creative Workshop Logo`} /> 
     <img className={`lightModeLogo`} width={100} src={`/assets/images/cwsLongNavyLogo.svg`} alt={`Creative Workshop Logo`} /> 
@@ -60,22 +60,19 @@ const config: DocsThemeConfig = {
   // navbar: {
     // extraContent: <NextraSearch />
   // },
-  ...(useDB() == false && {
-    navbar: {
-      extraContent: <div className={`navIconsContainer`}>
-      <NavIcons />
-    </div>
-    }
-  }),
+  // ...(useDB() == false && {
+  //   navbar: {
+  //     extraContent: <div className={`navIconsContainer`}>
+  //     <NavIcons />
+  //   </div>
+  //   }
+  // }),
   search: {
-    ...(useDB() == false && {
-      placeholder: `Search...`,
-    }),
-    ...(useDB() == true && {
+    // ...(useDB() == false && {
+    //   placeholder: `Search...`,
+    // }),
+    // ...(useDB() == true && {
       component: <>
-        <div className={`navIconsContainer showWhenNoDB`}>
-          <NavIcons />
-        </div>
         <div className={`navFormDiv`} style={{order: 0, display: `flex`, flexDirection: `row`, gridGap: 15, justifyContent: `space-between`, alignItems: `center`}}>
           <section className={`navFormSection showWhenDB`} style={{margin: 0, position: `relative`}}>
             <Form className={`navForm`} style={{display: `flex`, flexDirection: `row`}} />
@@ -83,7 +80,7 @@ const config: DocsThemeConfig = {
           <NavIcons />
         </div>
       </>
-    }),
+    // }),
   },
   docsRepositoryBase: 'https://github.com/strawhat19/CreativeWorkshop/',
   footer: {

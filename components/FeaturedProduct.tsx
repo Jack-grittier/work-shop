@@ -7,8 +7,8 @@ import { StateContext } from "../pages/_app";
 export default function FeaturedProduct({ product }) {
     const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
     let { user, router, setProducts, setProductToEdit } = useContext<any>(StateContext);
-    const [selectedColor, setSelectedColor] = useState(product.options.find(option => option.name === "Color").values[0]);
     const [selectedSize, setSelectedSize] = useState(product.options.find(option => option.name === "Size").values[0]);
+    const [selectedColor, setSelectedColor] = useState(product.options.find(option => option.name === "Color").values[0]);
 
     const handleVariantChange = (color, size) => {
         // Find the variant based on color and size

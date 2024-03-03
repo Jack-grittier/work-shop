@@ -13,7 +13,7 @@ import { collection, onSnapshot } from 'firebase/firestore';
 import { createContext, useRef, useState, useEffect } from 'react';
 import { auth, dataSize, db, fetchCustomersFromAPI, fetchProductsFromAPI, fetchShopDataFromAPI, maxDataSize, usersDatabase } from '../firebase';
 
-export const useDB = () => true;
+export const useDB = () => false;
 export const StateContext = createContext({});
 export const signUpOrSignIn = `Sign Up or Sign In`;
 
@@ -26,7 +26,7 @@ export const detectIfMobile = () => (typeof window.orientation !== `undefined`) 
 
 export const getShopDataFromAPI = async () => {
   try {
-    let getDatabase = true;
+    let getDatabase = useDB();
     if (getDatabase == true) {
       let latestShopData = fetchShopDataFromAPI();
       return latestShopData;
@@ -41,7 +41,7 @@ export const getShopDataFromAPI = async () => {
 
 export const getProductsFromAPI = async () => {
   try {
-    let getDatabase = true;
+    let getDatabase = useDB();
     if (getDatabase == true) {
       let latestProducts = fetchProductsFromAPI();
       return latestProducts;

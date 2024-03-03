@@ -1,3 +1,4 @@
+import Toggle from "./Toggle";
 import Popover from "./Popover";
 import User from "../models/User";
 import { toast } from "react-toastify";
@@ -8,7 +9,6 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { addUserToDatabase, auth, dataSize, googleProvider, maxDataSize } from '../firebase';
 import { StateContext, dev, removeNullAndUndefinedProperties, showAlert, signUpOrSignIn } from '../pages/_app';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
-import Toggle from "./Toggle";
 
 export const simplifyUser = (expandedUser: User) => {
   let simplifiedUser = {
