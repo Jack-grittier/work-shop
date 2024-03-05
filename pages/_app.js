@@ -13,7 +13,7 @@ import { collection, onSnapshot } from 'firebase/firestore';
 import { createContext, useRef, useState, useEffect } from 'react';
 import { auth, dataSize, db, fetchCustomersFromAPI, fetchProductsFromAPI, fetchShopDataFromAPI, maxDataSize, usersDatabase } from '../firebase';
 
-export const useDB = () => false;
+export const useDB = () => true;
 export const StateContext = createContext({});
 export const signUpOrSignIn = `Sign Up or Sign In`;
 
