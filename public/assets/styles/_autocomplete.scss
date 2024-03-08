@@ -73,27 +73,29 @@
 }
 
 div[role="presentation"] {
-    backdrop-filter: blur(5px);
-    z-index: 12 !important;
-    width: 85% !important;
-    top: 20px !important;
-    background: white;
-    border-radius: 8px;
-    margin: 0 auto;
-    display: flex;
-    grid-gap: 5px;
-    * {
-        width: 100%;
-    }
-    .optionDetailsColumn {
-        .optionStats {
-            .optionStatDetails {
-                font-size: 0.85em;
+    &:not(.MuiDrawer-root) {
+        backdrop-filter: blur(5px);
+        z-index: 12 !important;
+        width: 85% !important;
+        top: 20px !important;
+        background: white;
+        border-radius: 8px;
+        margin: 0 auto;
+        display: flex;
+        grid-gap: 5px;
+        * {
+            width: 100%;
+        }
+        .optionDetailsColumn {
+            .optionStats {
+                .optionStatDetails {
+                    font-size: 0.85em;
+                }
             }
         }
-    }
-    @media (max-width: 768px) {
-        max-width: 435px;
+        @media (max-width: 768px) {
+            max-width: 435px;
+        }
     }
 }
 

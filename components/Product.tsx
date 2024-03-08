@@ -1,13 +1,13 @@
 import Image from "./Image";
-import { toast } from "react-toastify";
+import { ToastOptions, toast } from "react-toastify";
 import { ButtonGroup } from "@mui/material";
 import { useContext, useState } from "react";
 import { StateContext, dev, dismissAlert, showAlert } from "../pages/_app";
-import { checkRole, liveLink, maxAnimationTime, productPlaceholderImage } from "../firebase";
+import { checkRole, liveLink, maxAnimationTime, productPlaceholderImage, shortAnimationTime } from "../firebase";
 
 export default function Product(props) {
     let { product, filteredProducts } = props;
-    let { user, router, products, setProducts, adminFeatures, setImageURLAdded, productToEdit, setProductToEdit } = useContext<any>(StateContext);
+    let { user, router, products, setProducts, cart, setCart, adminFeatures, setImageURLAdded, productToEdit, setProductToEdit } = useContext<any>(StateContext);
 
     if (!filteredProducts) filteredProducts = products;
 
@@ -42,8 +42,12 @@ export default function Product(props) {
 
     const onProductOptionFormSubmit = (e) => {
         e.preventDefault();
+        let { submitter } = e?.nativeEvent;
         let { selectColorField } = e.target;
-        console.log(`onProductOptionFormSubmit`, { e, selectColorField, val: selectColorField.value });
+
+        if (!submitter?.classList?.contains(`addToCartButton`)) {
+            console.log(`onProductOptionFormSubmit`, { e, submitter, selectColorField, val: selectColorField.value });
+        }
     }
 
     const renderSelectIcon = (optName) => {
@@ -57,9 +61,10 @@ export default function Product(props) {
     }
 
     const clearSearch = () => {
-        console.log(`Clear Search`);
         let searchInput: any = document.querySelector(`#globalSearchInput`);
-        searchInput.value = ``;
+        if (searchInput && searchInput?.value) {
+            searchInput.value = ``;
+        }
     }
 
     const backToShop = () => {
@@ -70,6 +75,7 @@ export default function Product(props) {
             router.push(`/shop`);
         } else {
             clearSearch();
+            router.push(`/shop`);
         }
         setTimeout(() => setBackToShopClicked(false), maxAnimationTime);
     }
@@ -185,16 +191,17 @@ export default function Product(props) {
             // setTimeout(() => setCancelClicked(false), maxAnimationTime);
         } else {
             setCartClicked(true);
-            dev() && console.log(`Add to Cart`, {e, type, user});
-            toast.info(`Adding to Cart...`);
+            toast.info(`Adding to Cart...`, { duration: shortAnimationTime } as ToastOptions);
             setTimeout(() => {
-                toast.error(`Add to Cart is in Development`);
+                toast.success(`Added to Cart`, { duration: shortAnimationTime } as ToastOptions);
                 setCartLoaded(true);
+                setCart(prevCart => ({ ...prevCart, items: [...prevCart?.items, product] }));
+                dev() && console.log(`Add to Cart`, {e, type, user, product, cart});
                 setTimeout(() => {
                     setCartClicked(false);
                     setCartLoaded(false);
-                }, maxAnimationTime);
-            }, maxAnimationTime);
+                }, shortAnimationTime);
+            }, shortAnimationTime);
         }
     }
 
@@ -358,8 +365,8 @@ export default function Product(props) {
                                 <div className={`productButtonText alertActionButton`}>{prodClicked ? `Navigating` : `Details`}</div>
                             </button>
                         )}
-
-                        {router.route.includes(`products/`) || product.options && product.options.length < 2 || product.options && product.options.length >= 2 && filteredProducts && filteredProducts?.length == 1 && (
+              
+                        {(router.route.includes(`products/`) || (product.options && product.options.length < 2) || (product.options && product.options.length >= 2 && filteredProducts && filteredProducts?.length == 1)) && (
                             <button title={`Add ${options.Quantity} ${product?.title}'s to Cart`} onClick={(e) => handleShopifyProductOption(e, `Cart`)} className={`productButton addToCartButton ${isCartButtonDisabled() ? `disabled` : ``}`} type={`submit`} disabled={isCartButtonDisabled()}>
                                 {!cartClicked && <>
                                     <span className={`price innerPrice hideOnMobile`}>

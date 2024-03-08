@@ -3,6 +3,22 @@
     max-width: 100% !important;
 }
 
+.MuiDrawer-root {
+    backdrop-filter: blur(5px);
+    .MuiPaper-root {
+        color: white;
+        min-width: 300px;
+        background: var(--navyT) !important;
+    }
+}
+
+.light {
+    .MuiPaper-root {
+        color: black;
+        background: white !important;
+    }
+}
+
 .Mui-disabled {
     color: rgba(255, 255, 255, 0.25) !important;
 }

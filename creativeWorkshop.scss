@@ -376,6 +376,13 @@ hr {
     padding-bottom: 20px;
 }
 
+.productImagesContainer {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
 .productOptionsForm {
     display: flex;
     grid-gap: 25px;
@@ -1050,16 +1057,6 @@ pre {
     }
     .productDesc {
         display: none;
-    }
-}
-
-@media (max-width: 480px) {
-    .Toastify__toast-container {
-        margin: 10px !important;
-        width: 83dvw !important;
-        .Toastify__toast {
-            margin-bottom: 10px;
-        }
     }
 }
 

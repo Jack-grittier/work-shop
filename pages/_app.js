@@ -381,9 +381,9 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   let [useLocalStorage, setUseLocalStorage] = useState(true);
 
   let [shop, setShop] = useState({});
-  let [cart, setCart] = useState({});
   let [products, setProducts] = useState([]);
   let [customers, setCustomers] = useState([]);
+  let [cart, setCart] = useState({ items: [] });
   let [adminFeatures, setAdminFeatures] = useState([]);
   let [productToEdit, setProductToEdit] = useState(null);
 

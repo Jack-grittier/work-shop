@@ -1,0 +1,19 @@
+.Toastify__toast-container {
+    margin-top: 65px;
+}
+
+@media (min-width: 600px) {
+    .Toastify__toast-container {
+        min-width: 450px;
+    }
+}
+
+@media (max-width: 480px) {
+    .Toastify__toast-container {
+        margin: 10px !important;
+        width: 83dvw !important;
+        .Toastify__toast {
+            margin-bottom: 10px;
+        }
+    }
+}

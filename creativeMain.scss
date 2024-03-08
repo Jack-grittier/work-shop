@@ -5,6 +5,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap");
 
 @import './public/assets/styles/mui';
+@import './public/assets/styles/toast';
 @import './public/assets/styles/contact';
 @import './public/assets/styles/autocomplete';
 
@@ -173,6 +174,7 @@ h6 {
 .text-right { text-align: right; }
 .maxfit { max-width: fit-content; }
 .ttu { text-transform: uppercase; }
+.cursorPointer { cursor: pointer; }
 .ttl { text-transform: lowercase; }
 .ttc { text-transform: capitalize; }
 .text-center { text-align: center; }
@@ -289,11 +291,13 @@ html[class~="dark"] {
     }
 
     form {
-        input {
-            color: rgba(17, 24, 39, 1);
-            background: #f2f2f2 !important;
-            &::placeholder {
+        &:not(.productForm) {
+            input {
                 color: rgba(17, 24, 39, 1);
+                background: #f2f2f2 !important;
+                &::placeholder {
+                    color: rgba(17, 24, 39, 1);
+                }
             }
         }
     }
@@ -631,6 +635,18 @@ input {
     font-family: var(--fontFamily);
     &::placeholder {
         font-family: var(--fontFamily);
+    }
+}
+
+.cartIconLink {
+    .MuiBadge-badge {
+        top: -2px;
+        font-size: 7px;
+        font-weight: 600;
+        padding: 0 !important;
+        min-width: 16px !important;
+        max-width: 16px !important;
+        max-height: 14px !important;
     }
 }
 

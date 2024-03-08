@@ -54,6 +54,7 @@ export const environment = environments.prod;
 export const { usersDatabase, emailsDatabase, productsDatabase } = environment;
 
 export const maxAnimationTime = 2500;
+export const shortAnimationTime = 350;
 export const maxDataSize = 1_048_576; // 1MB
 
 export const roles = {
