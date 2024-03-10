@@ -27,31 +27,36 @@ export const environments = {
     usersDatabase: `devUsers`,
     emailsDatabase: `devEmails`,
     productsDatabase: `devProducts`,
+    pageViewsDatabase: `devPageviews`,
   },
   test: {
     usersDatabase: `testUsers`,
     emailsDatabase: `testEmails`,
     productsDatabase: `testProducts`,
+    pageViewsDatabase: `testPageviews`,
   },
   alpha: {
     usersDatabase: `alphaUsers`,
     emailsDatabase: `alphaEmails`,
     productsDatabase: `alphaProducts`,
+    pageViewsDatabase: `alphaPageviews`,
   },
   beta: {
     usersDatabase: `betaUsers`,
     emailsDatabase: `betaEmails`,
     productsDatabase: `betaProducts`,
+    pageViewsDatabase: `betaPageviews`,
   },
   prod: {
     usersDatabase: `users`,
     emailsDatabase: `emails`,
     productsDatabase: `products`,
+    pageViewsDatabase: `pageviews`,
   },
 };
   
 export const environment = environments.prod;
-export const { usersDatabase, emailsDatabase, productsDatabase } = environment;
+export const { usersDatabase, emailsDatabase, productsDatabase, pageViewsDatabase } = environment;
 
 export const maxAnimationTime = 2500;
 export const shortAnimationTime = 350;
@@ -82,6 +87,27 @@ export const liveLink = process.env.NODE_ENV == `development` ? `http://localhos
 
 export const productPlaceholderImage = `https://cdn.shopify.com/s/files/1/0857/2839/5586/files/CatTripleWhiteBG.png?v=1706157387`;
 export const productPlaceholderAltImage = `https://cdn.shopify.com/s/files/1/0857/2839/5586/files/CatTripleBlueBG.png?v=1707470831`;
+
+export const trackUniquePageView = async (uniquePageView) => {
+  try {
+    await setDoc(doc(db, pageViewsDatabase, uniquePageView?.ID), uniquePageView);
+    return { success: true };
+  } catch (error) {
+    console.log(`Error adding unique page view to database`, error);
+    return { success: false, error };
+  }
+}
+
+export const addUserToDatabase = async (userObj) => {
+  try {
+    await setDoc(doc(db, usersDatabase, userObj?.ID), userObj);
+    await createShopifyCustomer(userObj?.email);
+    return { success: true };
+  } catch (error) {
+    console.log(`Error adding user to database`, error);
+    return { success: false, error };
+  }
+}
 
 export const fetchShopDataFromAPI = async (customObject = true, useDatabase = true) => {
   if (useDatabase == true) {
@@ -146,18 +172,6 @@ export const createShopifyCustomer = async (email) => {
     }
   } catch (error) {
     console.log(`Server Error on Create Customer`, error);
-  }
-}
-
-export const addUserToDatabase = async (userObj) => {
-  try {
-    await setDoc(doc(db, usersDatabase, userObj?.ID), userObj);
-    await createShopifyCustomer(userObj?.email);
-    // await setDoc(doc(db, emailsDatabase, userObj?.ID), { email: userObj?.email });
-    return { success: true };
-  } catch (error) {
-    console.log(`Error adding user to database`, error);
-    return { success: false, error };
   }
 }
 

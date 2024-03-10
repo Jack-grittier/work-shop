@@ -11,7 +11,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { AnimatePresence, motion } from 'framer-motion';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { createContext, useRef, useState, useEffect } from 'react';
-import { auth, dataSize, db, fetchCustomersFromAPI, fetchProductsFromAPI, fetchShopDataFromAPI, maxDataSize, usersDatabase } from '../firebase';
+import { auth, dataSize, db, fetchCustomersFromAPI, fetchProductsFromAPI, fetchShopDataFromAPI, maxDataSize, pageViewsDatabase, trackUniquePageView, usersDatabase } from '../firebase';
+import PageView from '../models/PageView';
 
 export const useDB = () => true;
 export const StateContext = createContext({});
@@ -383,6 +384,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   let [shop, setShop] = useState({});
   let [products, setProducts] = useState([]);
   let [customers, setCustomers] = useState([]);
+  let [pageViews, setPageViews] = useState([]);
   let [cart, setCart] = useState({ items: [] });
   let [adminFeatures, setAdminFeatures] = useState([]);
   let [productToEdit, setProductToEdit] = useState(null);
@@ -698,7 +700,28 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     };
   }, [])
 
-  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, color, setColor, dark, setDark, colorPref, setColorPref, year, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, usersLoading, setUsersLoading, iPhone, set_iPhone, shop, setShop, products, setProducts, productToEdit, setProductToEdit, cart, setCart, imageURLAdded, setImageURLAdded, adminFeatures, setAdminFeatures, theme, setTheme, customers, setCustomers }}>
+  useEffect(() => {
+    let pageViewsFromDatabase = [];
+
+    if (useDatabase == true) {
+      const unsubscribeFromPageViewsListener = onSnapshot(collection(db, pageViewsDatabase), (querySnapshot) => {
+        querySnapshot.forEach((doc) => pageViewsFromDatabase.push(new PageView({...doc.data()})));
+        setPageViews(pageViewsFromDatabase);
+
+        if (!localStorage.getItem(`visited`)) {
+          localStorage.setItem(`visited`, true);
+          let uniquePageView = new PageView({ uniqueIndex: pageViewsFromDatabase?.length + 1 });
+          trackUniquePageView(JSON.parse(JSON.stringify(uniquePageView)));
+        }
+      });
+
+      return () => {
+        unsubscribeFromPageViewsListener();
+      };
+    }
+  }, [])
+
+  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, color, setColor, dark, setDark, colorPref, setColorPref, year, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, usersLoading, setUsersLoading, iPhone, set_iPhone, shop, setShop, products, setProducts, productToEdit, setProductToEdit, cart, setCart, imageURLAdded, setImageURLAdded, adminFeatures, setAdminFeatures, theme, setTheme, customers, setCustomers, pageViews, setPageViews }}>
     {(browser != `chrome` || onMac && browser != `chrome`) ? (
       <div className={`framerMotion ${bodyClasses}`}>
         <AnimatePresence mode={`wait`}>
