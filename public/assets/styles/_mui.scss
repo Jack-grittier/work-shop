@@ -6,8 +6,12 @@
 .MuiDrawer-root {
     backdrop-filter: blur(5px);
     .MuiPaper-root {
+        display: flex;
         color: white;
         min-width: 300px;
+        padding-top: 40px;
+        align-items: center;
+        justify-content: flex-start;
         background: var(--navyT) !important;
     }
 }

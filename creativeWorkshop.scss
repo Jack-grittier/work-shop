@@ -816,6 +816,9 @@ pre {
     border-radius: 20px;
     margin: 0 auto 25px;
     transition: var(--transition);
+    &.productPicInCart {
+        max-height: 185px !important;
+    }
 }
 
 .productDesc {

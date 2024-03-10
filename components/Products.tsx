@@ -7,7 +7,7 @@ import LoadingSpinner from "./LoadingSpinner";
 import { useContext, useEffect, useState } from "react";
 
 export default function Products(props) {
-    let { products } = props;
+    let { products, isCart } = props;
     let { user } = useContext<any>(StateContext);
     if (!products) products = useContext<any>(StateContext)?.products;
     products = products && products.filter(prod => prod.status != `archived`);
@@ -16,8 +16,10 @@ export default function Products(props) {
     let [productsSearchTerm, setProductsSearchTerm] = useState(``);
 
     useEffect(() => {
-        if (products && products?.length > 0) {
-            setProductsLoaded(true);
+        if (!isCart) {
+            if (products && products?.length > 0) setProductsLoaded(true);
+        } else {
+            if (products && Array.isArray(products)) setProductsLoaded(true);
         }
     }, [products])
 
@@ -43,13 +45,13 @@ export default function Products(props) {
     }
 
     return (
-        <div className={`productsComponent productsContainer flex flexColumns gap15`}>
+        <div className={`productsComponent productsContainer flex flexColumns gap15 ${isCart ? `isCart` : ``}`}>
         
-            {getFilteredProducts(products) && getFilteredProducts(products)?.length > 0 && getFilteredProducts(products)?.length != 1 && (
-                <h2 className={`shopSubtitle`}>{getFilteredProducts(products)?.length} Product(s)</h2>
+            {getFilteredProducts(products) && getFilteredProducts(products)?.length > 0 && (getFilteredProducts(products)?.length != 1 || isCart) && (
+                <h2 className={`shopSubtitle`}>{getFilteredProducts(products)?.length} Product(s){isCart ? ` In Cart` : ``}</h2>
             )}
 
-            {products && products?.length > 0 && products?.length != 1 && (
+            {products && products?.length > 0 && products?.length != 1 && !isCart && (
                 <div className={`sectionContent mt-4`}>
                     <div className={`fieldBG`}>
                         <Search onInput={searchProducts} className={`productSearch`} />
@@ -60,7 +62,7 @@ export default function Products(props) {
                 </div>
             )}
 
-            {user && checkRole(user.roles, `Admin`) && products && products?.length > 0 && products?.length != 1 && (
+            {user && checkRole(user.roles, `Admin`) && products && products?.length > 0 && products?.length != 1 && !isCart && (
                 <ProductForm />
             )}
 
@@ -72,13 +74,13 @@ export default function Products(props) {
                         return (
                             <li className={`card productCard`} key={productIndex}>
                                 <div className={`productDetails flex gap15`}>
-                                    <Product product={product} filteredProducts={getFilteredProducts(products)} />
+                                    <Product product={product} filteredProducts={getFilteredProducts(products)} inCart={isCart} />
                                 </div>
                             </li>
                         )
                     }) : (
                         <h2 className={`shopSubtitle`}>
-                            {productsSearchTerm && productsSearchTerm != `` ? `No Products for Search` : productsLoaded ? `No Products Yet` : (
+                            {productsSearchTerm && productsSearchTerm != `` ? `No Products for Search` : productsLoaded ? isCart ? `No Items in Cart Yet` : `No Products Yet` : (
                                 <LoadingSpinner circleNotch loadingLabel={`Products`} />
                             )}
                         </h2>

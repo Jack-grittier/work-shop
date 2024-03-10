@@ -1,0 +1,42 @@
+.sideCart {
+    .prodTitle {
+        max-width: 135px !important;
+    }
+    .productTitle {
+        padding: 0 0 15px !important;
+    }
+    .productTitleAndPrice {
+        display: flex;
+        grid-gap: 10px;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        font-size: 18px !important;
+        .price {
+            padding-left: 0;
+            top: 0 !important;
+            font-size: 14px !important;
+        }
+    }
+    .productCard {
+        max-width: 184px;
+    }
+    .toggleButtons {
+        width: 100%;
+        align-items: center;
+        font-size: 15px !important;
+        justify-content: space-between !important;
+    }
+    .selectText {
+        font-size: 15px !important;
+        padding-right: 15px !important;
+    }
+    .productButton {
+        max-height: 22px !important;
+        padding: 4px 4px 2px !important;
+        &.qtyText {
+            font-size: 12px;
+            padding: 4px 7px 2px !important;
+        }
+    }
+}

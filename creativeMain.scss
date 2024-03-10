@@ -5,6 +5,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap");
 
 @import './public/assets/styles/mui';
+@import './public/assets/styles/cart';
 @import './public/assets/styles/toast';
 @import './public/assets/styles/contact';
 @import './public/assets/styles/autocomplete';
@@ -2172,4 +2173,10 @@ form {
 .errorMessage {
     font-size: 13px;
     color: var(--error);
+}
+
+.productQuantityButtons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

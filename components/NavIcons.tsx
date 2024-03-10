@@ -30,56 +30,6 @@ export default function NavIcons() {
         setAdminFeatures(prevAdminFeats => prevAdminFeats.map(featr => featr.feature == `Dark Mode` ? ({ ...featr, enabled: !featr.enabled }) : featr));
     }
 
-    const showCart = (anchor: Anchor) => (
-        <div style={{maxWidth: 250, padding: `35px 0 0 35px`}}>
-            {/* <Products products={cart?.items} /> */}
-            {cart?.items && cart?.items?.length > 0 ? cart?.items?.map((itm, itmIndex) => {
-                return (
-                    <div key={itmIndex} className={`cartItem`}>
-                        <div>{itmIndex + 1}) {itm?.name}</div>
-                        <div className={`flex`}>${itm?.price} <div>Qty: 0</div></div>
-                    </div>
-                )
-            }) : (
-                <div className={`cartItem`}>
-                    No items in the Cart
-                </div>
-            )}
-        </div>
-        // <Box
-        //   sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
-        //   role="presentation"
-        //   onClick={toggleDrawer(anchor, false)}
-        //   onKeyDown={toggleDrawer(anchor, false)}
-        // >
-        //   <List>
-        //     {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-        //       <ListItem key={text} disablePadding>
-        //         <ListItemButton>
-        //           <ListItemIcon>
-        //             {index % 2 === 0 ? `Inbox Icon` : `Mail Icon`}
-        //           </ListItemIcon>
-        //           <ListItemText primary={text} />
-        //         </ListItemButton>
-        //       </ListItem>
-        //     ))}
-        //   </List>
-        //   <Divider />
-        //   <List>
-        //     {['All mail', 'Trash', 'Spam'].map((text, index) => (
-        //       <ListItem key={text} disablePadding>
-        //         <ListItemButton>
-        //           <ListItemIcon>
-        //             {index % 2 === 0 ? `Inbox Icon` : `Mail Icon`}
-        //           </ListItemIcon>
-        //           <ListItemText primary={text} />
-        //         </ListItemButton>
-        //       </ListItem>
-        //     ))}
-        //   </List>
-        // </Box>
-      );
-
     return (
         <div className={`navIcons`}>
             <a href={`https://twitter.com/GetCreativeWS`} target="_blank" rel={`noreferrer`} className={`twitterIconLink x-p-2 nx-text-current`}>
@@ -104,7 +54,9 @@ export default function NavIcons() {
                     open={state[`right`]}
                     onClose={toggleDrawer(`right`, false)}
                 >
-                    {showCart(`right`)}
+                    <div className={`cart sideCart`}>
+                        <Products products={cart?.items} isCart={true} />
+                    </div>
                 </Drawer>
             </a>
             <a role={`button`} aria-pressed={theme == `dark`} onClick={() => onClickThemeModeIconLink()} rel={`noreferrer`} className={`themeModeIconLink customIconLink nx-p-2 nx-text-current`} tabIndex={0}>

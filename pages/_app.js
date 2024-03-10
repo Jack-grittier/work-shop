@@ -386,9 +386,9 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   let [ipAddress, setIPAddress] = useState(``);
   let [customers, setCustomers] = useState([]);
   let [pageViews, setPageViews] = useState([]);
-  let [cart, setCart] = useState({ items: [] });
   let [adminFeatures, setAdminFeatures] = useState([]);
   let [productToEdit, setProductToEdit] = useState(null);
+  let [cart, setCart] = useState({ items: [], user: user });
 
   const setBrowserUI = () => {
     if (brwser == `` && (navigator.userAgent.match(/edg/i) || navigator.userAgent.includes(`edg`) || navigator.userAgent.includes(`Edg`))) {

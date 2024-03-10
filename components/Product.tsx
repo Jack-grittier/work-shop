@@ -1,12 +1,12 @@
 import Image from "./Image";
-import { ToastOptions, toast } from "react-toastify";
 import { ButtonGroup } from "@mui/material";
 import { useContext, useState } from "react";
+import { ToastOptions, toast } from "react-toastify";
 import { StateContext, dev, dismissAlert, showAlert } from "../pages/_app";
 import { checkRole, liveLink, maxAnimationTime, productPlaceholderImage, shortAnimationTime } from "../firebase";
 
 export default function Product(props) {
-    let { product, filteredProducts } = props;
+    let { product, filteredProducts, inCart } = props;
     let { user, router, products, setProducts, cart, setCart, adminFeatures, setImageURLAdded, productToEdit, setProductToEdit } = useContext<any>(StateContext);
 
     if (!filteredProducts) filteredProducts = products;
@@ -46,7 +46,7 @@ export default function Product(props) {
         let { selectColorField } = e.target;
 
         if (!submitter?.classList?.contains(`addToCartButton`)) {
-            console.log(`onProductOptionFormSubmit`, { e, submitter, selectColorField, val: selectColorField.value });
+            dev() && console.log(`onProductOptionFormSubmit`, { e, submitter, selectColorField, val: selectColorField.value });
         }
     }
 
@@ -80,7 +80,8 @@ export default function Product(props) {
         setTimeout(() => setBackToShopClicked(false), maxAnimationTime);
     }
 
-    const updateOptions = (optName, opt) => {
+    const updateOptions = (optName, opt, e?) => {
+        if (inCart && e) e.stopPropagation();
         if (filteredProducts && filteredProducts?.length > 0) {
             setOptions(prevOptions => {
                 let Quantity = prevOptions.Quantity;
@@ -195,7 +196,7 @@ export default function Product(props) {
             setTimeout(() => {
                 toast.success(`Added to Cart`, { duration: shortAnimationTime } as ToastOptions);
                 setCartLoaded(true);
-                setCart(prevCart => ({ ...prevCart, items: [...prevCart?.items, product] }));
+                setCart(prevCart => ({ ...prevCart, items: [...prevCart?.items, product], user: user }));
                 dev() && console.log(`Add to Cart`, {e, type, user, product, cart});
                 setTimeout(() => {
                     setCartClicked(false);
@@ -209,12 +210,12 @@ export default function Product(props) {
         <div className={`product ${filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 ? `featuredProduct` : `multiProduct`}`}>
 
             <a className={`productTitleLink productTitle`} title={`Product Link - ${product?.title}`} href={!router.route.includes(`products/`) ? `/products/${product.id}` : undefined} onClick={(e) => !router.route.includes(`products/`) ? handleShopifyProductOption(e, `Navigate`) : e.preventDefault()}>
-                <i className={`shopifyIcon green topIcon fab fa-shopify`}></i>
+                {!inCart && <i className={`shopifyIcon green topIcon fab fa-shopify`}></i>}
                 <h3 className={`productNameAndPrice productTitleAndPrice cardTitle`}>
                     <span title={product?.title} className={`prodTitle oflow ${product?.title.length > 15 ? `longTitle` : `shortTitle`}`}>
                         {product?.title}
                     </span>
-                    <span title={`Product Price - $${options?.Price}`} className={`price cardPrice`}> - 
+                    <span title={`Product Price - $${options?.Price}`} className={`price cardPrice`}>{ inCart ? `` : ` - `}
                         <span className={`dollar`}>$</span>{options?.Price}
                     </span>
                 </h3>
@@ -225,7 +226,7 @@ export default function Product(props) {
                 <a className={`productImageLinkContainer productImagesContainer`} href={!router.route.includes(`products/`) ? `/products/${product.id}` : undefined} onClick={(e) => !router.route.includes(`products/`) ? handleShopifyProductOption(e, `Navigate`) : e.preventDefault()}>
                     {product.image ? (
                         <div className={`productImageContainer`}>
-                            <Image src={product.image.src} className={`productPic productMainImage customImage`} alt={`Product Image`} />
+                            <Image src={product.image.src} className={`productPic productMainImage customImage ${inCart ? `productPicInCart` : ``}`} alt={`Product Image`} />
                             {product.altImage && <Image src={product.altImage.src} className={`productPic productAltImage customImage`} alt={`Product Alternate Image`} />}
                         </div>
                     ) : (
@@ -233,32 +234,34 @@ export default function Product(props) {
                     )}
                 </a>
 
-                <div className={`productDesc`}>
-                    <div className={`productDescField productDescTitle textWithIcon`}>
-                        <i className={`blue fas fa-stream`}></i>
-                        {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 ? `Description` : `Desc`}
+                {!inCart && <>
+                    <div className={`productDesc`}>
+                        <div className={`productDescField productDescTitle textWithIcon`}>
+                            <i className={`blue fas fa-stream`}></i>
+                            {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 ? `Description` : `Desc`}
+                        </div>
+                        <div className={`productDescField productDescType productDescCat textWithIcon`}>
+                            <i className={`blue fas fa-tags`}></i>
+                            Type - {product.type}
+                        </div>
+                        <div className={`productDescField productDescQty textWithIcon`}>
+                            <i className={`blue fas fa-hashtag`}></i>
+                            {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 ? <>
+                                {product.quantity} In Stock
+                            </> : <>
+                                Qty - {product.quantity}
+                            </>}
+                        </div>
                     </div>
-                    <div className={`productDescField productDescType productDescCat textWithIcon`}>
-                        <i className={`blue fas fa-tags`}></i>
-                        Type - {product.type}
-                    </div>
-                    <div className={`productDescField productDescQty textWithIcon`}>
-                        <i className={`blue fas fa-hashtag`}></i>
-                        {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 ? <>
-                            {product.quantity} In Stock
-                        </> : <>
-                            Qty - {product.quantity}
-                        </>}
-                    </div>
-                </div>
 
-                {product.description != `` ? product.description : product?.title}
+                    {product.description != `` ? product.description : product?.title}
+                </>}
             </div>
 
             <form onSubmit={(e) => onProductOptionFormSubmit(e)} className={`productOptions productOptionsForm`}>
 
                 <div className={`productFieldRow`}>
-                    {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 && <>
+                    {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 && !inCart && <>
                         <fieldset name={`selectPriceField`} className={`selectToggle selectPriceField hideOnMobile`}>
                             <ButtonGroup className={`toggleButtons productButtons`} variant={`outlined`} aria-label={`Product Price`}>
                                 <h3 className={`selectText textWithIcon`}>
@@ -279,24 +282,26 @@ export default function Product(props) {
                             <ButtonGroup className={`toggleButtons productButtons`} variant={`outlined`} aria-label={`Product Quantity`}>
                                 <h3 className={`selectText textWithIcon`}>
                                     <i className={`selectIcon ${renderSelectIcon(`Quantity`)}`}></i> 
-                                    Quantity
+                                    {inCart ? `Qty` : `Quantity`}
                                 </h3>
-                                <button onClick={(e) => updateOptions(`QuantitySub`, options.Quantity)} type={`button`} className={`qtyBtn subQty redBg qtyButton ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyButtonSlim` : ``} optionButton productButton Quantity-${options.Quantity} firstOption`} value={options.Quantity}>
-                                    <span className={`optionText textOverflow`}>-</span>
-                                </button>
-                                <button type={`button`} className={`qtyBtn qtyText ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyTextSlim` : ``} optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity} disabled>
-                                    <span className={`optionText textOverflow`}>{options.Quantity}</span>
-                                    {/* <input name={`quantity`} type={`number`} value={options.Quantity} /> */}
-                                </button>
-                                <button onClick={(e) => updateOptions(`QuantityAdd`, options.Quantity)} type={`button`} className={`qtyBtn addQty greenBg qtyButton ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyButtonSlim` : ``} optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity}>
-                                    <span className={`optionText textOverflow`}>+</span>
-                                </button>
+                                <div className={`productQuantityButtons`}>
+                                    <button onClick={(e) => updateOptions(`QuantitySub`, options.Quantity, e)} type={`button`} className={`qtyBtn subQty redBg qtyButton ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyButtonSlim` : ``} optionButton productButton Quantity-${options.Quantity} firstOption`} value={options.Quantity}>
+                                        <span className={`optionText textOverflow`}>-</span>
+                                    </button>
+                                    <button type={`button`} className={`qtyBtn qtyText ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyTextSlim` : ``} optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity} disabled>
+                                        <span className={`optionText textOverflow`}>{options.Quantity}</span>
+                                        {/* <input name={`quantity`} type={`number`} value={options.Quantity} /> */}
+                                    </button>
+                                    <button onClick={(e) => updateOptions(`QuantityAdd`, options.Quantity, e)} type={`button`} className={`qtyBtn addQty greenBg qtyButton ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyButtonSlim` : ``} optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity}>
+                                        <span className={`optionText textOverflow`}>+</span>
+                                    </button>
+                                </div>
                             </ButtonGroup>
                         </fieldset>
                     </>}
                 </div>
 
-                {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 && product.options && Array.isArray(product.options) && product.options.length > 1 && product.options.map((optGroup, optGroupIndex) => {
+                {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 && product.options && Array.isArray(product.options) && product.options.length > 1 && !inCart && product.options.map((optGroup, optGroupIndex) => {
                     return (
                         <fieldset key={optGroupIndex} name={`select${optGroup?.name}Field`} className={`selectToggle select${optGroup?.name}Field`}>
                             <ButtonGroup className={`toggleButtons productButtons`} variant={`outlined`} aria-label={`Product Options`}>
@@ -307,7 +312,7 @@ export default function Product(props) {
                                 <div className={`buttons`}>
                                     {optGroup.values && Array.isArray(optGroup.values) && optGroup.values.length > 0 && optGroup.values.map((option, optionIndex) => {
                                         return (
-                                            <button onClick={(e) => updateOptions(optGroup?.name, option)} key={optionIndex} type={`button`} className={`optionButton productButton ${Object.values(options).includes(option) ? `active` : ``} ${optGroup?.name}-${option} ${optionIndex == 0 ? `firstOption` : ``}`} value={option}>
+                                            <button onClick={(e) => updateOptions(optGroup?.name, option, e)} key={optionIndex} type={`button`} className={`optionButton productButton ${Object.values(options).includes(option) ? `active` : ``} ${optGroup?.name}-${option} ${optionIndex == 0 ? `firstOption` : ``}`} value={option}>
                                                 <span className={`optionText textOverflow`}>{option}</span>
                                             </button>
                                         )
@@ -319,32 +324,36 @@ export default function Product(props) {
                 })}
                 
                 <div className={`productFieldRow`}>
+                    {!inCart && (
+                        <div className={`productActions productButtons`}>
+
+                            {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 && (
+                                <button title={`Back to Shop`} onClick={() => backToShop()} className={`productButton backToShopButton`} type={`button`}>
+                                    <i className={`productIcon fas ${backToShopClicked ? `pink spinThis fa-spinner` : `pink fa-undo`}`}></i>
+                                    <div className={`productButtonText alertActionButton`}>
+                                        {backToShopClicked ? `Navigating` : (
+                                            <div className={`backToShop`}>
+                                                <span className={`hideOnMobile`}>Back to </span> Shop
+                                            </div>
+                                        )}
+                                    </div>
+                                </button>
+                            )}
+
+                        </div>
+                    )}
                     <div className={`productActions productButtons`}>
 
-                        {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 && (
-                            <button title={`Back to Shop`} onClick={() => backToShop()} className={`productButton backToShopButton`} type={`button`}>
-                                <i className={`productIcon fas ${backToShopClicked ? `pink spinThis fa-spinner` : `pink fa-undo`}`}></i>
-                                <div className={`productButtonText alertActionButton`}>
-                                    {backToShopClicked ? `Navigating` : (
-                                        <div className={`backToShop`}>
-                                            <span className={`hideOnMobile`}>Back to </span> Shop
-                                        </div>
-                                    )}
-                                </div>
-                            </button>
-                        )}
-
-                    </div>
-                    <div className={`productActions productButtons`}>
-
-                        {user && checkRole(user.roles, `Admin`) && (
+                        {/* Delete Product Button */}
+                        {user && checkRole(user.roles, `Admin`) && !inCart && (
                             <button title={`Delete ${product?.title}`} onClick={(e) => handleShopifyProductOption(e, `Delete`)} className={`productButton deleteProductButton`} type={`button`}>
                                 <i className={`productIcon fas ${delClicked ? `pink spinThis fa-spinner` : `red fa-trash-alt`}`}></i>
                                 <div className={`productButtonText alertActionButton`}>{delClicked ? `Deleting` : `Delete`}</div>
                             </button>
                         )}
 
-                        {user && checkRole(user.roles, `Admin`) && (
+                        {/* Edit Product Button */}
+                        {user && checkRole(user.roles, `Admin`) && !inCart && (
                             <button 
                                 className={`productButton editProductButton ${productToEdit != null && productToEdit.id == product.id ? `cancelProductButton` : ``}`} type={`button`}
                                 title={`
@@ -359,14 +368,16 @@ export default function Product(props) {
                             </button>
                         )}
 
-                        {!router.route.includes(`products/`) && (
+                        {/* Navigate to Product Detail View Button */}
+                        {!router.route.includes(`products/`) && !inCart && (
                             <button title={`Details ${product?.title}`} onClick={(e) => handleShopifyProductOption(e, `Navigate`)} className={`productButton detailsProductButton`} type={`button`}>
                                 <i className={`productIcon fas ${prodClicked ? `pink spinThis fa-spinner` : `green fa-tags`}`}></i>
                                 <div className={`productButtonText alertActionButton`}>{prodClicked ? `Navigating` : `Details`}</div>
                             </button>
                         )}
               
-                        {(router.route.includes(`products/`) || (product.options && product.options.length < 2) || (product.options && product.options.length >= 2 && filteredProducts && filteredProducts?.length == 1)) && (
+                        {/* Add to Cart Button */}
+                        {((router.route.includes(`products/`) || (product.options && product.options.length < 2) || (product.options && product.options.length >= 2 && filteredProducts && filteredProducts?.length == 1)) && !inCart) && (
                             <button title={`Add ${options.Quantity} ${product?.title}'s to Cart`} onClick={(e) => handleShopifyProductOption(e, `Cart`)} className={`productButton addToCartButton ${isCartButtonDisabled() ? `disabled` : ``}`} type={`submit`} disabled={isCartButtonDisabled()}>
                                 {!cartClicked && <>
                                     <span className={`price innerPrice hideOnMobile`}>
