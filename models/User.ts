@@ -42,6 +42,7 @@ export default class User {
     user?: any,
     image?: string,
     metadata?: any,
+    shopifyID?: any,
     createdAt?: any,
     updatedAt?: any,
     source?: string,
@@ -49,6 +50,7 @@ export default class User {
     lastUpdated?: any,
     password?: string,
     firebaseUser?: any,
+    customerData?: any,
     passwordHash?: any,
     properties?: number,
     playerUUID?: string,
@@ -99,6 +101,17 @@ export default class User {
 
     if (this.roles == undefined) {
       this.roles = [`User`];
+    }
+
+    if (this.customerData == undefined || this.shopifyID == undefined) {
+      let storedCustomers = JSON.parse(localStorage.getItem(`customers`)) || [];
+      if (storedCustomers.length > 0) {
+        let customerAccount = storedCustomers.find(customer => customer?.email == this?.email);
+        if (customerAccount) {
+          this.customerData = customerAccount;
+          this.shopifyID = customerAccount?.id;
+        }
+      }
     }
 
     if (this.type == `Google`) {

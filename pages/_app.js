@@ -5,6 +5,7 @@ import '../creativeWorkshop.scss';
 import Pusher from 'pusher-js';
 import User from '../models/User';
 import ReactDOM from 'react-dom/client';
+import PageView from '../models/PageView';
 // import { useRouter } from 'next/router';
 import { simplifyUser } from '../components/Form';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -12,7 +13,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { createContext, useRef, useState, useEffect } from 'react';
 import { auth, dataSize, db, fetchCustomersFromAPI, fetchProductsFromAPI, fetchShopDataFromAPI, maxDataSize, pageViewsDatabase, trackUniquePageView, usersDatabase } from '../firebase';
-import PageView from '../models/PageView';
 
 export const useDB = () => true;
 export const StateContext = createContext({});
@@ -57,7 +57,7 @@ export const getProductsFromAPI = async () => {
 
 export const getCustomersFromAPI = async () => {
   try {
-    let getDatabase = true;
+    let getDatabase = useDB();
     if (getDatabase == true) {
       let latestCustomers = fetchCustomersFromAPI();
       return latestCustomers;
@@ -429,8 +429,8 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
 
   const refreshCustomersFromAPI = async () => {
     let customersFromAPI = await getCustomersFromAPI();
-    if (customersFromAPI) {
-      setCustomers(customersFromAPI);
+    if (customersFromAPI && customersFromAPI?.customers) {
+      setCustomers(customersFromAPI?.customers);
     } else {
       setCustomers([]);
     }
@@ -568,7 +568,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
         unsubscribeFromDatabaseUsersListener();
       };
     } else {
-      let storedUsers = JSON.parse(localStorage.getItem(`users`));
+      let storedUsers = JSON.parse(localStorage.getItem(`users`)) || [];
       if (storedUsers && useLocalStorage) {
         setUsers(storedUsers);
         setUsersLoading(false); 

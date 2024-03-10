@@ -143,9 +143,7 @@ export const fetchCustomersFromAPI = async () => {
   if (customersResponse.status === 200) {
     let customersData = await customersResponse.json();
     if (customersData) {
-      if (Array.isArray(customersData)) {
-        return customersData;
-      }
+      return customersData;
     }
   }
 }
