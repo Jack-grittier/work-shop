@@ -7,12 +7,14 @@ export default class PageView {
     date?: any,
     id?: string,
     ID?: string,
+    url?: string,
     device?: any,
     uid?: string,
     uuid?: string,
     browser?: any,
     location?: any,
     timestamp?: any,
+    ipAddress?: any,
     referrerURL?: any,
     dateNoSpaces?: any,
     uniqueIndex?: number,
@@ -27,6 +29,8 @@ export default class PageView {
     if (this?.date == undefined) this.date = formatDate(this?.timestamp);
     if (this?.dateNoSpaces == undefined) this.dateNoSpaces = formatDate(this?.timestamp, `timezoneNoSpaces`);
 
+    if (this?.ipAddress == undefined) this.ipAddress = `::1`;
+    if (this?.url == undefined) this.url = window.location.href;
     if (this?.referrerURL == undefined) this.referrerURL = document?.referrer;
     if (this?.device == undefined) this.device = /Mobi|Android/i?.test(navigator?.userAgent) ? `Mobile` : `Desktop`;
     if (this?.browserTimezone == undefined) this.browserTimezone = Intl?.DateTimeFormat()?.resolvedOptions()?.timeZone;

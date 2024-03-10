@@ -383,6 +383,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
 
   let [shop, setShop] = useState({});
   let [products, setProducts] = useState([]);
+  let [ipAddress, setIPAddress] = useState(``);
   let [customers, setCustomers] = useState([]);
   let [pageViews, setPageViews] = useState([]);
   let [cart, setCart] = useState({ items: [] });
@@ -710,8 +711,13 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
 
         if (!localStorage.getItem(`visited`)) {
           localStorage.setItem(`visited`, true);
-          let uniquePageView = new PageView({ uniqueIndex: pageViewsFromDatabase?.length + 1 });
-          trackUniquePageView(JSON.parse(JSON.stringify(uniquePageView)));
+
+          fetch(`https://api.ipify.org?format=json`).then(response => response.json()).then(data => {
+            setIPAddress(data?.ip);
+
+            let uniquePageView = new PageView({ uniqueIndex: pageViewsFromDatabase?.length + 1, ipAddress: data?.ip });
+            trackUniquePageView(JSON.parse(JSON.stringify(uniquePageView)));
+          }).catch(error => console.error(`Error Fetching IP`, error));
         }
       });
 
