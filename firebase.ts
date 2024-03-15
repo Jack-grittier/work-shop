@@ -1,9 +1,9 @@
 import Shop from "./models/Shop";
 import Product from "./models/Product";
 import { initializeApp } from "firebase/app";
+import { defaultProducts, defaultShop } from "./database";
 import { GoogleAuthProvider, getAuth } from "firebase/auth";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
-import { defaultProducts, defaultShop } from "./globalFunctions";
 
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: 'select_account' });

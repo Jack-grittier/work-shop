@@ -6,7 +6,7 @@ export default function AutoCompleteOption(props) {
     return (
         <div className={`autocompleteOption ${className ? className : ``}`}>
             <div className={`leftSmallCol`}>
-                <span className={`dollar`}>$</span>{removeTrailingZeroDecimal(option?.price)}
+                <span className={`dollar`}>$</span>{removeTrailingZeroDecimal(option?.price, 2)}
             </div>
             <div className={`optionPrimaryImageColumn`}>
                 <img className={`optionPrimaryImage`} src={option?.image?.src} alt={`Image`} />

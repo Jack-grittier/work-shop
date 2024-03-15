@@ -8,7 +8,9 @@ export default function Footer(props) {
             <div className="left">
                 <a className="hoverLink" title={`Home`} href="/">Home  <i className="fas fa-undo"></i></a>
             </div>
-                <div className="right"> {shop?.name} <i className="fas fa-copyright"></i>{year}</div>
+            <div className="right">
+                {shop?.name} <i className="fas fa-copyright"></i>{year}
+            </div>
         </footer>
     )
 }
