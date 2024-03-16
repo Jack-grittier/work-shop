@@ -8,11 +8,14 @@
     .MuiPaper-root {
         display: flex;
         color: white;
-        min-width: 300px;
+        min-width: 500px;
         padding-top: 40px;
         align-items: center;
         justify-content: flex-start;
-        background: var(--navyT) !important;
+        background: var(--cwsBluePinkT3) !important;
+        @media (max-width: 768px) {
+            min-width: 300px;
+        }
     }
 }
 

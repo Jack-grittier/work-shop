@@ -48,7 +48,7 @@ export default function Products(props) {
         <div className={`productsComponent productsContainer flex flexColumns gap15 ${isCart ? `isCart` : ``}`}>
         
             {getFilteredProducts(products) && getFilteredProducts(products)?.length > 0 && (getFilteredProducts(products)?.length != 1 || isCart) && (
-                <h2 className={`shopSubtitle`}>{getFilteredProducts(products)?.length} Product(s){isCart ? ` In Cart` : ``}</h2>
+                <h2 className={`shopSubtitle ${isCart ? `cartSubtitle` : ``}`}>{getFilteredProducts(products)?.length} Product(s){isCart ? ` In Cart` : ``}</h2>
             )}
 
             {products && products?.length > 0 && products?.length != 1 && !isCart && (
@@ -79,7 +79,7 @@ export default function Products(props) {
                             </li>
                         )
                     }) : (
-                        <h2 className={`shopSubtitle`}>
+                        <h2 className={`shopSubtitle ${isCart ? `cartSubtitle` : ``}`}>
                             {productsSearchTerm && productsSearchTerm != `` ? `No Products for Search` : productsLoaded ? isCart ? `No Items in Cart Yet` : `No Products Yet` : (
                                 <LoadingSpinner circleNotch loadingLabel={`Products`} />
                             )}

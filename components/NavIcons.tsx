@@ -1,21 +1,20 @@
-import { Badge, Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import Cart from "./Cart";
 import { useContext, useState } from "react";
 import { StateContext } from "../pages/_app";
-import Products from "./Products";
-// import InboxIcon from '@mui/icons-material/MoveToInbox';
+import { Badge, Drawer } from "@mui/material";
 // import MailIcon from '@mui/icons-material/Mail';
+// import InboxIcon from '@mui/icons-material/MoveToInbox';
 
 type Anchor = `top` | `left` | `bottom` | `right`;
 
 export default function NavIcons() {
-    let [cartOpen, setCartOpen] = useState(false);
     let { theme, cart, setAdminFeatures } = useContext<any>(StateContext);
 
     const [state, setState] = useState({
         top: false,
         left: false,
-        bottom: false,
         right: false,
+        bottom: false,
     });
     
     const toggleDrawer = (anchor: Anchor, open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -54,9 +53,7 @@ export default function NavIcons() {
                     open={state[`right`]}
                     onClose={toggleDrawer(`right`, false)}
                 >
-                    <div className={`cart sideCart`}>
-                        <Products products={cart?.items} isCart={true} />
-                    </div>
+                    <Cart />
                 </Drawer>
             </a>
             <a role={`button`} aria-pressed={theme == `dark`} onClick={() => onClickThemeModeIconLink()} rel={`noreferrer`} className={`themeModeIconLink customIconLink nx-p-2 nx-text-current`} tabIndex={0}>

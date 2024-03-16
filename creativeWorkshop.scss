@@ -336,6 +336,9 @@ hr {
     font-weight: 400;
     text-align: center;
     margin-bottom: 15px;
+    &.cartSubtitle {
+        font-weight: 700;
+    }
 }
 
 .card {

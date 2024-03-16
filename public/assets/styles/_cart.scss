@@ -1,4 +1,11 @@
+.cart {
+    width: 100%;
+}
+
 .sideCart {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 1fr 55px;
     .prodTitle {
         max-width: 135px !important;
     }
@@ -38,5 +45,8 @@
             font-size: 12px;
             padding: 4px 7px 2px !important;
         }
+    }
+    .cartButton {
+        padding: 14px 20px 12px !important;
     }
 }
