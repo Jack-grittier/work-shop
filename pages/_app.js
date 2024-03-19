@@ -370,8 +370,6 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   let [usersLoading, setUsersLoading] = useState(true);
   let [content, setContent] = useState(`defaultContent`);
   let [year, setYear] = useState(new Date().getFullYear());
-  let [databasePlayers, setDatabasePlayers] = useState([]);
-  let [filteredPlayers, setFilteredPlayers] = useState(players);
   let [deleteCompletely, setDeleteCompletely] = useState(false);
   let [sameNamePlayeredEnabled, setSameNamePlayeredEnabled] = useState(false);
   let [noPlayersFoundMessage, setNoPlayersFoundMessage] = useState(`No Players Found`);
@@ -506,6 +504,14 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
       dev() && console.log(`Customers`, customers);
     }
   }, [customers])
+
+  // Catch Cart Updates
+  useEffect(() => {
+    if (cart.length > 0) {
+      if (dataSize(cart) <= maxDataSize) localStorage.setItem(`cart`, JSON.stringify(cart));
+      dev() && console.log(`Cart`, cart);
+    }
+  }, [cart])
 
   // Catch Feature Updates
   useEffect(() => {
@@ -727,7 +733,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     }
   }, [])
 
-  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, color, setColor, dark, setDark, colorPref, setColorPref, year, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, players, setPlayers, filteredPlayers, setFilteredPlayers, useLocalStorage, setUseLocalStorage, databasePlayers, setDatabasePlayers, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, usersLoading, setUsersLoading, iPhone, set_iPhone, shop, setShop, products, setProducts, productToEdit, setProductToEdit, cart, setCart, imageURLAdded, setImageURLAdded, adminFeatures, setAdminFeatures, theme, setTheme, customers, setCustomers, pageViews, setPageViews }}>
+  return <StateContext.Provider value={{ router, rte, setRte, updates, setUpdates, content, setContent, width, setWidth, user, setUser, page, setPage, mobileMenu, setMobileMenu, users, setUsers, authState, setAuthState, emailField, setEmailField, devEnv, setDevEnv, mobileMenuBreakPoint, platform, setPlatform, focus, setFocus, color, setColor, dark, setDark, colorPref, setColorPref, year, qotd, setQotd, alertOpen, setAlertOpen, mobile, setMobile, systemStatus, setSystemStatus, loading, setLoading, anim, setAnimComplete, IDs, setIDs, categories, setCategories, browser, setBrowser, onMac, rearranging, setRearranging, buttonText, setButtonText, players, setPlayers, useLocalStorage, setUseLocalStorage, useDatabase, setUseDatabase, sameNamePlayeredEnabled, setSameNamePlayeredEnabled, deleteCompletely, setDeleteCompletely, noPlayersFoundMessage, setNoPlayersFoundMessage, useLazyLoad, setUseLazyLoad, usersLoading, setUsersLoading, iPhone, set_iPhone, shop, setShop, products, setProducts, productToEdit, setProductToEdit, cart, setCart, imageURLAdded, setImageURLAdded, adminFeatures, setAdminFeatures, theme, setTheme, customers, setCustomers, pageViews, setPageViews }}>
     {(browser != `chrome` || onMac && browser != `chrome`) ? (
       <div className={`framerMotion ${bodyClasses}`}>
         <AnimatePresence mode={`wait`}>

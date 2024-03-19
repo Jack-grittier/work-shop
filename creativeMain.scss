@@ -1527,6 +1527,12 @@ textarea {
     background: var(--cwsPinkBlue);
 }
 
+.hoverWhiteText {
+    &:hover {
+        color: white !important;
+    }
+}
+
 .confirmTitle {
     .productButtons {
         padding-top: 40px;

@@ -234,12 +234,12 @@ export default function Product(props) {
                     )}
                 </a>
 
-                {!inCart && <>
-                    <div className={`productDesc`}>
-                        <div className={`productDescField productDescTitle textWithIcon`}>
-                            <i className={`blue fas fa-stream`}></i>
-                            {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 ? `Description` : `Desc`}
-                        </div>
+                <div className={`productDesc`}>
+                    <div className={`productDescField productDescTitle textWithIcon`}>
+                        <i className={`blue fas fa-stream`}></i>
+                        {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 ? `Description` : `Desc`}
+                    </div>
+                    {!inCart && <>
                         <div className={`productDescField productDescType productDescCat textWithIcon`}>
                             <i className={`blue fas fa-tags`}></i>
                             Type - {product.type}
@@ -252,10 +252,10 @@ export default function Product(props) {
                                 Qty - {product.quantity}
                             </>}
                         </div>
-                    </div>
+                    </>}
+                </div>
 
-                    {product.description != `` ? product.description : product?.title}
-                </>}
+                {product.description != `` ? product.description : product?.title}
             </div>
 
             <form onSubmit={(e) => onProductOptionFormSubmit(e)} className={`productOptions productOptionsForm`}>

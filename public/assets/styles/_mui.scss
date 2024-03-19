@@ -4,6 +4,7 @@
 }
 
 .MuiDrawer-root {
+    z-index: 9999 !important;
     backdrop-filter: blur(5px);
     .MuiPaper-root {
         display: flex;

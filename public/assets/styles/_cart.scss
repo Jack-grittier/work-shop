@@ -26,7 +26,7 @@
         }
     }
     .productCard {
-        max-width: 184px;
+        max-width: 100%;
     }
     .toggleButtons {
         width: 100%;
@@ -47,6 +47,15 @@
         }
     }
     .cartButton {
+        border-radius: 4px !important;
         padding: 14px 20px 12px !important;
+        i {
+            transition: var(--transition);
+        }
+        &:hover {
+            i {
+                color: white !important;
+            }
+        }
     }
 }
