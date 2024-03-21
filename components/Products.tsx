@@ -7,8 +7,8 @@ import LoadingSpinner from "./LoadingSpinner";
 import { useContext, useEffect, useState } from "react";
 
 export default function Products(props) {
-    let { products, isCart } = props;
     let { user } = useContext<any>(StateContext);
+    let { products, isCart, extraClasses } = props;
     if (!products) products = useContext<any>(StateContext)?.products;
     products = products && products.filter(prod => prod.status != `archived`);
 
@@ -45,7 +45,7 @@ export default function Products(props) {
     }
 
     return (
-        <div className={`productsComponent productsContainer flex flexColumns gap15 ${isCart ? `isCart` : ``}`}>
+        <div className={`productsComponent productsContainer flex flexColumns gap15 ${extraClasses && extraClasses != `` ? extraClasses : ``} ${isCart ? `isCart pl3` : ``}`}>
         
             {getFilteredProducts(products) && getFilteredProducts(products)?.length > 0 && (getFilteredProducts(products)?.length != 1 || isCart) && (
                 <h2 className={`shopSubtitle ${isCart ? `cartSubtitle` : ``}`}>{getFilteredProducts(products)?.length} Product(s){isCart ? ` In Cart` : ``}</h2>

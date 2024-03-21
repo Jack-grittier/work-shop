@@ -148,6 +148,16 @@ export const fetchCustomersFromAPI = async () => {
   }
 }
 
+export const fetchCartFromAPI = async () => {
+  let cartResponse = await fetch(`${liveLink}/api/cart`);
+  if (cartResponse.status === 200) {
+    let cartData = await cartResponse.json();
+    if (cartData) {
+      return cartData;
+    }
+  }
+}
+
 export const createShopifyCustomer = async (email) => {
   try {
     let createShopifyCustomerResponse = await fetch(`${liveLink}/api/customers/create`, {

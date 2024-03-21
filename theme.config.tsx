@@ -1,9 +1,7 @@
 import React from 'react';
-import { useDB } from './pages/_app';
 import Form from './components/Form';
 import Footer from './components/footer';
 import NavIcons from './components/NavIcons';
-// import { generateUniqueID } from './pages/_app';
 import { DocsThemeConfig } from 'nextra-theme-docs';
 // import NextraSearch from './components/NextraSearch';
 

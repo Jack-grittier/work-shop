@@ -9,16 +9,18 @@ import PageView from '../models/PageView';
 // import { useRouter } from 'next/router';
 import { simplifyUser } from '../components/Form';
 import { onAuthStateChanged } from 'firebase/auth';
+import { generateUniqueID } from '../globalFunctions';
 import { AnimatePresence, motion } from 'framer-motion';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { createContext, useRef, useState, useEffect } from 'react';
-import { auth, dataSize, db, fetchCustomersFromAPI, fetchProductsFromAPI, fetchShopDataFromAPI, maxDataSize, pageViewsDatabase, trackUniquePageView, usersDatabase } from '../firebase';
+import { auth, dataSize, db, fetchCartFromAPI, fetchCustomersFromAPI, fetchProductsFromAPI, fetchShopDataFromAPI, maxDataSize, pageViewsDatabase, trackUniquePageView, usersDatabase } from '../firebase';
 
 export const useDB = () => true;
 export const StateContext = createContext({});
 export const signUpOrSignIn = `Sign Up or Sign In`;
 
 export const dev = () => process.env.NODE_ENV === `development`;
+export const defaultCart = { items: [], id: generateUniqueID() };
 export const getPage = () => capitalizeAllWords(window.location.pathname.replace(`/`,``));
 export const replaceAll = (str, search, replacement) => str.replace(new RegExp(search, `g`), replacement);
 export const renderLogMessage = (string, useDatabase) => `${useDatabase == true ? `Database ` : ``}${string}`;
@@ -64,6 +66,21 @@ export const getCustomersFromAPI = async () => {
     } else {
       let customers = JSON.parse(localStorage.getItem(`customers`));
       if (customers) return customers;
+    }
+  } catch (error) {
+    console.log(`Server Error on Get Customers`, error);
+  }
+}
+
+export const getCartFromAPI = async () => {
+  try {
+    let getDatabase = false;
+    if (getDatabase == true) {
+      let latestCart = fetchCartFromAPI();
+      return latestCart;
+    } else {
+      let storedCart = JSON.parse(localStorage.getItem(`cart`));
+      if (storedCart) return storedCart;
     }
   } catch (error) {
     console.log(`Server Error on Get Customers`, error);
@@ -183,22 +200,6 @@ export const setSideBarUI = () => {
     };
   }
 }
-
-export const generateUniqueID = (existingIDs) => {
-  const generateID = () => {
-    let id = Math.random().toString(36).substr(2, 9);
-    return Array.from(id).map(char => {
-      return Math.random() > 0.5 ? char.toUpperCase() : char;
-    }).join(``);
-  };
-  let newID = generateID();
-  if (existingIDs && existingIDs.length > 0) {
-    while (existingIDs.includes(newID)) {
-      newID = generateID();
-    }
-  }
-  return newID;
-};
 
 export const countPropertiesInObject = (obj) => {
   let count = 0;
@@ -381,12 +382,12 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
 
   let [shop, setShop] = useState({});
   let [products, setProducts] = useState([]);
+  let [cart, setCart] = useState(defaultCart);
   let [ipAddress, setIPAddress] = useState(``);
   let [customers, setCustomers] = useState([]);
   let [pageViews, setPageViews] = useState([]);
   let [adminFeatures, setAdminFeatures] = useState([]);
   let [productToEdit, setProductToEdit] = useState(null);
-  let [cart, setCart] = useState({ items: [], user: user });
 
   const setBrowserUI = () => {
     if (brwser == `` && (navigator.userAgent.match(/edg/i) || navigator.userAgent.includes(`edg`) || navigator.userAgent.includes(`Edg`))) {
@@ -431,6 +432,15 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
       setCustomers(customersFromAPI?.customers);
     } else {
       setCustomers([]);
+    }
+  }
+  
+  const refreshCartFromAPI = async () => {
+    let cartFromAPI = await getCartFromAPI();
+    if (cartFromAPI && cartFromAPI?.items) {
+      setCart(cartFromAPI);
+    } else {
+      setCart(defaultCart);
     }
   }
 
@@ -507,7 +517,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
 
   // Catch Cart Updates
   useEffect(() => {
-    if (cart.length > 0) {
+    if (cart && cart?.items && cart?.items.length > 0) {
       if (dataSize(cart) <= maxDataSize) localStorage.setItem(`cart`, JSON.stringify(cart));
       dev() && console.log(`Cart`, cart);
     }
@@ -618,6 +628,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
     refreshShopDataFromAPI();
     refreshProductsFromAPI();
     refreshCustomersFromAPI();
+    refreshCartFromAPI();
 
     // User
     if (useDatabase == true) {
