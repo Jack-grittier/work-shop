@@ -698,8 +698,10 @@ hr {
                 }
             }
         }
-        @media (min-width: 1500px) {
-            width: 51% !important;
+        &:not(.cartCards) {
+            @media (min-width: 1500px) {
+                width: 51% !important;
+            }
         }
         .topIcon {
             position: relative;

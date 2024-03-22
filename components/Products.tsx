@@ -68,7 +68,7 @@ export default function Products(props) {
 
             {getFilteredProducts(products) && (
 
-                <ul id={`productCards`} className={`cards ${getFilteredProducts(products)?.length > 0 ? `hasProducts ${getFilteredProducts(products)?.length > 1 ? `multiProducts` : `oneProduct`}` : `noProducts`} hasButtons`}>
+                <ul id={`productCards`} className={`cards ${getFilteredProducts(products)?.length > 0 ? `hasProducts ${getFilteredProducts(products)?.length > 1 ? `multiProducts` : `oneProduct`}` : `noProducts`} hasButtons ${isCart ? `cartCards` : ``}`}>
 
                     {getFilteredProducts(products)?.length > 0 ? getFilteredProducts(products).map((product, productIndex) => {
                         return (

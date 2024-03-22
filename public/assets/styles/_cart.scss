@@ -1,11 +1,17 @@
+.cartCards {
+    width: 100% !important;
+}
+
 .cart {
     width: 100%;
     .cards {
         overflow-y: auto;
         max-height: 795px;
         padding: 0 15px 0 0;
-        grid-template-columns: repeat(1, 1fr);
-        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+        grid-template-columns: repeat(1, 1fr) !important;
+        &:not(.noProducts) {
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+        }
         li {
             .cardTitle {
                 width: 100%;
