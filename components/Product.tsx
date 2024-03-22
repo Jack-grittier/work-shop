@@ -1,6 +1,7 @@
 import Image from "./Image";
 import { ButtonGroup } from "@mui/material";
 import { useContext, useState } from "react";
+// import ShopButton from "./ShopButton/ShopButton";
 import { productActions } from "../globals/globals";
 import { ToastOptions, toast } from "react-toastify";
 import { StateContext, dev, dismissAlert, showAlert } from "../pages/_app";
@@ -360,6 +361,7 @@ export default function Product(props) {
                     <div className={`productActions productButtons ${inCart ? `inCartProductActionButtons` : ``}`}>
 
                         {/* Delete Product Button // Remove Product Button */}
+                        {/* <ShopButton product={product} inCart={inCart} action={productActions.Remove} wide={false} /> */}
                         {((user && checkRole(user.roles, `Admin`)) || inCart) && (
                             <button title={`Delete ${product?.title}`} onClick={(e) => handleShopifyProductOption(e, inCart ? productActions.Remove.label : productActions.Delete.label)} className={`productButton deleteProductButton ${inCart ? `cartRemoveButton cartDeleteButton cartActionButton` : ``}`} type={`button`}>
                                 <i className={`productIcon fas ${delClicked ? `pink spinThis fa-spinner` : `red fa-trash-alt`}`}></i>

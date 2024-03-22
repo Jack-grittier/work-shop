@@ -1,3 +1,5 @@
+import { userRoles } from "../globals";
+
 export const generateID = () => {
   let id = Math.random().toString(36).substr(2, 9);
   return Array.from(id).map(char => {
@@ -23,5 +25,18 @@ export const removeTrailingZeroDecimal = (number, decimalPlaces = 1) => {
     return wholeNumber;
   } else {
     return num.toFixed(decimalPlaces);
+  }
+}
+
+export const checkUserRole = (wRoles, role) => {
+  if (!wRoles) return false;
+  let userRolesList = !Array.isArray(wRoles) && wRoles?.roles ? wRoles?.roles : wRoles;
+  if (userRolesList && Array.isArray(userRolesList)) {
+    let roleLevel = role;
+    if (typeof role == `string`) roleLevel = userRoles[role]?.level; 
+    else if (Object.keys(role).length > 0) roleLevel = role.level;
+    let rolesAsStrings = userRolesList.some(userRole => typeof userRole == `string`);
+    let userHasMinimumRole = rolesAsStrings ? userRolesList.some(rol => userRoles[rol]?.level >= roleLevel) : userRolesList.some(userRole => userRole?.level >= roleLevel);
+    return userHasMinimumRole;
   }
 }

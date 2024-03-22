@@ -1,3 +1,5 @@
+// const path = require('path');
+
 const withNextra = require(`nextra`)({
   theme: `nextra-theme-docs`,
   themeConfig: `./theme.config.tsx`,
@@ -20,6 +22,25 @@ const withNextra = require(`nextra`)({
 })
 
 module.exports = withNextra({
+  // sassOptions: {
+  //   includePaths: [path.join(__dirname, `styles`), path.join(__dirname, `components`)],
+  // },
+  // webpack(config, options) {
+  //   config.module.rules.push({
+  //     test: /\.scss$/,
+  //     use: [
+  //       options.defaultLoaders.babel,
+  //       {
+  //         loader: require(`sass`).default,
+  //         options: {
+  //           includePaths: [path.resolve(__dirname, `styles/*`)],
+  //         },
+  //       },
+  //     ],
+  //   });
+
+  //   return config;
+  // },
   async redirects() {
     return [
       {
