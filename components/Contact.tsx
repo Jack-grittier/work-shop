@@ -153,16 +153,22 @@ export default function Contact(props) {
                         onBlur={() => setMessageFieldFocusedAtleastOnce(true)} 
                     />
 
-                    {!showMessageFieldValidationError() && <div className={`characterCounts flex gap15 justifyEnd`}>
-                        <div className={`characterCount min ${messageIsLongEnoughToTest() ? formData.message.length >= minMessageLength ? `valid` : `invalid` : ``}`}>
-                            Min: {messageIsLongEnoughToTest() ? formData.message.length >= minMessageLength ? minMessageLength : formData.message.length : 0}/{minMessageLength}
+                    {!showMessageFieldValidationError() && (
+                        <div className={`characterCounts flex gap15 justifyEnd`}>
+                            <div className={`characterCount min ${messageIsLongEnoughToTest() ? formData.message.length >= minMessageLength ? `valid` : `invalid` : ``}`}>
+                                Min: {messageIsLongEnoughToTest() ? formData.message.length >= minMessageLength ? minMessageLength : formData.message.length : 0}/{minMessageLength}
+                            </div>
+                            <div className={`characterCount max ${messageIsLongEnoughToTest() ? `valid` : ``}`}>
+                                Max: {messageIsLongEnoughToTest() ? formData.message.length : 0}/{maxMessageLength}
+                            </div>
                         </div>
-                        <div className={`characterCount max ${messageIsLongEnoughToTest() ? `valid` : ``}`}>Max: {messageIsLongEnoughToTest() ? formData.message.length : 0}/{maxMessageLength}</div>
-                    </div>}
+                    )}
 
-                    {showMessageFieldValidationError() && <div className={`errorMessage messageFieldErrorMessage messageErrorMessage`}>
-                        Please Enter a Message that is at least {minMessageLength} characters and at most {maxMessageLength} characters
-                    </div>}
+                    {showMessageFieldValidationError() && (
+                        <div className={`errorMessage messageFieldErrorMessage messageErrorMessage`}>
+                            Please Enter a Message that is at least {minMessageLength} characters and at most {maxMessageLength} characters
+                        </div>
+                    )}
 
                     <button disabled={showEmailFieldValidationError() || showMessageFieldValidationError() || messageIsLongEnoughToTest() && formData.message.length < minMessageLength} className={`contactFormSubmitButton cwsFormSubmitButton ${showEmailFieldValidationError() || showMessageFieldValidationError() || messageIsLongEnoughToTest() && formData.message.length < minMessageLength ? `disabled` : ``}`} type={`submit`}>
                         <div className={`textWithIcon`}>

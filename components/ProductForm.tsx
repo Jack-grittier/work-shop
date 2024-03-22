@@ -222,13 +222,15 @@ export default function ProductForm(props) {
                 placeholder={`Public Image URL...`} 
                 defaultValue={productToEdit == null ? `` : productToEdit?.image?.src} 
             />
-            {(imageURLAdded || productToEdit != null) && <input 
-                type={`text`} 
-                name={`altImage`} 
-                className={`productImage`} 
-                placeholder={`Public Alt Image URL...`} 
-                defaultValue={productToEdit == null ? `` : productToEdit?.altImage?.src} 
-            />}
+            {(imageURLAdded || productToEdit != null) && (
+                <input 
+                    type={`text`} 
+                    name={`altImage`} 
+                    className={`productImage`} 
+                    placeholder={`Public Alt Image URL...`} 
+                    defaultValue={productToEdit == null ? `` : productToEdit?.altImage?.src} 
+                />
+            )}
             <button disabled={processing} className={`productFormSubmitButton blackButton`} type={`submit`}>
                 <div className={`textWithIcon`}>
                     <i className={`fas ${productToEdit == null ? processing ? `pink spinThis fa-spinner` : `pink fa-plus` : processing ? `pink spinThis fa-spinner` : `lightgreen fa-save`}`}></i>
