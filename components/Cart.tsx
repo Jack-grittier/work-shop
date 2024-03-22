@@ -23,7 +23,7 @@ export default function Cart(props) {
 
     return (
         <div className={`cart ${cartPage ? `sideCart cartPage` : `sideCart`}`}>
-            <div className={`cartTop`}>
+            <div className={`cartTop p10x`}>
                 <Products products={cart?.items} isCart={true} extraClasses={cartPage ? `cartPageProducts` : `cartProducts`} />
             </div>
             <div className={`cartBottom center flex justifyContentCenter mb30`}>

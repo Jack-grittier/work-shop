@@ -164,6 +164,7 @@ h6 {
 .p35 { padding: 35px; }
 .p5x { padding: 0 5px; }
 .p5y { padding: 5px 0; }
+.p10x { padding: 0 10px; }
 .p10y { padding: 10px 0; }
 .p15x { padding: 0 15px; }
 .p15y { padding: 15px 0; }
@@ -221,16 +222,17 @@ h6 {
 .ttc { text-transform: capitalize; }
 .text-center { text-align: center; }
 .p15nb { padding: 15px 15px 0 15px; }
-.mt-4 { margin-top: -4px !important; }
-.mt-5 { margin-top: -5px !important; }
 .accent { color: var(--accentColor); }
 .m0Important { margin: 0 !important; }
+.mt-4I { margin-top: -4px !important; }
+.mt-5I { margin-top: -5px !important; }
 .p0Important { padding: 0 !important; }
 .mainColor { color: var(--mainColor); }
 .overflowXHidden { overflow-x: hidden; }
 .overflowYHidden { overflow-y: hidden; }
 .whiteText { color: white !important; }
 .blackText { color: black !important; }
+.mb15I { margin-bottom: 15px !important; }
 .accentColor { color: var(--accentColor); }
 .container { width: var(--containerWidth); }
 .mauto { margin-left: auto; margin-right: auto; }

@@ -1,6 +1,7 @@
 import Image from "./Image";
 import { ButtonGroup } from "@mui/material";
 import { useContext, useState } from "react";
+import { productActions } from "../globals/globals";
 import { ToastOptions, toast } from "react-toastify";
 import { StateContext, dev, dismissAlert, showAlert } from "../pages/_app";
 import { checkRole, liveLink, maxAnimationTime, productPlaceholderImage, shortAnimationTime } from "../firebase";
@@ -33,11 +34,27 @@ export default function Product(props) {
         deleteProduct();
     }
 
+    const clearSearch = () => {
+        let searchInput: any = document.querySelector(`#globalSearchInput`);
+        if (searchInput && searchInput?.value) {
+            searchInput.value = ``;
+        }
+    }
+
     const cancelOrFinishEditProduct = () => {
         setProductToEdit(null);
         setImageURLAdded(false);
         let productFormElement: any = document.querySelector(`.productForm`);
         productFormElement.reset();
+    }
+
+    const removeProductFromCart = (e) => {
+        if (inCart && e) e.stopPropagation();
+        setDelClicked(true);
+        setCart(prevCart => ({ ...prevCart, items: prevCart?.items?.filter(prod => prod?.cartId != product?.cartId) }));
+        toast.success(`Product Successfully ${productActions.Remove.doneLabel}`);
+        dev() && console.log(`Product ${product?.title} Successfully ${productActions.Remove.doneLabel} from ${productActions.Cart}`);
+        setDelClicked(false);
     }
 
     const onProductOptionFormSubmit = (e) => {
@@ -60,17 +77,11 @@ export default function Product(props) {
         return icon;
     }
 
-    const clearSearch = () => {
-        let searchInput: any = document.querySelector(`#globalSearchInput`);
-        if (searchInput && searchInput?.value) {
-            searchInput.value = ``;
-        }
-    }
-
     const backToShop = () => {
         setBackToShopClicked(true);
-        dev() && console.log(`Navigating to Shop`);
-        toast.info(`Navigating to Shop`);
+        let { inProgressLabel } = productActions.Navigate;
+        dev() && console.log(`${inProgressLabel} to Shop`);
+        toast.info(`${inProgressLabel} to Shop`);
         if (router.route.includes(`/shop`) || router.route.includes(`/products`) && !router.route.includes(`/products/`)) {
             router.push(`/shop`);
         } else {
@@ -139,65 +150,70 @@ export default function Product(props) {
             let responseToUse = archiveProductResponse;
 
             if (!responseToUse.ok) {
-                console.log(`Deleting Product Error...`, product);
-                toast.error(`Error Deleting Product`);
+                console.log(`${productActions.Delete.inProgressLabel} Product Error...`, product);
+                toast.error(`Error ${productActions.Delete.inProgressLabel} Product`);
                 setTimeout(() => setDelClicked(false), maxAnimationTime);
                 return responseToUse;
             } else {
                 const responseData = await responseToUse.json();
-                toast.success(`Product Successfully Deleted`);
+                toast.success(`Product Successfully ${productActions.Delete.doneLabel}`);
                 setProducts(prevProducts => prevProducts.filter(prevProduct => prevProduct.id != product.id));
                 cancelOrFinishEditProduct();
                 setDelClicked(false);
                 return responseData;
             }
         } catch (error) {
-            toast.error(`Deleting Product Error on Server...`);
-            console.log(`Deleting Product Error on Server...`, product);
+            toast.error(`${productActions.Delete.inProgressLabel} Product Error on Server...`);
+            console.log(`${productActions.Delete.inProgressLabel} Product Error on Server...`, product);
             setTimeout(() => setDelClicked(false), maxAnimationTime);
         }
     }
 
     const handleShopifyProductOption = (e, type?: string) => {
-        if (type == `Delete`) {
+        if (type == productActions.Delete.label) {
             showAlert(<div className={`alertTitleMessage`}>Confirm <span className={`red`}>Delete</span>?</div>, <>
                 <div className={`confirmTitle`}>
                     <h3 className={`confirmMessage`}>Are you sure you want to Delete Product {product?.name}?</h3>
                     <div className={`productActions productButtons`}>
                         <button onClick={() => dismissAlertThenDeleteProduct()} className={`productButton buttonFullWidth`} type={`button`}>
                             <i className={`productIcon fas ${delClicked ? `pink spinThis fa-spinner` : `red fa-trash-alt`}`}></i>
-                            <div className={`productButtonText alertActionButton`}>{delClicked ? `Deleting` : `Delete`}</div>
+                            <div className={`productButtonText alertActionButton`}>
+                                {delClicked ? productActions.Delete.inProgressLabel : productActions.Delete.label}
+                            </div>
                         </button>
                     </div>
                 </div>
             </>, undefined, `400px`);
-        } else if (type == `Navigate`) {
+        } else if (type == productActions.Navigate.label) {
             setProdClicked(true);
-            dev() && console.log(`Navigating to ${product.name}`, {e, type, user, router, route: router.route});
-            toast.info(`Navigating to ${product.name}`);
+            dev() && console.log(`${productActions.Navigate.inProgressLabel} to ${product.name}`, {e, type, user, router, route: router.route});
+            toast.info(`${productActions.Navigate.inProgressLabel} to ${product.name}`);
             router.push(`/products/${product.id}`);
             setTimeout(() => setProdClicked(false), maxAnimationTime);
-        } else if (type == `Edit`) {
+        } else if (type == productActions.Edit.label) {
             setEditClicked(true);
             cancelOrFinishEditProduct();
             setProductToEdit(product);
-            dev() && console.log(`Editing ${product.name}`, product);
+            dev() && console.log(`${productActions.Edit.inProgressLabel} ${product.name}`, product);
             setEditClicked(false);
             // setTimeout(() => setEditClicked(false), maxAnimationTime);
-        } else if (type == `Cancel`) {
+        } else if (type == productActions.Cancel.label) {
             setCancelClicked(true);
             cancelOrFinishEditProduct();
-            dev() && console.log(`Cancel Editing ${product.name}`, product);
+            dev() && console.log(`${productActions.Cancel.label} ${productActions.Edit.inProgressLabel} ${product.name}`, product);
             setCancelClicked(false);
             // setTimeout(() => setCancelClicked(false), maxAnimationTime);
+        } else if (type == productActions.Remove.label) {
+            removeProductFromCart(e);
         } else {
             setCartClicked(true);
-            toast.info(`Adding to Cart...`, { duration: shortAnimationTime } as ToastOptions);
+            toast.info(`${productActions.AddToCart.inProgressLabel}...`, { duration: shortAnimationTime } as ToastOptions);
             setTimeout(() => {
-                toast.success(`Added to Cart`, { duration: shortAnimationTime } as ToastOptions);
+                toast.success(`${productActions.AddToCart.doneLabel}`, { duration: shortAnimationTime } as ToastOptions);
                 setCartLoaded(true);
-                setCart(prevCart => ({ ...prevCart, items: [...prevCart?.items, product], user: user }));
-                dev() && console.log(`Add to Cart`, {e, type, user, product, cart});
+                let cartProduct = { ...product, cartId: `Product-${cart?.items?.length + 1}-${product?.id}-${cart?.id}` };
+                setCart(prevCart => ({ ...prevCart, items: [...prevCart?.items, cartProduct] }));
+                dev() && console.log(`${productActions.AddToCart.label}`, {e, type, user, cartProduct, cart});
                 setTimeout(() => {
                     setCartClicked(false);
                     setCartLoaded(false);
@@ -209,7 +225,7 @@ export default function Product(props) {
     return (
         <div className={`product ${filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 ? `featuredProduct` : `multiProduct`}`}>
 
-            <a className={`productTitleLink productTitle`} title={`Product Link - ${product?.title}`} href={!router.route.includes(`products/`) ? `/products/${product.id}` : undefined} onClick={(e) => !router.route.includes(`products/`) ? handleShopifyProductOption(e, `Navigate`) : e.preventDefault()}>
+            <a className={`productTitleLink productTitle`} title={`Product Link - ${product?.title}`} href={!router.route.includes(`products/`) ? `/products/${product.id}` : undefined} onClick={(e) => !router.route.includes(`products/`) ? handleShopifyProductOption(e, productActions.Navigate.label) : e.preventDefault()}>
                 {!inCart && <i className={`shopifyIcon green topIcon fab fa-shopify`}></i>}
                 <h3 className={`productNameAndPrice productTitleAndPrice cardTitle`}>
                     <span title={product?.title} className={`prodTitle oflow ${product?.title.length > 15 ? `longTitle` : `shortTitle`}`}>
@@ -223,7 +239,7 @@ export default function Product(props) {
 
             <div className={`productContent`}>
 
-                <a className={`productImageLinkContainer productImagesContainer`} href={!router.route.includes(`products/`) ? `/products/${product.id}` : undefined} onClick={(e) => !router.route.includes(`products/`) ? handleShopifyProductOption(e, `Navigate`) : e.preventDefault()}>
+                <a className={`productImageLinkContainer productImagesContainer`} href={!router.route.includes(`products/`) ? `/products/${product.id}` : undefined} onClick={(e) => !router.route.includes(`products/`) ? handleShopifyProductOption(e, productActions.Navigate.label) : e.preventDefault()}>
                     {product.image ? (
                         <div className={`productImageContainer`}>
                             <Image src={product.image.src} className={`productPic productMainImage customImage ${inCart ? `productPicInCart` : ``}`} alt={`Product Image`} />
@@ -260,7 +276,7 @@ export default function Product(props) {
 
             <form onSubmit={(e) => onProductOptionFormSubmit(e)} className={`productOptions productOptionsForm`}>
 
-                <div className={`productFieldRow`}>
+                <div className={`productOptionFields productFieldRow`}>
                     {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 && !inCart && <>
                         <fieldset name={`selectPriceField`} className={`selectToggle selectPriceField hideOnMobile`}>
                             <ButtonGroup className={`toggleButtons productButtons`} variant={`outlined`} aria-label={`Product Price`}>
@@ -323,15 +339,14 @@ export default function Product(props) {
                     )
                 })}
                 
-                <div className={`productFieldRow`}>
+                <div className={`productActionButtons productFieldRow`}>
                     {!inCart && (
                         <div className={`productActions productButtons`}>
-
                             {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 && (
                                 <button title={`Back to Shop`} onClick={() => backToShop()} className={`productButton backToShopButton`} type={`button`}>
                                     <i className={`productIcon fas ${backToShopClicked ? `pink spinThis fa-spinner` : `pink fa-undo`}`}></i>
                                     <div className={`productButtonText alertActionButton`}>
-                                        {backToShopClicked ? `Navigating` : (
+                                        {backToShopClicked ? productActions.Navigate.inProgressLabel : (
                                             <div className={`backToShop`}>
                                                 <span className={`hideOnMobile`}>Back to </span> Shop
                                             </div>
@@ -339,46 +354,76 @@ export default function Product(props) {
                                     </div>
                                 </button>
                             )}
-
                         </div>
                     )}
-                    <div className={`productActions productButtons`}>
 
-                        {/* Delete Product Button */}
-                        {user && checkRole(user.roles, `Admin`) && !inCart && (
-                            <button title={`Delete ${product?.title}`} onClick={(e) => handleShopifyProductOption(e, `Delete`)} className={`productButton deleteProductButton`} type={`button`}>
+                    <div className={`productActions productButtons ${inCart ? `inCartProductActionButtons` : ``}`}>
+
+                        {/* Delete Product Button // Remove Product Button */}
+                        {((user && checkRole(user.roles, `Admin`)) || inCart) && (
+                            <button title={`Delete ${product?.title}`} onClick={(e) => handleShopifyProductOption(e, inCart ? productActions.Remove.label : productActions.Delete.label)} className={`productButton deleteProductButton ${inCart ? `cartRemoveButton cartDeleteButton cartActionButton` : ``}`} type={`button`}>
                                 <i className={`productIcon fas ${delClicked ? `pink spinThis fa-spinner` : `red fa-trash-alt`}`}></i>
-                                <div className={`productButtonText alertActionButton`}>{delClicked ? `Deleting` : `Delete`}</div>
+                                <div className={`productButtonText alertActionButton`}>
+                                    {delClicked 
+                                    ? (inCart ? productActions.Remove.inProgressLabel : productActions.Delete.inProgressLabel) 
+                                    : (inCart ? productActions.Remove.label : productActions.Delete.label)}
+                                </div>
                             </button>
                         )}
 
                         {/* Edit Product Button */}
                         {user && checkRole(user.roles, `Admin`) && !inCart && (
                             <button 
-                                className={`productButton editProductButton ${productToEdit != null && productToEdit.id == product.id ? `cancelProductButton` : ``}`} type={`button`}
-                                title={`
-                                    ${productToEdit != null && productToEdit.id == product.id ? `Cancel` : `Edit`} ${product?.title}
+                                type={`button`}
+                                className={`productButton editProductButton ${productToEdit != null 
+                                    && productToEdit.id == product.id 
+                                    ? `cancelProductButton` 
+                                    : ``}
+                                `}
+                                title={`${productToEdit != null 
+                                        && productToEdit.id == product.id 
+                                        ? productActions.Cancel.label 
+                                        : productActions.Edit.label
+                                    } ${product?.title}
                                 `} 
-                                onClick={
-                                    (e) => handleShopifyProductOption(e, productToEdit != null && productToEdit.id == product.id ? `Cancel` : `Edit`)
+                                onClick={(e) => handleShopifyProductOption(e, 
+                                        productToEdit != null 
+                                        && productToEdit.id == product.id 
+                                        ? productActions.Cancel.label 
+                                        : productActions.Edit.label
+                                    )
                                 }
                             >
-                                <i className={`productIcon fas ${editClicked || cancelClicked ? `pink spinThis fa-spinner` : productToEdit != null && productToEdit.id == product.id ? `blue fa-ban` : `blue fa-pen`}`}></i>
-                                <div className={`productButtonText alertActionButton`}>{editClicked ? `Editing` : productToEdit != null && productToEdit.id == product.id ? cancelClicked ? `Canceling` : `Cancel` : `Edit`}</div>
+                                <i className={`productIcon fas ${editClicked || cancelClicked 
+                                    ? `pink spinThis fa-spinner` 
+                                    : productToEdit != null 
+                                    && productToEdit.id == product.id 
+                                    ? `blue fa-ban` 
+                                    : `blue fa-pen`}
+                                `}></i>
+                                <div className={`productButtonText alertActionButton`}>
+                                    {editClicked ? productActions.Edit.inProgressLabel 
+                                    : productToEdit != null 
+                                    && productToEdit.id == product.id 
+                                    ? cancelClicked ? productActions.Cancel.inProgressLabel : productActions.Cancel.label 
+                                    : productActions.Edit.label}
+                                </div>
                             </button>
                         )}
 
                         {/* Navigate to Product Detail View Button */}
                         {!router.route.includes(`products/`) && !inCart && (
-                            <button title={`Details ${product?.title}`} onClick={(e) => handleShopifyProductOption(e, `Navigate`)} className={`productButton detailsProductButton`} type={`button`}>
+                            <button title={`${productActions.Details} ${product?.title}`} onClick={(e) => handleShopifyProductOption(e, productActions.Navigate.label)} className={`productButton detailsProductButton`} type={`button`}>
                                 <i className={`productIcon fas ${prodClicked ? `pink spinThis fa-spinner` : `green fa-tags`}`}></i>
-                                <div className={`productButtonText alertActionButton`}>{prodClicked ? `Navigating` : `Details`}</div>
+                                <div className={`productButtonText alertActionButton`}>
+                                    {prodClicked ? productActions.Navigate.inProgressLabel : productActions.Details}
+                                </div>
                             </button>
                         )}
               
                         {/* Add to Cart Button */}
                         {((router.route.includes(`products/`) || (product.options && product.options.length < 2) || (product.options && product.options.length >= 2 && filteredProducts && filteredProducts?.length == 1)) && !inCart) && (
-                            <button title={`Add ${options.Quantity} ${product?.title}'s to Cart`} onClick={(e) => handleShopifyProductOption(e, `Cart`)} className={`productButton addToCartButton ${isCartButtonDisabled() ? `disabled` : ``}`} type={`submit`} disabled={isCartButtonDisabled()}>
+                            <button title={`Add ${options.Quantity} ${product?.title}'s to Cart`} onClick={(e) => handleShopifyProductOption(e, productActions.Cart)} className={`productButton addToCartButton ${isCartButtonDisabled() ? `disabled` : ``}`} type={`submit`} disabled={isCartButtonDisabled()}>
                                 {!cartClicked && <>
                                     <span className={`price innerPrice hideOnMobile`}>
                                         <span className={`dollar`}>$</span>{options?.Price}
@@ -386,7 +431,7 @@ export default function Product(props) {
                                 </>}
                                 <i className={`productIcon green addToCartIcon fas ${cartClicked ? cartLoaded ? `fa-check` : `pink spinThis fa-spinner` : `fa-shopping-cart`}`}></i>
                                 <div className={`productButtonText alertActionButton`}>
-                                    {cartClicked ? cartLoaded ? `Added` : `Adding` : (
+                                    {cartClicked ? cartLoaded ? productActions.Add.label : productActions.Add.inProgressLabel : (
                                         <div className={`addToCart`}>
                                             <span className={`hideOnMobile ${user && checkRole(user.roles, `Admin`) ? `hideForRole` : ``}`}>Add to </span> Cart
                                         </div>

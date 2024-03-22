@@ -64,6 +64,7 @@ export default class Product {
     variants: Variant[],
     price: any,
     type?: any,
+    cartId?: string,
     inCartQty?: any,
     quantity?: number,
     description?: string,
