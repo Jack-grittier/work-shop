@@ -4,6 +4,7 @@ import ProductForm from "./ProductForm";
 import { checkRole } from "../firebase";
 import { StateContext } from "../pages/_app";
 import LoadingSpinner from "./LoadingSpinner";
+import { productActions } from "../globals/globals";
 import { useContext, useEffect, useState, useRef } from "react";
 
 export default function Products(props) {
@@ -11,7 +12,7 @@ export default function Products(props) {
     let { products, isCart, extraClasses } = props;
     let { user, cart } = useContext<any>(StateContext);
     if (!products) products = useContext<any>(StateContext)?.products;
-    products = products && products.filter(prod => prod.status != `archived`);
+    products = products && products.filter(prod => prod.status != productActions.Archive.label.toLocaleLowerCase());
 
     let [productsLoaded, setProductsLoaded] = useState(false);
     let [productsSearchTerm, setProductsSearchTerm] = useState(``);
@@ -48,23 +49,10 @@ export default function Products(props) {
                 let { scrollHeight, clientHeight } = element;
                 let scrollOverClient = scrollHeight >= clientHeight;
                 let childrenOverParent = totalChildHeights >= height;
-
-                // console.log(`Element is Overflowing?`, {
-                //     cart,
-                //     height,
-                //     children,
-                //     scrollHeight,
-                //     clientHeight,
-                //     scrollOverClient,
-                //     totalChildHeights,
-                //     childrenOverParent,
-                //     elementClasses: element?.className,
-                // })
                 
                 overflowingHeight = scrollOverClient || childrenOverParent;
             }
         }
-
         return overflowingHeight;
     }
 
@@ -76,32 +64,40 @@ export default function Products(props) {
         }
     }, [products])
 
+    // Products Component
     return (
         <div className={`productsComponent productsContainer flex flexColumns gap15 ${extraClasses && extraClasses != `` ? extraClasses : ``} ${isCart ? `isCart pl3` : ``}`}>
         
+            {/* Products Title */}
             {getFilteredProducts(products) && getFilteredProducts(products)?.length > 0 && (getFilteredProducts(products)?.length != 1 || isCart) && (
                 <h2 className={`shopSubtitle ${isCart ? `cartSubtitle` : ``}`}>
                     {getFilteredProducts(products)?.length} Product(s){isCart ? ` In Cart` : ``}
                 </h2>
             )}
 
-            <div className={`productForms w100 flex flexColumns gap15 ${products && products?.length > 0 && products?.length != 1 ? `mb15` : ``}`}>
-                {products && products?.length > 0 && products?.length != 1 && !isCart && (
-                    <div className={`searchContainer productSearchContainer sectionContent mt-4I`}>
-                        <div className={`fieldBG`}>
-                            <Search onInput={searchProducts} className={`productSearch`} />
-                            <kbd className={`fieldBGKBD nx-absolute nx-my-1.5 nx-select-none ltr:nx-right-1.5 rtl:nx-left-1.5 nx-h-5 nx-rounded nx-bg-white nx-px-1.5 nx-font-mono nx-text-[10px] nx-font-medium nx-text-gray-500 nx-border dark:nx-border-gray-100/20 dark:nx-bg-dark/50 contrast-more:nx-border-current contrast-more:nx-text-current contrast-more:dark:nx-border-current nx-items-center nx-gap-1 nx-pointer-events-none nx-hidden sm:nx-flex nx-opacity-100`}>
-                                Products
-                            </kbd>
+            {/* Product Forms */}
+            {!isCart && <>
+                <div className={`productForms w100 flex flexColumns gap15 ${products && products?.length > 0 && products?.length != 1 ? `mb15` : ``}`}>
+                    {/* Products Search Form */}
+                    {products && products?.length > 0 && products?.length != 1 && (
+                        <div className={`searchContainer productSearchContainer sectionContent mt-4I`}>
+                            <div className={`fieldBG`}>
+                                <Search onInput={searchProducts} className={`productSearch`} />
+                                <kbd className={`fieldBGKBD nx-absolute nx-my-1.5 nx-select-none ltr:nx-right-1.5 rtl:nx-left-1.5 nx-h-5 nx-rounded nx-bg-white nx-px-1.5 nx-font-mono nx-text-[10px] nx-font-medium nx-text-gray-500 nx-border dark:nx-border-gray-100/20 dark:nx-bg-dark/50 contrast-more:nx-border-current contrast-more:nx-text-current contrast-more:dark:nx-border-current nx-items-center nx-gap-1 nx-pointer-events-none nx-hidden sm:nx-flex nx-opacity-100`}>
+                                    Products
+                                </kbd>
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
 
-                {user && checkRole(user.roles, `Admin`) && products && products?.length > 0 && products?.length != 1 && !isCart && (
-                    <ProductForm />
-                )}
-            </div>
+                    {/* Product Add // Edit Form */}
+                    {user && checkRole(user.roles, `Admin`) && products && products?.length > 0 && products?.length != 1 && (
+                        <ProductForm />
+                    )}
+                </div>
+            </>}
 
+            {/* Product Cards */}
             {getFilteredProducts(products) && (
 
                 <ul id={`productCards`} ref={cardsElementRef} className={`cards ${getFilteredProducts(products)?.length > 0 ? `hasProducts ${getFilteredProducts(products)?.length > 1 ? `multiProducts` : `oneProduct`}` : `noProducts`} hasButtons ${isCart ? `cartCards 

@@ -1,5 +1,5 @@
 import { capWords, formatDate } from "../pages/_app";
-import { generateUniqueID } from "../globalFunctions";
+import { generateUniqueID } from "../globals/functions/globalFunctions";
 
 const formatDateFromFirebase = (timestamp) => {
   let date;

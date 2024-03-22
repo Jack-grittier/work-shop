@@ -9,7 +9,7 @@ import PageView from '../models/PageView';
 // import { useRouter } from 'next/router';
 import { simplifyUser } from '../components/Form';
 import { onAuthStateChanged } from 'firebase/auth';
-import { generateUniqueID } from '../globalFunctions';
+import { generateUniqueID } from '../globals/functions/globalFunctions';
 import { AnimatePresence, motion } from 'framer-motion';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { createContext, useRef, useState, useEffect } from 'react';

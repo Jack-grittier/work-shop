@@ -44,6 +44,11 @@ export const productActions = {
         doneLabel: `Navigated`,
         inProgressLabel: `Navigating`,
     },
+    Archive: {
+        label: `Archive`,
+        doneLabel: `Archived`,
+        inProgressLabel: `Archiving`,
+    },
     Remove: {
         label: `Remove`,
         doneLabel: `Removed`,

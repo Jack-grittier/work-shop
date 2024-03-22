@@ -1,5 +1,5 @@
 import { Badge } from "@mui/material";
-import { removeTrailingZeroDecimal } from "../globalFunctions";
+import { removeTrailingZeroDecimal } from "../globals/functions/globalFunctions";
 
 export default function AutoCompleteOption(props) {
     let { option, property, className } = props;

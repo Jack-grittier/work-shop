@@ -1,5 +1,5 @@
 import { formatDate } from "../pages/_app";
-import { generateUniqueID } from "../globalFunctions";
+import { generateUniqueID } from "../globals/functions/globalFunctions";
 
 export default class PageView {
   [key: string]: any;

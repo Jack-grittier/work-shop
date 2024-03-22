@@ -1,12 +1,12 @@
 import Shop from "./models/Shop";
 import Product from "./models/Product";
 import { initializeApp } from "firebase/app";
-import { defaultProducts, defaultShop } from "./database";
 import { GoogleAuthProvider, getAuth } from "firebase/auth";
+import { defaultProducts, defaultShop } from "./db/database";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
 
 const provider = new GoogleAuthProvider();
-provider.setCustomParameters({ prompt: 'select_account' });
+provider.setCustomParameters({ prompt: `select_account` });
 export const googleProvider = provider;
 
 const firebaseConfig = {
@@ -22,7 +22,7 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 
-export const environments = {
+export const firebaseDatabases = {
   dev: {
     usersDatabase: `devUsers`,
     emailsDatabase: `devEmails`,
@@ -55,8 +55,8 @@ export const environments = {
   },
 };
   
-export const environment = environments.prod;
-export const { usersDatabase, emailsDatabase, productsDatabase, pageViewsDatabase } = environment;
+export const firebaseDatabaseToUse = firebaseDatabases.prod;
+export const { usersDatabase, emailsDatabase, productsDatabase, pageViewsDatabase } = firebaseDatabaseToUse;
 
 export const maxAnimationTime = 2500;
 export const shortAnimationTime = 350;
