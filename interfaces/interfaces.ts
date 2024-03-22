@@ -1,1 +1,3 @@
-// Interfaces
+export const interfaces = {
+    
+}

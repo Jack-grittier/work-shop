@@ -1,1 +1,3 @@
-// Library
+export const library = {
+    
+}

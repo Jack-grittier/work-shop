@@ -1,1 +1,3 @@
-// Logs
+export const logs = {
+    
+}

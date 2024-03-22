@@ -1,1 +1,3 @@
-// Routes
+export const routes = {
+    
+}

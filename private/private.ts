@@ -1,1 +1,3 @@
-// Private
+export const privateData = {
+
+}

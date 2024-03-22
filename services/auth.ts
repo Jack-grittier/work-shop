@@ -1,1 +1,3 @@
-// Authentication
+export const auth = {
+    
+}

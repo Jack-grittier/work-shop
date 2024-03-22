@@ -1,1 +1,3 @@
-// Server
+export const server = {
+    
+}

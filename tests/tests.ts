@@ -1,1 +1,3 @@
-// Tests
+export const tests = {
+    
+}

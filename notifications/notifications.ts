@@ -1,1 +1,3 @@
-// Notifications
+export const notifications = {
+    
+}

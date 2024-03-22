@@ -1,1 +1,3 @@
-// Scripts
+export const scripts = {
+    
+}

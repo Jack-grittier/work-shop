@@ -1,1 +1,3 @@
-// Functions
+export const scriptFunctions = {
+    
+}
