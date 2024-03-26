@@ -1,6 +1,11 @@
 import Role from "../models/Role";
 import Action from "../models/Action";
 
+export const productStatuses = {
+    Active: `active`,
+    Archived: `archived`,
+}
+
 export const userRoles = {
     User: {
         level: 1,

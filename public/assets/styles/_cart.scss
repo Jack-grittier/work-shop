@@ -19,6 +19,9 @@
         padding: 0;
         overflow-y: auto;
         max-height: 770px;
+        .card {
+            padding: 25px !important;
+        }
         &.cardsOverflowingY {
             padding: 0 15px 0 0;
         }
@@ -41,6 +44,12 @@
     height: 100%;
     display: grid;
     grid-template-rows: 1fr 55px;
+    .qtyBtn {
+        padding: 12px !important;
+    }
+    .productActions {
+        justify-content: space-between !important;
+    }
     .prodTitle {
         top: 0;
         max-width: 500px !important;
@@ -75,19 +84,23 @@
         padding-right: 15px !important;
     }
     .productButton {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         max-height: 22px !important;
-        padding: 4px 4px 2px !important;
-        &.cartActionButton {
-            padding: 15px 12px 13px !important;
+        &:not(.qtyBtn) {
+            padding: 15px 12px 14px !important;
         }
-        &.qtyText {
-            font-size: 12px;
-            padding: 4px 7px 2px !important;
+        .productButtonText {
+            font-size: 16px !important;
         }
+        // &.cartActionButton {
+        //     padding: 15px 12px 13px !important;
+        // }
     }
     .cartButton {
         border-radius: 4px !important;
-        padding: 14px 20px 12px !important;
+        // padding: 14px 20px 12px !important;
         i {
             transition: var(--transition);
         }

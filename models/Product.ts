@@ -65,6 +65,7 @@ export default class Product {
     price: any,
     type?: any,
     cartId?: string,
+    selectedOptions?: any,
     inCartQty?: any,
     quantity?: number,
     description?: string,

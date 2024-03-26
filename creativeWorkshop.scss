@@ -377,6 +377,21 @@ hr {
     height: 100%;
     font-size: 20px;
     padding-bottom: 20px;
+    &.productContentInCart {
+        display: flex;
+        grid-gap: 25px;
+        padding-bottom: 0;
+        .productPic {
+            margin: 0;
+        }
+        .productImageContainer {
+            min-width: 125px;
+            max-width: 125px;
+        }
+        .productDescription {
+            font-size: 16px;
+        }
+    }
 }
 
 .productImagesContainer {
@@ -687,7 +702,9 @@ hr {
         width: 95% !important;
     }
     &.noProducts, &.oneProduct {
-        width: 75% !important;
+        &:not(.cartCards) {
+            width: 75% !important;
+        }
         grid-template-columns: repeat(1, 1fr);
         .productPic {
             max-height: 425px;

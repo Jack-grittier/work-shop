@@ -4,7 +4,7 @@ import ProductForm from "./ProductForm";
 import { checkRole } from "../firebase";
 import { StateContext } from "../pages/_app";
 import LoadingSpinner from "./LoadingSpinner";
-import { productActions } from "../globals/globals";
+import { productStatuses } from "../globals/globals";
 import { useContext, useEffect, useState, useRef } from "react";
 
 export default function Products(props) {
@@ -12,15 +12,15 @@ export default function Products(props) {
     let { products, isCart, extraClasses } = props;
     let { user, cart } = useContext<any>(StateContext);
     if (!products) products = useContext<any>(StateContext)?.products;
-    products = products && products.filter(prod => prod.status != productActions.Archive.label.toLocaleLowerCase());
+    products = products && products.filter(prod => prod.status != productStatuses.Archived);
 
     let [productsLoaded, setProductsLoaded] = useState(false);
     let [productsSearchTerm, setProductsSearchTerm] = useState(``);
 
     const getFilteredProducts = (productsToFilter) => {
-        let filteredProducts = productsToFilter.map(prod => ({ ...prod, label: prod.title }));
+        let filteredProducts = productsToFilter.filter(prod => prod.status != productStatuses.Archived).map(prod => ({ ...prod, label: prod.title }));
         if (productsSearchTerm && productsSearchTerm != ``) {
-            filteredProducts = productsToFilter.filter(prod => JSON.stringify({ ...prod, label: prod.title }).toLowerCase().includes(productsSearchTerm));
+            filteredProducts = productsToFilter.filter(prod => prod.status != productStatuses.Archived && JSON.stringify({ ...prod, label: prod.title }).toLowerCase().includes(productsSearchTerm));
         };
         return filteredProducts;
     }
@@ -43,7 +43,7 @@ export default function Products(props) {
         if (element != undefined && element != null) {
             let children = Array.from(element.children);
             if (cart?.items?.length > 1) {
-                let childHeights = children.map((ch: any) => ch.clientHeight + 35);
+                let childHeights = children.map((ch: any) => ch.clientHeight);
                 let totalChildHeights = childHeights.reduce((total, currentValue) => total + currentValue, 0);
                 
                 let { scrollHeight, clientHeight } = element;
@@ -53,6 +53,7 @@ export default function Products(props) {
                 overflowingHeight = scrollOverClient || childrenOverParent;
             }
         }
+
         return overflowingHeight;
     }
 
@@ -101,7 +102,7 @@ export default function Products(props) {
             {getFilteredProducts(products) && (
 
                 <ul id={`productCards`} ref={cardsElementRef} className={`cards ${getFilteredProducts(products)?.length > 0 ? `hasProducts ${getFilteredProducts(products)?.length > 1 ? `multiProducts` : `oneProduct`}` : `noProducts`} hasButtons ${isCart ? `cartCards 
-                ${cardsElementRef?.current && isElementOverflowingHeight(cardsElementRef?.current) == true ? `cardsOverflowingY` : ``}` : ``}`}>
+                ${cardsElementRef?.current && isElementOverflowingHeight(cardsElementRef?.current, 760) == true ? `cardsOverflowingY` : ``}` : ``}`}>
 
                     {getFilteredProducts(products)?.length > 0 ? getFilteredProducts(products).map((product, productIndex) => {
                         return (
