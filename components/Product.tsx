@@ -300,7 +300,7 @@ export default function Product(props) {
                 </>}
                   
                 <div className={`productDescription`}>
-                    {product.description != `` ? product.description : product?.title}
+                    <span className={`productDescriptionText`}>{product.description != `` ? product.description : product?.title}</span>
                     {inCart && product.options.length >= 2 && <>
                         <div className={`productCartSelectedOptions`} style={{ fontStyle: `italic`, paddingTop: 5, fontSize: 13 }}>
                             {Object.entries(product.selectedOptions).filter(([key, val]) => key != `Quantity` && key != `Price`).map((entry: any, cartProdIndex) => {

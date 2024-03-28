@@ -806,12 +806,6 @@ input {
 }
 
 @media (max-width: 992px) {
-    .navFormDiv {
-        // display: none !important;
-        .navIcons {
-            display: none;
-        }
-    }
     .board {
         &.lists {
             overflow-x: scroll;
@@ -824,10 +818,12 @@ input {
     }
 }
 
-@media (max-width: 835px) {
+@media (max-width: 855px) {
     nav {
         .navFormDiv {
-            display: none !important;
+            .navFormSection {
+                display: none !important;
+            }
         }
     }
 }

@@ -110,4 +110,34 @@
             }
         }
     }
+    @media (max-width: 500px) {
+        .shopSubtitle {
+            margin-bottom: 20px;
+        }
+        .productCard {
+            &.card {
+                max-width: 280px;
+                padding: 0px !important;
+            }
+        }
+        .product {
+            padding: 15px;
+        }
+        .productTitle {
+            padding: 0 !important;
+        }
+        .productContent {
+            &.productContentInCart {
+                align-items: center;
+            }
+        }
+        .productDescriptionText {
+            display: none;
+        }
+        .cartQuantityField {
+            .selectText {
+                display: none;
+            }
+        }
+    }
 }
