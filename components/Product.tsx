@@ -5,7 +5,7 @@ import { useContext, useState } from "react";
 import { productActions } from "../globals/globals";
 import { ToastOptions, toast } from "react-toastify";
 import { StateContext, dev, dismissAlert, showAlert } from "../pages/_app";
-import { checkRole, liveLink, maxAnimationTime, productPlaceholderImage, shortAnimationTime } from "../firebase";
+import { checkRole, createShopifyCart, liveLink, maxAnimationTime, productPlaceholderImage, shopifyClient, shortAnimationTime } from "../firebase";
 
 export default function Product(props) {
     let { product, filteredProducts, inCart } = props;
@@ -195,6 +195,69 @@ export default function Product(props) {
         }
     }
 
+    const ac = (cartProduct) => {
+        console.log(`Shopify Client`, shopifyClient.checkout.create);
+        shopifyClient.checkout.create().then((checkout) => {
+            // Store the checkout ID to use for adding line items
+            let checkoutId = checkout.id;
+            
+            // ID of the product variant
+            const variantId = cartProduct.variants[0].id;
+            
+            // Prepare the line item array you want to add to the cart
+            const lineItemsToAdd = [
+                {
+                    variantId,
+                    quantity: 1
+                }
+            ];
+
+            console.log(`Checkout`, checkout);
+            
+            // Add an item to the checkout
+            shopifyClient.checkout.addLineItems(checkoutId, lineItemsToAdd).then((checkout) => {
+                console.log('Checkout after adding items:', checkout);
+                
+                // This URL can be used in your UI to direct the user to the checkout
+                console.log('Checkout web URL:', checkout.webUrl);
+            });
+        }).catch((error) => {
+            console.log('Error creating checkout:', error);
+        });
+    }
+
+    async function addToCart(cartProduct) {
+        try {
+            const cart = await tryCart(cartProduct);
+            console.log('Cart created:', cart);
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+        }
+    }
+
+    const tryCart = async (cartProduct) => {
+        try {
+            // Await the result of createCart to ensure the promise resolves
+            let cartToCreate = await createCart(cartProduct);
+            console.log(`${productActions.AddToCart.label} Cart`, cartToCreate);
+            return cartToCreate;
+        } catch (error) {
+            console.log(`${productActions.AddToCart.label} Error`, error);
+            return error;
+        }
+    }    
+
+    const createCart = async (cartProduct) => {
+        try {
+            let cartToCreate = await createShopifyCart();
+            console.log(`Create Cart`, cartToCreate);
+            return cartToCreate;
+        } catch (error) {
+            console.log(`Create Cart Error`, error);
+            return;
+        }
+    }
+
     const handleShopifyProductOption = (e, type?: string) => {
         if (type == productActions.Delete.label) {
             showAlert(<div className={`alertTitleMessage`}>Confirm <span className={`red`}>Delete</span>?</div>, <>
@@ -239,7 +302,12 @@ export default function Product(props) {
                 setCartLoaded(true);
                 let cartProduct = { ...product, cartId: `Product-${cart?.items?.length + 1}-${product?.id}-${cart?.id}`, selectedOptions: options };
                 setCart(prevCart => ({ ...prevCart, items: [...prevCart?.items, cartProduct] }));
-                dev() && console.log(`${productActions.AddToCart.label}`, {e, type, user, cartProduct, cart});
+                // tryCart(cartProduct);
+                // addToCart(product).then((data) => {
+                //     console.log(`Cart Data`, data);
+                //     return data;
+                // }).catch(console.error);
+                // ac(cartProduct);
                 setTimeout(() => {
                     setCartClicked(false);
                     setCartLoaded(false);

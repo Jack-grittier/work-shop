@@ -9,10 +9,10 @@ import PageView from '../models/PageView';
 // import { useRouter } from 'next/router';
 import { simplifyUser } from '../components/Form';
 import { onAuthStateChanged } from 'firebase/auth';
-import { generateUniqueID } from '../globals/functions/globalFunctions';
 import { AnimatePresence, motion } from 'framer-motion';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { createContext, useRef, useState, useEffect } from 'react';
+import { generateUniqueID } from '../globals/functions/globalFunctions';
 import { auth, dataSize, db, fetchCartFromAPI, fetchCustomersFromAPI, fetchProductsFromAPI, fetchShopDataFromAPI, maxDataSize, pageViewsDatabase, trackUniquePageView, usersDatabase } from '../firebase';
 
 export const useDB = () => true;

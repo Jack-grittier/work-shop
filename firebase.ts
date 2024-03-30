@@ -1,4 +1,5 @@
 import Shop from "./models/Shop";
+import ShopifyBuy from 'shopify-buy';
 import Product from "./models/Product";
 import { initializeApp } from "firebase/app";
 import { GoogleAuthProvider, getAuth } from "firebase/auth";
@@ -182,5 +183,38 @@ export const createShopifyCustomer = async (email) => {
     console.log(`Server Error on Create Customer`, error);
   }
 }
+
+export const createShopifyCart = async () => {
+  try {
+    let createShopifyCartResponse = await fetch(`${liveLink}/api/cart/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        // Data
+      })
+    });
+
+    if (createShopifyCartResponse.status === 200) {
+      let createdCartData = await createShopifyCartResponse.json();
+      if (createdCartData) return createdCartData;
+    } else {
+      const errorResponse = await createShopifyCartResponse.json();
+      console.log(`Error creating Cart: ${errorResponse.message || createShopifyCartResponse.statusText}`);
+      return null;
+    }
+  } catch (error) {
+    console.log(`Server Error on Create Cart`, error);
+  }
+}
+
+const storeName = process.env.SHOPIFY_STORE_NAME || process.env.NEXT_PUBLIC_SHOPIFY_STORE_NAME;
+const accessToken = process.env.SHOPIFY_ACCESS_TOKEN || process.env.NEXT_PUBLIC_SHOPIFY_ACCESS_TOKEN;
+
+export const shopifyClient = ShopifyBuy.buildClient({
+  domain: `${storeName}.myshopify.com`,
+  storefrontAccessToken: accessToken
+});
 
 export default app;

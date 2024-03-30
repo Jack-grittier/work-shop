@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  let useAPICall = false;
+  let useAPICall = true;
   let defaultCart = { id: 1, items: [] };
   if (req.method === `GET`) {
     try {
@@ -11,15 +11,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const url = `https://${storeName}.myshopify.com/admin/api/${apiVersion}/cart.json`;
 
         const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-            'Content-Type': 'application/json',
-            'X-Shopify-Access-Token': accessToken
-            }
+          method: 'GET',
+          headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Access-Token': accessToken
+          }
         });
 
         const data = await response.json();
-        let cartDataToReturn = data?.errors ? defaultCart : data;
+        let cartDataToReturn = data?.errors ? {data, defaultCart} : data;
         res.status(200).json(cartDataToReturn);
       } else {
         res.status(200).json(defaultCart);
