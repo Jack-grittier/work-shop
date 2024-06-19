@@ -12,9 +12,12 @@ export default function Cart(props) {
     let [checkoutClicked, setCheckoutClicked] = useState(false);
 
     const onCheckout = (e) => {
-        dev() && console.log(`onCheckout`, e);
         setCheckoutClicked(true);
         toast.info(`Checking Out`);
+        dev() && console.log(`onCheckout`, {
+            e,
+            cart,
+        });
         setTimeout(() => {
             toast.info(`Checkout is In Development`, { duration: shortAnimationTime } as ToastOptions);
             setCheckoutClicked(false);

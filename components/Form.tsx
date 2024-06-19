@@ -57,6 +57,7 @@ export default function Form(props?: any) {
   const [, setLoaded] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isPopoverVisible, setPopoverVisible] = useState(false);
+  const [useLegacyProfileEditor, setUseLegacyProfileEditor] = useState(false);
   const { mobile, useDatabase, user, users, setUser, authState, emailField, playersLoading, setAuthState, setEmailField, setFocus, adminFeatures, setAdminFeatures } = useContext<any>(StateContext);
   
   const trackKeyDown = () => {
@@ -279,12 +280,12 @@ export default function Form(props?: any) {
         {!user && emailField && (
           <input className={`authFormPassworrdField`} autoFocus={emailField} placeholder="Password" type="password" name="password" autoComplete={`current-password`} />
         )}
-        {user && window?.location?.href?.includes(`profile`) && <input id="name" className={`name userData`} placeholder="Name" type="text" name="status" />}
-        {user && window?.location?.href?.includes(`profile`) && <input id="status" className={`status userData`} placeholder="Status" type="text" name="status" />}
-        {user && window?.location?.href?.includes(`profile`) && <input id="bio" className={`bio userData`} placeholder="About You" type="text" name="bio" />}
-        {user && window?.location?.href?.includes(`profile`) && <input id="number" className={`number userData`} placeholder="Favorite Number" type="number" name="number" />}
-        {user && window?.location?.href?.includes(`profile`) && <input id="password" className={`editPassword userData`} placeholder="Edit Password" type="password" name="editPassword" autoComplete={`current-password`} />}
-        <input title={user ? `Sign Out` : authState} className={`${(user && window?.location?.href?.includes(`profile`) || (authState == `Sign In` || authState == `Sign Up`)) ? `submit half` : `submit full`} ${user ? `userSignedInSubmit` : `userSignedOutSubmit`}`} type="submit" name="authFormSubmit" value={user ? `Sign Out` : authState} />
+        {user && (useLegacyProfileEditor && window?.location?.href?.includes(`profile`)) && <input id="name" className={`name userData`} placeholder="Name" type="text" name="status" />}
+        {user && (useLegacyProfileEditor && window?.location?.href?.includes(`profile`)) && <input id="status" className={`status userData`} placeholder="Status" type="text" name="status" />}
+        {user && (useLegacyProfileEditor && window?.location?.href?.includes(`profile`)) && <input id="bio" className={`bio userData`} placeholder="About You" type="text" name="bio" />}
+        {user && (useLegacyProfileEditor && window?.location?.href?.includes(`profile`)) && <input id="number" className={`number userData`} placeholder="Favorite Number" type="number" name="number" />}
+        {user && (useLegacyProfileEditor && window?.location?.href?.includes(`profile`)) && <input id="password" className={`editPassword userData`} placeholder="Edit Password" type="password" name="editPassword" autoComplete={`current-password`} />}
+        <input title={user ? `Sign Out` : authState} className={`${(user && (useLegacyProfileEditor && window?.location?.href?.includes(`profile`)) || (authState == `Sign In` || authState == `Sign Up`)) ? `submit half` : `submit full`} ${user ? `userSignedInSubmit` : `userSignedOutSubmit`}`} type="submit" name="authFormSubmit" value={user ? `Sign Out` : authState} />
         {/* {(authState == `Sign In` || authState == `Sign Up`) && <input id={`back`} className={`back`} type="submit" name="authFormBack" value={`Back`} />} */}
         {!user && authState == `Next` && <div title={`${signUpOrSignIn} With Google`} className={`googleButton customUserSection`}>
           <GoogleButton onClick={(e) => googleSignInOrSignUp(e)} type={`dark`} />
@@ -328,7 +329,7 @@ export default function Form(props?: any) {
             />
           </div>
         )}
-        {user && window?.location?.href?.includes(`profile`) && <input id={user?.id} className={`save`} type="submit" name="authFormSave" style={{padding: 0}} value={`Save`} />}
+        {user && (useLegacyProfileEditor && window?.location?.href?.includes(`profile`)) && <input id={user?.id} className={`save`} type="submit" name="authFormSave" style={{padding: 0}} value={`Save`} />}
       </form>
     )}
   </>

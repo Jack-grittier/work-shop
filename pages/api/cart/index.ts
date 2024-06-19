@@ -13,8 +13,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const response = await fetch(url, {
           method: 'GET',
           headers: {
-          'Content-Type': 'application/json',
-          'X-Shopify-Access-Token': accessToken
+            'Content-Type': 'application/json',
+            'X-Shopify-Access-Token': accessToken
           }
         });
 

@@ -16,6 +16,7 @@ import { generateUniqueID } from '../globals/functions/globalFunctions';
 import { auth, dataSize, db, fetchCartFromAPI, fetchCustomersFromAPI, fetchProductsFromAPI, fetchShopDataFromAPI, maxDataSize, pageViewsDatabase, trackUniquePageView, usersDatabase } from '../firebase';
 
 export const useDB = () => true;
+export const useInitialLogs = false;
 export const StateContext = createContext({});
 export const signUpOrSignIn = `Sign Up or Sign In`;
 
@@ -79,7 +80,7 @@ export const getCartFromAPI = async () => {
       let latestCart = fetchCartFromAPI();
       return latestCart;
     } else {
-      let storedCart = JSON.parse(localStorage.getItem(`cart`));
+      let storedCart = localStorage.getItem(`cart`) ? JSON.parse(localStorage.getItem(`cart`)) : defaultCart;
       if (storedCart) return storedCart;
     }
   } catch (error) {
@@ -382,7 +383,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
 
   let [shop, setShop] = useState({});
   let [products, setProducts] = useState([]);
-  let [cart, setCart] = useState(defaultCart);
+  let [cart, setCart] = useState({items: []});
   let [ipAddress, setIPAddress] = useState(``);
   let [customers, setCustomers] = useState([]);
   let [pageViews, setPageViews] = useState([]);
@@ -438,9 +439,12 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   const refreshCartFromAPI = async () => {
     let cartFromAPI = await getCartFromAPI();
     if (cartFromAPI && cartFromAPI?.items) {
+      cartFromAPI.id = cartFromAPI.id ? cartFromAPI.id : defaultCart.id;
       setCart(cartFromAPI);
     } else {
-      setCart(defaultCart);
+      let locallyStoredStoredCart = localStorage.getItem(`cart`) ? JSON.parse(localStorage.getItem(`cart`)) : defaultCart;
+      locallyStoredStoredCart.id = locallyStoredStoredCart.id ? locallyStoredStoredCart.id : defaultCart.id;
+      setCart(locallyStoredStoredCart);
     }
   }
 
@@ -487,7 +491,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   }
 
   const setInitialAndOnRouteChangeFeatures = () => {
-    dev() && console.log(`App is changing to`, router.asPath);
+    dev() && useInitialLogs && console.log(`App is changing to`, router.asPath);
     setFeatures();
   };
 
@@ -495,7 +499,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   useEffect(() => {
     if (Object.keys(shop).length > 0) {
       if (dataSize(shop) <= maxDataSize) localStorage.setItem(`shop`, JSON.stringify(shop));
-      dev() && console.log(`Shop`, shop);
+      dev() && useInitialLogs && console.log(`Shop`, shop);
     }
   }, [shop])
 
@@ -503,7 +507,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   useEffect(() => {
     if (products.length > 0) {
       if (dataSize(products) <= maxDataSize) localStorage.setItem(`products`, JSON.stringify(products));
-      dev() && console.log(`Products`, products);
+      dev() && useInitialLogs && console.log(`Products`, products);
     }
   }, [products])
 
@@ -511,15 +515,16 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   useEffect(() => {
     if (customers.length > 0) {
       if (dataSize(customers) <= maxDataSize) localStorage.setItem(`customers`, JSON.stringify(customers));
-      dev() && console.log(`Customers`, customers);
+      dev() && useInitialLogs && console.log(`Customers`, customers);
     }
   }, [customers])
 
   // Catch Cart Updates
   useEffect(() => {
-    if (cart && cart?.items && cart?.items.length > 0) {
-      if (dataSize(cart) <= maxDataSize) localStorage.setItem(`cart`, JSON.stringify(cart));
-      dev() && console.log(`Cart`, cart);
+    if (cart && cart?.items && Array.isArray(cart?.items)) {
+      let validCartSize = dataSize(cart) <= maxDataSize;
+      if (validCartSize && cart.id) localStorage.setItem(`cart`, JSON.stringify(cart));
+      dev() && cart.id && console.log(`Cart`, cart);
     }
   }, [cart])
 
@@ -535,7 +540,8 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
         setThemeMode(`light`);
       }
     }
-    dev() && console.log(`Features`, adminFeatures);
+    let validAdminFeatures = adminFeatures && Array.isArray(adminFeatures) && adminFeatures.length > 0;
+    dev() && useInitialLogs && validAdminFeatures && console.log(`Features`, adminFeatures);
     localStorage.setItem(`features`, JSON.stringify(adminFeatures));
   }, [adminFeatures])
 
@@ -562,7 +568,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
         querySnapshot.forEach((doc) => usersFromDatabase.push(new User({...doc.data()})));
         // usersFromDatabase = usersFromDatabase.map(usr => simplifyUser(usr));
         setUsersLoading(false);
-        dev() && console.log(`Database Users`, usersFromDatabase);
+        dev() && useInitialLogs && console.log(`Database Users`, usersFromDatabase);
         setUsers(usersFromDatabase);
         let storedUser = localStorage.getItem(`user`) ? JSON.parse(localStorage.getItem(`user`)) : null;
         let userToCheck = (user == null || user == undefined) ? storedUser : user;
@@ -635,7 +641,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
 
       if (users.length > 0) {
         if (dataSize(users) <= maxDataSize) localStorage.setItem(`users`, JSON.stringify(users));
-        dev() && console.log(`Users`, users);
+        dev() && useInitialLogs && console.log(`Users`, users);
       }
       
       const unsubscribeFromAuthStateListener = onAuthStateChanged(auth, userCredential => {
@@ -643,7 +649,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
           let firebaseUser = users && users.length > 0 ? users.find(u => u.uid == userCredential.uid) : userCredential;
           // firebaseUser.properties = countPropertiesInObject(firebaseUser);
           let currentUser = new User(firebaseUser);
-          console.log(`Logged in as`, { users, currentUser, firebaseUser });
+          dev() && useInitialLogs && console.log(`Logged in as`, { users, currentUser, firebaseUser });
           localStorage.setItem(`user`, JSON.stringify(currentUser));
           setUser(currentUser);
           setAuthState(`Sign Out`);

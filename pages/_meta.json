@@ -42,6 +42,15 @@
       "layout": "full"
     }
   },
+  "profile": {
+    "title": "Profile",
+    "type": "page",
+    "display": "hidden",
+    "theme": {
+      "pagination": false,
+      "layout": "full"
+    }
+  },
   "services": {
     "title": "Services",
     "type": "page",

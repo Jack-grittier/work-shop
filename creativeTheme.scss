@@ -36,6 +36,7 @@ html, body {
     --cwsBluePink: linear-gradient(90deg, var(--cwsBlue), var(--cwsPink));
     --cwsPinkBlue: linear-gradient(90deg, var(--cwsPink), var(--cwsBlue));
     --customHookRootHeight: calc(var(--customHookInputContainerHeight) - 10);
+    --cwsPinkBlueT: linear-gradient(90deg, rgba(199, 26, 143, 0.5), rgba(65, 174, 227, 0.5));
     --cwsBluePinkT: linear-gradient(90deg, rgba(65, 174, 227, 0.5), rgba(199, 26, 143, 0.5));
     --cwsBluePinkT2: linear-gradient(90deg, rgba(65, 174, 227, 0.75), rgba(199, 26, 143, 0.75));
     --cwsBluePinkT3: linear-gradient(90deg, rgba(65, 174, 227, 0.85), rgba(199, 26, 143, 0.85));

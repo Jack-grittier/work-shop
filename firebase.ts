@@ -184,28 +184,34 @@ export const createShopifyCustomer = async (email) => {
   }
 }
 
-export const createShopifyCart = async () => {
+export const startNewShopifyCart = async (productId: number, quantity: number, customerId, customerData) => {
   try {
-    let createShopifyCartResponse = await fetch(`${liveLink}/api/cart/create`, {
+    let startNewShopifyCartResponse = await fetch(`${liveLink}/api/cart/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        // Data
+        quantity,
+        productId,
+        customerId,
+        customerData,
       })
     });
 
-    if (createShopifyCartResponse.status === 200) {
-      let createdCartData = await createShopifyCartResponse.json();
-      if (createdCartData) return createdCartData;
+    if (startNewShopifyCartResponse.ok) {
+      let startNewShopifyCartData = await startNewShopifyCartResponse.json();
+      if (startNewShopifyCartData) return startNewShopifyCartData;
     } else {
-      const errorResponse = await createShopifyCartResponse.json();
-      console.log(`Error creating Cart: ${errorResponse.message || createShopifyCartResponse.statusText}`);
+      const errorResponse = await startNewShopifyCartResponse.json();
+      console.log(`Error Starting New Cart: ${errorResponse.message || startNewShopifyCartResponse.statusText}`, {
+        startNewShopifyCartResponse,
+        errorResponse,
+      });
       return null;
     }
   } catch (error) {
-    console.log(`Server Error on Create Cart`, error);
+    console.log(`Server Error on Start New Cart`, error);
   }
 }
 
