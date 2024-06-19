@@ -32,7 +32,7 @@ export default function ProductPage({ product }) {
     let filteredProducts = [new Product(product)];
     return <>
         <Banner title={product.title} />
-        <section className={`productsSection customSection`}>
+        <section id={`productPage`} className={`productPageSection productsSection customSection`}>
             <Main className={`cwsContent`} showTopButton={true}>
                 <Products products={filteredProducts} />
             </Main>

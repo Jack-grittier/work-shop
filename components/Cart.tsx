@@ -2,26 +2,50 @@ import Products from "./Products";
 import { useContext, useState } from "react";
 import { StateContext, dev } from "../pages/_app";
 import { ToastOptions, toast } from "react-toastify";
-import { maxAnimationTime, shortAnimationTime } from "../firebase";
+import { maxAnimationTime, shortAnimationTime, newShopifyCheckout } from "../firebase";
 
 export default function Cart(props) {
     let { cartPage } = props;
-    // let [cartOpen, setCartOpen] = useState(false);
-    let { cart, router } = useContext<any>(StateContext);
+    let { user, cart, router } = useContext<any>(StateContext);
     if (!cartPage) cartPage = false;
     let [checkoutClicked, setCheckoutClicked] = useState(false);
+
+    async function newShopifyCheckoutFromCart() {
+        try {
+            let validCart = cart && cart.items && Array.isArray(cart.items);
+            let notEmptyCart = validCart && cart.items.length > 0;
+            if (notEmptyCart) {
+                let customerData = user && user.customerData ? user.customerData : null;
+                let newShopifyCart = await newShopifyCheckout(cart.items, customerData);
+                setCheckoutClicked(false);
+                if (newShopifyCart) return newShopifyCart;
+            } else {
+                setTimeout(() => {
+                    setCheckoutClicked(false);
+                    toast.info(`Please Add Items to Cart`, { duration: shortAnimationTime } as ToastOptions);
+                }, maxAnimationTime);
+            }
+        } catch (error) {
+            console.log(`Error Creating New Cart`, error);
+        }
+    }
 
     const onCheckout = (e) => {
         setCheckoutClicked(true);
         toast.info(`Checking Out`);
-        dev() && console.log(`onCheckout`, {
-            e,
-            cart,
+        dev() && console.log(`onCheckout Cart`, cart);
+        newShopifyCheckoutFromCart().then((shopifyCart) => {
+            if (shopifyCart != undefined && shopifyCart != null) {
+                shopifyCart = shopifyCart.checkout ? shopifyCart.checkout : shopifyCart;
+                console.log(`New Checkout`, shopifyCart);
+                window.open(shopifyCart.webUrl, `_blank`);
+            } else {
+                toast.error(`Error Checking Out`, { duration: shortAnimationTime } as ToastOptions);
+            }
+        }).catch(error => {
+            console.log(`Error Checking Out`, error);
+            return error;
         });
-        setTimeout(() => {
-            toast.info(`Checkout is In Development`, { duration: shortAnimationTime } as ToastOptions);
-            setCheckoutClicked(false);
-        }, maxAnimationTime);
     }
 
     return (

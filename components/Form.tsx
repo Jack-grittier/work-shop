@@ -94,7 +94,7 @@ export default function Form(props?: any) {
       setUser(playerExistsInDatabase || userWithGoogle);
 
       let registrationData = { playerExistsInDatabase, userWithGoogle, userToStoreInDatabase };
-      dev() && console.log(`Registration Logs`, registrationData);
+      // dev() && console.log(`Registration Logs`, registrationData);
 
       if (playerExistsInDatabase != false) {
         console.log(`Successfully Signed In with Google`, dev() ? registrationData : userToStoreInDatabase);

@@ -5,7 +5,7 @@ import { useContext, useState } from "react";
 import { productActions } from "../globals/globals";
 import { ToastOptions, toast } from "react-toastify";
 import { StateContext, defaultCart, dev, dismissAlert, showAlert } from "../pages/_app";
-import { startNewShopifyCart, checkRole, liveLink, maxAnimationTime, productPlaceholderImage, shopifyClient, shortAnimationTime } from "../firebase";
+import { checkRole, liveLink, maxAnimationTime, productPlaceholderImage, shortAnimationTime } from "../firebase";
 
 export default function Product(props) {
     let { product, filteredProducts, inCart } = props;
@@ -199,79 +199,105 @@ export default function Product(props) {
         }
     }
 
-    async function addToCart(cartProduct) {
-        try {
-            let useCart = false;
-            let validCart = cart && cart.items && Array.isArray(cart.items);
-            let emptyCart = validCart && cart.items.length == 0;
-            if (emptyCart && useCart) {
-                let customerData = user && user.customerData ? user.customerData : null;
-                let customerId = customerData && customerData.id == user.shopifyID ? customerData.id : null;
-                let newShopifyCart = await startNewShopifyCart(cartProduct.variants[0].id, 1, customerId, customerData);
-                if (newShopifyCart && newShopifyCart.draft_order) newShopifyCart = newShopifyCart.draft_order;
-                dev() && console.log(`New Shopify Cart`, newShopifyCart);
+    const onDeleteProduct = () => {
+        showAlert(<div className={`alertTitleMessage`}>Confirm <span className={`red`}>Delete</span>?</div>, <>
+            <div className={`confirmTitle`}>
+                <h3 className={`confirmMessage`}>Are you sure you want to Delete Product {product?.name}?</h3>
+                <div className={`productActions productButtons`}>
+                    <button onClick={() => dismissAlertThenDeleteProduct()} className={`productButton buttonFullWidth`} type={`button`}>
+                        <i className={`productIcon fas ${delClicked ? `pink spinThis fa-spinner` : `red fa-trash-alt`}`}></i>
+                        <div className={`productButtonText alertActionButton`}>
+                            {delClicked ? productActions.Delete.inProgressLabel : productActions.Delete.label}
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </>, undefined, `400px`);
+    }
+
+    const onNavigateProduct = (e, type) => {
+        setProdClicked(true);
+        dev() && console.log(`${productActions.Navigate.inProgressLabel} to ${product.name}`, {e, type, user, router, route: router.route});
+        toast.info(`${productActions.Navigate.inProgressLabel} to ${product.name}`);
+        router.push(`/products/${product.id}`);
+        setTimeout(() => setProdClicked(false), maxAnimationTime);
+    }
+
+    const onEditProduct = () => {
+        setEditClicked(true);
+        cancelOrFinishEditProduct();
+        setProductToEdit(product);
+        dev() && console.log(`${productActions.Edit.inProgressLabel} ${product.name}`, product);
+        setEditClicked(false);
+        // setTimeout(() => setEditClicked(false), maxAnimationTime);
+    }
+
+    const onCancelProduct = () => {
+        setCancelClicked(true);
+        cancelOrFinishEditProduct();
+        dev() && console.log(`${productActions.Cancel.label} ${productActions.Edit.inProgressLabel} ${product.name}`, product);
+        setCancelClicked(false);
+        // setTimeout(() => setCancelClicked(false), maxAnimationTime);
+    }
+
+    const addToCart = () => {
+        setCartClicked(true);
+        toast.info(`${productActions.AddToCart.inProgressLabel}...`, { duration: shortAnimationTime } as ToastOptions);
+        setTimeout(() => {
+            toast.success(`${productActions.AddToCart.doneLabel}`, { duration: shortAnimationTime } as ToastOptions);
+            setCartLoaded(true);
+
+            let variantID;
+            let validOptions = product.options && Array.isArray(product.options) && product.options.length > 0;
+            let validVariants = product.variants && Array.isArray(product.variants) && product.variants.length > 0;
+            if (validOptions && validVariants) {
+                variantID = product.variants[0].id;
+                if (product.variants.length > 1) {
+                    let variants = product.variants.filter(vr => {
+                        let variantOptions = Object.entries(vr).filter(([key, val]) => key.includes(`option`) && val != null).map(arr => arr[1]);
+                        if (variantOptions.length > 0) {
+                            if (variantOptions.every(optVal => Object.values(options).includes(optVal))) {
+                                return vr;
+                            }
+                        }
+                    })
+                    variantID = variants[0].id; 
+                }
             }
-        } catch (error) {
-            console.log(`Error Adding to Cart`, error);
-        }
+
+            let cartProduct = { 
+                ...product, 
+                variantID,
+                selectedOptions: options,
+                cartId: `Product-${cart?.items?.length + 1}-${product?.id}-${cart?.id}`, 
+            };
+
+            setCart(prevCart => ({ 
+                ...prevCart, 
+                items: [...prevCart?.items, cartProduct],
+                id: prevCart.id ? prevCart.id : defaultCart.id, 
+            }));
+
+            setTimeout(() => {
+                setCartClicked(false);
+                setCartLoaded(false);
+            }, shortAnimationTime);
+        }, shortAnimationTime);
     }
 
     const handleShopifyProductOption = (e, type?: string) => {
         if (type == productActions.Delete.label) {
-            showAlert(<div className={`alertTitleMessage`}>Confirm <span className={`red`}>Delete</span>?</div>, <>
-                <div className={`confirmTitle`}>
-                    <h3 className={`confirmMessage`}>Are you sure you want to Delete Product {product?.name}?</h3>
-                    <div className={`productActions productButtons`}>
-                        <button onClick={() => dismissAlertThenDeleteProduct()} className={`productButton buttonFullWidth`} type={`button`}>
-                            <i className={`productIcon fas ${delClicked ? `pink spinThis fa-spinner` : `red fa-trash-alt`}`}></i>
-                            <div className={`productButtonText alertActionButton`}>
-                                {delClicked ? productActions.Delete.inProgressLabel : productActions.Delete.label}
-                            </div>
-                        </button>
-                    </div>
-                </div>
-            </>, undefined, `400px`);
+            onDeleteProduct();
         } else if (type == productActions.Navigate.label) {
-            setProdClicked(true);
-            dev() && console.log(`${productActions.Navigate.inProgressLabel} to ${product.name}`, {e, type, user, router, route: router.route});
-            toast.info(`${productActions.Navigate.inProgressLabel} to ${product.name}`);
-            router.push(`/products/${product.id}`);
-            setTimeout(() => setProdClicked(false), maxAnimationTime);
+            onNavigateProduct(e, type);
         } else if (type == productActions.Edit.label) {
-            setEditClicked(true);
-            cancelOrFinishEditProduct();
-            setProductToEdit(product);
-            dev() && console.log(`${productActions.Edit.inProgressLabel} ${product.name}`, product);
-            setEditClicked(false);
-            // setTimeout(() => setEditClicked(false), maxAnimationTime);
+            onEditProduct();
         } else if (type == productActions.Cancel.label) {
-            setCancelClicked(true);
-            cancelOrFinishEditProduct();
-            dev() && console.log(`${productActions.Cancel.label} ${productActions.Edit.inProgressLabel} ${product.name}`, product);
-            setCancelClicked(false);
-            // setTimeout(() => setCancelClicked(false), maxAnimationTime);
+            onCancelProduct();
         } else if (type == productActions.Remove.label) {
             removeProductFromCart(e);
-        } else {
-            setCartClicked(true);
-            toast.info(`${productActions.AddToCart.inProgressLabel}...`, { duration: shortAnimationTime } as ToastOptions);
-            setTimeout(() => {
-                toast.success(`${productActions.AddToCart.doneLabel}`, { duration: shortAnimationTime } as ToastOptions);
-                setCartLoaded(true);
-                let cartProduct = { ...product, cartId: `Product-${cart?.items?.length + 1}-${product?.id}-${cart?.id}`, selectedOptions: options };
-                setCart(prevCart => ({ 
-                    ...prevCart, 
-                    items: [...prevCart?.items, cartProduct],
-                    id: prevCart.id ? prevCart.id : defaultCart.id, 
-                }));
-                addToCart(product).then((data) => {
-                    return data;
-                }).catch(console.error);
-                setTimeout(() => {
-                    setCartClicked(false);
-                    setCartLoaded(false);
-                }, shortAnimationTime);
-            }, shortAnimationTime);
+        } else { // Last Option is Add to Cart
+            addToCart();
         }
     }
 
@@ -309,20 +335,18 @@ export default function Product(props) {
                             <i className={`blue fas fa-stream`}></i>
                             {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 ? `Description` : `Desc`}
                         </div>
-                        {!inCart && <>
-                            <div className={`productDescField productDescType productDescCat textWithIcon`}>
-                                <i className={`blue fas fa-tags`}></i>
-                                Type - {product.type}
-                            </div>
-                            <div className={`productDescField productDescQty textWithIcon`}>
-                                <i className={`blue fas fa-hashtag`}></i>
-                                {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 ? <>
-                                    {product.quantity} In Stock
-                                </> : <>
-                                    Qty - {product.quantity}
-                                </>}
-                            </div>
-                        </>}
+                        <div className={`productDescField productDescType productDescCat textWithIcon`}>
+                            <i className={`blue fas fa-tags`}></i>
+                            Type - {product.type}
+                        </div>
+                        <div className={`productDescField productDescQty textWithIcon`}>
+                            <i className={`blue fas fa-hashtag`}></i>
+                            {filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 ? <>
+                                {product.quantity} In Stock
+                            </> : <>
+                                Qty - {product.quantity}
+                            </>}
+                        </div>
                     </div>
                 </>}
                   

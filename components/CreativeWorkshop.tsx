@@ -9,7 +9,7 @@ export default function CreativeWorkshop(props) {
   return (
     <Main {...props}>
       <Banner title={`We're Out Of This World`} />
-      <section className={`productsSection customSection`}>
+      <section id={`homePage`} className={`homePageSection productsSection customSection`}>
         <h1 className={`shopTitle`}>{shop?.name}</h1>
         <Products />
       </section>
