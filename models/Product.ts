@@ -61,11 +61,13 @@ export default class Product {
     options: Option[],
     images: Image[],
     image: Image,
-    variants: Variant[],
     price: any,
+    variants: Variant[],
+    variantIDs: any[],
     type?: any,
     cartId?: string,
     variantID?: any,
+    variant?: Variant,
     selectedOptions?: any,
     inCartQty?: any,
     quantity?: number,
@@ -78,10 +80,14 @@ export default class Product {
     label?: string,
   }) {
     Object.assign(this, productObj);
+    let hasValidVariants = this?.variants && this?.variants?.length > 0;
     if (this.label === undefined) this.label = this?.title;
     if (this.type === undefined) this.type = this?.product_type;
-    if (this.price === undefined) this.price = this?.variants && this?.variants?.length > 0 ? this?.variants[0]?.price : `0.00`;
     if (this.category === undefined) this.category = this?.product_type;
-    if (this.quantity === undefined) this.quantity = this?.variants && this?.variants?.length > 0 ? this?.variants?.reduce((total, variant) => total + variant.inventory_quantity, 0) : 0;
+    if (this.price === undefined) this.price = hasValidVariants ? this?.variants[0]?.price : `0.00`;
+    if (this.variantIDs === undefined) this.variantIDs = hasValidVariants ? this?.variants.map(vr => vr.id) : [this.variants[0].id];
+    if (this.quantity === undefined) {
+      this.quantity = this?.variants && this?.variants?.length > 0 ? this?.variants?.reduce((total, variant) => total + variant.inventory_quantity, 0) : 0;
+    }
   }
 }  

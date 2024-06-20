@@ -507,7 +507,7 @@ export default function CreativeWorkshop({ Component, pageProps, router }) {
   useEffect(() => {
     if (products.length > 0) {
       if (dataSize(products) <= maxDataSize) localStorage.setItem(`products`, JSON.stringify(products));
-      dev() && useInitialLogs && console.log(`Products`, products);
+      dev() && console.log(`Products`, products);
     }
   }, [products])
 

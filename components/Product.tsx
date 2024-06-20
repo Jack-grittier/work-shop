@@ -1,6 +1,6 @@
 import Image from "./Image";
 import { ButtonGroup } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 // import ShopButton from "./ShopButton/ShopButton";
 import { productActions } from "../globals/globals";
 import { ToastOptions, toast } from "react-toastify";
@@ -22,12 +22,17 @@ export default function Product(props) {
     let [backToShopClicked, setBackToShopClicked] = useState(false);
 
     let [options, setOptions] = useState(product.options.reduce((acc, {name, values}) => Object.assign(acc, {[name]: values[0]}), {
-        Quantity: 1,
-        Price: product.price,
+        Quantity: product.variantID ? product.selectedOptions.Quantity : 1,
+        Price: product.variantID ? (product.price * product.selectedOptions.Quantity).toFixed(2) : product.price,
     }));
 
     const isCartButtonDisabled = () => {
-        return Object.keys(options).length == 0;
+        let isDisabled = false;
+        let noOptions = Object.keys(options).length == 0;
+
+
+        isDisabled = noOptions;
+        return isDisabled;
     }
 
     const dismissAlertThenDeleteProduct = () => {
@@ -96,7 +101,15 @@ export default function Product(props) {
         setTimeout(() => setBackToShopClicked(false), maxAnimationTime);
     }
 
+    const getAdminFeatureEnabled = (featureName) => {
+        return adminFeatures && adminFeatures.find(feat => feat.feature === featureName)?.enabled;
+    }
+
     const renderProductQuantityField = () => {
+        let optQty = options.Quantity;
+        let qtyButtonClass = getAdminFeatureEnabled(`Quantity Circle Buttons`) ? `qtyButtonSlim` : ``;
+        let variant = product.variantID ? product.variants.find(vr => vr.id == product.variantID) : null;
+        let addQtyDisabled = variant != null ? optQty >= (variant.inventory_quantity - 1) : false;
         return <>
             <fieldset name={`selectQuantityField`} className={`selectToggle selectQuantityField ${inCart ? `cartQuantityField` : ``}`}>
                 <ButtonGroup className={`toggleButtons productButtons`} variant={`outlined`} aria-label={`Product Quantity`}>
@@ -105,14 +118,14 @@ export default function Product(props) {
                         {inCart ? `Qty` : `Quantity`}
                     </h3>
                     <div className={`productQuantityButtons`}>
-                        <button onClick={(e) => updateOptions(`QuantitySub`, options.Quantity, e)} type={`button`} className={`qtyBtn subQty redBg qtyButton ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyButtonSlim` : ``} optionButton productButton Quantity-${options.Quantity} firstOption`} value={options.Quantity}>
+                        <button onClick={(e) => updateOptions(`QuantitySub`, optQty, e)} type={`button`} disabled={optQty == 1} className={`cartQtyBtn qtyBtn subQty redBg qtyButton ${qtyButtonClass} optionButton productButton Quantity-${optQty} firstOption ${optQty == 1 ? `disabled` : ``}`} value={optQty}>
                             <span className={`optionText textOverflow`}>-</span>
                         </button>
-                        <button type={`button`} className={`qtyBtn qtyText ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyTextSlim` : ``} optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity} disabled>
-                            <span className={`optionText textOverflow`}>{options.Quantity}</span>
-                            {/* <input name={`quantity`} type={`number`} value={options.Quantity} /> */}
+                        <button type={`button`} className={`qtyBtn qtyText ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyTextSlim` : ``} optionButton productButton Quantity-${optQty}`} value={optQty} disabled>
+                            <span className={`optionText textOverflow`}>{optQty}</span>
+                            {/* <input name={`quantity`} type={`number`} value={optQty} /> */}
                         </button>
-                        <button onClick={(e) => updateOptions(`QuantityAdd`, options.Quantity, e)} type={`button`} className={`qtyBtn addQty greenBg qtyButton ${adminFeatures && adminFeatures?.find(feat => feat.feature == `Quantity Circle Buttons`)?.enabled ? `qtyButtonSlim` : ``} optionButton productButton Quantity-${options.Quantity}`} value={options.Quantity}>
+                        <button onClick={(e) => updateOptions(`QuantityAdd`, optQty, e)} type={`button`} disabled={addQtyDisabled} className={`cartQtyBtn qtyBtn addQty greenBg qtyButton ${qtyButtonClass} optionButton productButton Quantity-${optQty} finalOption ${addQtyDisabled ? `disabled` : ``}`} value={optQty}>
                             <span className={`optionText textOverflow`}>+</span>
                         </button>
                     </div>
@@ -124,18 +137,19 @@ export default function Product(props) {
     const updateOptions = (optName, opt, e?) => {
         if (inCart && e) e.stopPropagation();
         if (filteredProducts && filteredProducts?.length > 0) {
+            let Quantity = 1;
             setOptions(prevOptions => {
-                let Quantity = prevOptions.Quantity;
+                Quantity = prevOptions.Quantity;
                 let Price: any = parseFloat(product?.price);
-                let Size = optName == `Size` ? opt : prevOptions?.Size;
+                // let Size = optName == `Size` ? opt : prevOptions?.Size;
     
-                if (Size) {
-                    let sizeMultiplier = parseFloat(Size.charAt(0));
-                    let sizeMultiplierIsNumber = !isNaN(sizeMultiplier);
-                    if (sizeMultiplierIsNumber) {
-                        Price = Price + (sizeMultiplier * 1.5);
-                    }
-                }
+                // if (Size) {
+                //     let sizeMultiplier = parseFloat(Size.charAt(0));
+                //     let sizeMultiplierIsNumber = !isNaN(sizeMultiplier);
+                //     if (sizeMultiplierIsNumber) {
+                //         Price = Price + (sizeMultiplier * 1.5);
+                //     }
+                // }
     
                 if (optName == `QuantitySub`) {
                     Quantity = Quantity <= 1 ? 1 : Quantity - 1;
@@ -147,7 +161,7 @@ export default function Product(props) {
     
                 let untrackedOptions = [`QuantitySub`, `QuantityAdd`];
     
-                return {
+                let newOptions = {
                     ...prevOptions,
                     ...(!untrackedOptions.includes(optName) && {
                         [optName]: opt,
@@ -155,6 +169,8 @@ export default function Product(props) {
                     Quantity,
                     Price,
                 }
+
+                return newOptions;
             })
         }
     }
@@ -247,6 +263,7 @@ export default function Product(props) {
             toast.success(`${productActions.AddToCart.doneLabel}`, { duration: shortAnimationTime } as ToastOptions);
             setCartLoaded(true);
 
+            let variant;
             let variantID;
             let validOptions = product.options && Array.isArray(product.options) && product.options.length > 0;
             let validVariants = product.variants && Array.isArray(product.variants) && product.variants.length > 0;
@@ -261,12 +278,15 @@ export default function Product(props) {
                             }
                         }
                     })
-                    variantID = variants[0].id; 
+
+                    variant = variants[0]
+                    variantID = variant.id; 
                 }
             }
 
             let cartProduct = { 
                 ...product, 
+                variant,
                 variantID,
                 selectedOptions: options,
                 cartId: `Product-${cart?.items?.length + 1}-${product?.id}-${cart?.id}`, 
@@ -300,6 +320,18 @@ export default function Product(props) {
             addToCart();
         }
     }
+
+    useEffect(() => {
+        if (product.variantID) {
+            setCart(prevCart => ({ 
+                ...prevCart, 
+                items: prevCart.items.map(pr => pr.variantID == product.variantID ? ({ 
+                    ...pr, 
+                    selectedOptions: { ...pr.selectedOptions, Quantity: options.Quantity } 
+                }) : pr)
+            }))
+        }
+    }, [options])
 
     return (
         <div className={`product ${filteredProducts && Array.isArray(filteredProducts) && filteredProducts?.length == 1 ? `featuredProduct` : `multiProduct`}`}>

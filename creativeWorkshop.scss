@@ -656,19 +656,39 @@ hr {
     }
 }
 
+.blackButton {
+    color: white !important;
+    background: black !important;
+    border-color: black !important;
+}
+
+.whiteButton {
+    color: black;
+    background: white;
+    border-color: white !important;
+}
+
 .dark {
     .qtyButton {
-        color: black;
-        background: white;
-        border-color: white !important;
+        &.disabled {
+            opacity: 1;
+            @extend .blackButton;
+        }
+        &:not(.disabled) {
+            @extend .whiteButton;
+        }
     }
 }
 
 .light {
     .qtyButton {
-        color: white;
-        background: black !important;
-        border-color: black !important;
+        &.disabled {
+            opacity: 1;
+            @extend .whiteButton;
+        }
+        &:not(.disabled) {
+            @extend .blackButton;
+        }
     }
 }
 

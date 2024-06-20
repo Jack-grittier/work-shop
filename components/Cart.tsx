@@ -33,12 +33,18 @@ export default function Cart(props) {
     const onCheckout = (e) => {
         setCheckoutClicked(true);
         toast.info(`Checking Out`);
-        dev() && console.log(`onCheckout Cart`, cart);
         newShopifyCheckoutFromCart().then((shopifyCart) => {
             if (shopifyCart != undefined && shopifyCart != null) {
-                shopifyCart = shopifyCart.checkout ? shopifyCart.checkout : shopifyCart;
-                console.log(`New Checkout`, shopifyCart);
-                window.open(shopifyCart.webUrl, `_blank`);
+                if (shopifyCart.checkout) {
+                    shopifyCart = shopifyCart.checkout;
+                    dev() && console.log(`New Checkout`, shopifyCart);
+                    window.open(shopifyCart.webUrl, `_blank`);
+                } else {
+                    shopifyCart = shopifyCart.draft_order;
+                    dev() && console.log(`New Cart`, shopifyCart);
+                    // window.location.href = shopifyCart.invoice_url;
+                    window.open(shopifyCart.invoice_url, `_blank`);
+                }
             } else {
                 toast.error(`Error Checking Out`, { duration: shortAnimationTime } as ToastOptions);
             }

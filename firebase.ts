@@ -186,7 +186,7 @@ export const createShopifyCustomer = async (email) => {
 
 export const newShopifyCheckout = async (cartProducts, customerData) => {
   try {
-    let startNewShopifyCheckoutResponse = await fetch(`${liveLink}/api/checkouts/create`, {
+    let startNewShopifyCheckoutResponse = await fetch(`${liveLink}/api/cart/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -213,37 +213,6 @@ export const newShopifyCheckout = async (cartProducts, customerData) => {
     console.log(`Server Error on Start New Checkout`, error);
   }
 }
-
-// export const newShopifyCheckout = async (cartProducts, customerId, customerData) => {
-//   try {
-//     let startNewShopifyCheckoutResponse = await fetch(`${liveLink}/api/cart/create`, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({
-//         customerId,
-//         customerData,
-//         cartProducts,
-//       })
-//     });
-
-//     if (startNewShopifyCheckoutResponse.ok) {
-//       let startNewShopifyCheckoutData = await startNewShopifyCheckoutResponse.json();
-//       if (startNewShopifyCheckoutData) return startNewShopifyCheckoutData;
-//     } else {
-//       const errorResponse = await startNewShopifyCheckoutResponse.json();
-//       console.log(`Error Starting New Checkout`, {
-//         status: errorResponse.message || startNewShopifyCheckoutResponse.statusText,
-//         startNewShopifyCheckoutResponse,
-//         errorResponse,
-//       });
-//       return null;
-//     }
-//   } catch (error) {
-//     console.log(`Server Error on Start New Checkout`, error);
-//   }
-// }
 
 const storeName = process.env.SHOPIFY_STORE_NAME || process.env.NEXT_PUBLIC_SHOPIFY_STORE_NAME;
 const accessToken = process.env.SHOPIFY_ACCESS_TOKEN || process.env.NEXT_PUBLIC_SHOPIFY_ACCESS_TOKEN;

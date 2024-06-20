@@ -1,3 +1,4 @@
+import { defaultShop } from '../../../../db/database';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 const toBase64 = (input: string) => Buffer.from(input).toString('base64');
@@ -17,22 +18,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         quantity: item.selectedOptions.Quantity,
       }));
 
-      const query = customerData ? `
+      let customerFragment = ``;
+      if (customerData) {
+        let { address1, address2, city, country, first_name, last_name, phone, province, zip } = customerData.default_address;
+        let shippingAddressFields = `
+          address1: "${address1 == null ? defaultShop.address1 : address1}",
+          address2: "${address2 == null ? defaultShop.address2 : address2}",
+          city: "${city == null ? defaultShop.city : city}",
+          country: "${country == null ? defaultShop.country : country}",
+          firstName: "${first_name}",
+          lastName: "${last_name}",
+          phone: "${phone == null ? defaultShop.phone : phone}",
+          province: "${province == null ? defaultShop.province : province}",
+          zip: "${zip == null ? defaultShop.zip : zip}"
+        `.trim().replace(/,$/, '');
+
+        customerFragment = `
+          email: "${customerData.email}",
+          shippingAddress: {
+            ${shippingAddressFields}
+          },
+        `;
+      }
+
+      const query = `
         mutation {
           checkoutCreate(input: {
             lineItems: ${JSON.stringify(lineItems).replace(/"([^"]+)":/g, '$1:')},
-            email: "${customerData?.email || ''}",
-            shippingAddress: ${customerData ? `{
-              address1: "${customerData.default_address.address1}",
-              address2: "${customerData.default_address.address2}",
-              city: "${customerData.default_address.city}",
-              country: "${customerData.default_address.country}",
-              firstName: "${customerData.default_address.firstName}",
-              lastName: "${customerData.default_address.lastName}",
-              phone: "${customerData.default_address.phone}",
-              province: "${customerData.default_address.province}",
-              zip: "${customerData.default_address.zip}"
-            }` : 'null'}
+            ${customerFragment}
           }) {
             checkout {
               id
@@ -45,21 +58,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
           }
         }
-      ` : `mutation {
-          checkoutCreate(input: {
-            lineItems: ${JSON.stringify(lineItems).replace(/"([^"]+)":/g, '$1:')},
-          }) {
-            checkout {
-              id
-              webUrl
-            }
-            checkoutUserErrors {
-              code
-              field
-              message
-            }
-          }
-        }`;
+      `;
 
       const response = await fetch(url, {
         method: 'POST',

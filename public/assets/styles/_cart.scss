@@ -13,6 +13,14 @@
     }
 }
 
+.cartQtyBtn {
+    &.disabled {
+        color: white !important;
+        background: black !important;
+        border-color: black !important;
+    }
+}
+
 .cart {
     width: 100%;
     .cards {
