@@ -18,14 +18,6 @@
 ## About
 This application was made using the Shopify API with React and Websockets for Real Time Functionality for the store, Creative Workshop. Creative Workshop is a dynamic collective of artists, designers, and fabricators dedicated to bringing your ideas into full color. Whether you need a graphic designer or illustrator, help with merch production, or branding and decor for your entire event, Creative Workshop can do it all!
 
-## Installation
-```
-git clone git@github.com:strawhat19/CreativeWorkshop.git
-cd CreativeWorkshop/
-npm install
-npm run dev
-```
-
 ## Usage
 Users can create accounts, sign up and shop our collections.
 
@@ -71,9 +63,3 @@ Users can create accounts, sign up and shop our collections.
       M.I.T. makes no representations about the suitability of this software for any
       purpose.  It is provided "as is" without express or implied warranty.
 #### https://opensource.org/licenses/MIT
-
-## Contact
-#### Repository: [*Repo*](https://github.com/strawhat19/CreativeWorkshop)
-#### GitHub: [*strawhat19*](https://github.com/strawhat19)
-#### Piratechs: [*Piratechs*](https://piratechs.com/)
-#### Contact me or ask me questions at [rahmed@piratechs.com](mailto:rahmed@piratechs.com)
